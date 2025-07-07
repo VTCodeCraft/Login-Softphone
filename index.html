@@ -1,12 +1,33 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <link rel="shortcut icon" href="#" />
-    <title>IVR Softphone</title>
-  </head>
-  <body>
-    <script src="./phone.js"></script>
-    <!-- <script src="https://cdn.founderscart.com/app/ivrsolutions/webrtc/softphone/phone.min.js"></script> -->
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="shortcut icon" href="#" />
+  <title>IVR Softphone</title>
+</head>
+
+<body>
+  <script src="./phone.js"></script>
+  <!-- <script src="https://cdn.founderscart.com/app/ivrsolutions/webrtc/softphone/phone.min.js"></script> -->
+  <script>
+    window.addEventListener('message', (event) => {
+      const { type, action, number } = event.data;
+
+      if ((type === 'SOFTPHONE_CALL' || action === 'autoFillNumber') && number) {
+        const input = document.querySelector(
+          'input[type="tel"], input[name="number"], input[id*="number"], input[id*="dial"], input'
+        );
+        if (input) {
+          input.value = number;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          console.log('✅ Filled number:', number);
+        } else {
+          console.warn('⚠️ Input field not found.');
+        }
+      }
+    });
+  </script>
+</body>
+
 </html>
