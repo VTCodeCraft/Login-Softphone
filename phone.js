@@ -1,4 +1,26 @@
 /* eslint-disable prettier/prettier */
+// Listen for postMessage events from parent window to auto-fill dialer
+window.addEventListener('message', function (event) {
+  // Optionally, check event.origin here for security
+  const msg = event.data;
+  if (
+    msg &&
+    msg.type === 'SOFTPHONE_CALL' &&
+    typeof msg.number === 'string' &&
+    msg.number.trim().length > 0
+  ) {
+    // Ensure dialer UI is visible
+    if (!$('#dialText').length) {
+      ShowDial();
+    }
+    // Fill the dialer input
+    $('#dialText').val(msg.number.trim());
+    // Trigger input event to update UI state
+    $('#dialText').trigger('input');
+    // Optionally, focus the input
+    $('#dialText').focus();
+  }
+});
 const url = new URL(window.location.href);
 const params = new URLSearchParams(url.search);
 const clientId = params.get('id');
