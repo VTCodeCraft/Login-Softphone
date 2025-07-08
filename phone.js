@@ -1,51 +1,3 @@
-(function autoLoginFromURL() {
-  // 1. Parse query params from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const profileUserID = urlParams.get('userId');
-
-  // 2. Check if user is already logged in (based on localStorage)
-  const alreadyLoggedIn = localStorage.getItem('loggedIn') === 'true';
-  const storedUserId = localStorage.getItem('profileUserID');
-
-  if (alreadyLoggedIn && storedUserId === profileUserID) {
-    console.log('[Softphone] Already logged in with same user.');
-    return;
-  }
-
-  // 3. If valid userId from URL, login and persist
-  if (profileUserID) {
-    localStorage.setItem('loggedIn', 'true');
-    localStorage.setItem('profileUserID', profileUserID);
-
-    // Optional: preload user-specific data
-    // fetchUserProfile(profileUserID); 
-
-    console.log(`[Softphone] Auto-logged in user: ${profileUserID}`);
-    // You can call your own internal login functions here if needed
-  } else {
-    console.warn('[Softphone] No userId provided in URL. Skipping login.');
-  }
-})();
-
-
-
-
-// After login success
-window.parent.postMessage({
-  type: 'SOFTPHONE_LOGIN',
-  userData: {
-    profileUserID: '17519492160917E9',
-    profileName: 'Dev Joshi',
-    SipUsername: 'w5105',
-    SipPassword: '9910513597',
-    // ...any other field
-  }
-}, '*');
-
-
-
-
-
 /* eslint-disable prettier/prettier */
 const url = new URL(window.location.href);
 const params = new URLSearchParams(url.search);
@@ -2798,46 +2750,6 @@ function logoutUser() {
   localStorage.setItem('loggedIn', false);
   window.location.reload(true);
 }
-
-// Save credentials to Chrome storage
-function saveCredentials(loginId, password) {
-  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-    chrome.storage.local.set({ loginId: loginId, password: password });
-  } else {
-    // Fallback for non-extension environments
-    localStorage.setItem('loginId', loginId);
-    localStorage.setItem('password', password);
-  }
-}
-
-// Load credentials from Chrome storage
-function loadCredentials(callback) {
-  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-    chrome.storage.local.get(['loginId', 'password'], function(result) {
-      callback(result.loginId, result.password);
-    });
-  } else {
-    // Fallback for non-extension environments
-    const loginId = localStorage.getItem('loginId');
-    const password = localStorage.getItem('password');
-    callback(loginId, password);
-  }
-}
-
-// Example usage: Call this on page load to auto-fill or auto-login
-loadCredentials(function(loginId, password) {
-  if (loginId && password) {
-    // TODO: Auto-fill login form or auto-login
-    // Example: document.getElementById('loginId').value = loginId;
-    // Example: document.getElementById('password').value = password;
-    // Or call your login function directly
-    // login(loginId, password);
-  }
-});
-
-// Example usage: Call saveCredentials after successful login
-// saveCredentials(userInputLoginId, userInputPassword);
-
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
