@@ -232,24 +232,7 @@ const appversion = '0.3.29';
 const sipjsversion = '0.20.0';
 const navUserAgent = window.navigator.userAgent; // TODO: change to Navigator.userAgentData
 const instanceID = String(Date.now());
-const localDB = {
-  set: (key, value) => {
-    chrome.storage.local.set({ [key]: value });
-  },
-  get: (key) => {
-    return new Promise((resolve) => {
-      chrome.storage.local.get([key], (result) => {
-        resolve(result[key]);
-      });
-    });
-  },
-  remove: (key) => {
-    chrome.storage.local.remove([key]);
-  },
-  clear: () => {
-    chrome.storage.local.clear();
-  }
-};
+const localDB = window.localStorage;
 
 
 // Set the following to null to disable
