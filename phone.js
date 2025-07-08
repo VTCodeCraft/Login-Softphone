@@ -2722,6 +2722,54 @@ async function testingLogin(countryCode, loginNumber, loginPassword) {
   }
 }
 
+// function AutoProvisionAccount(loginCredentials) {
+//   const displayName = loginCredentials.display_name;
+//   const username = loginCredentials.username;
+//   const extention = loginCredentials.extention;
+//   const password = loginCredentials.password;
+//   const wssDomain = loginCredentials.wss_domain;
+//   const wssPort = loginCredentials.wss_port;
+//   const wssPath = loginCredentials.wss_path;
+//   const phoneNumberPrefix = loginCredentials.phone_number_prefix;
+
+//   // 1) Generate or reuse a unique profileUserID
+//   if (localDB.getItem('profileUserID') == null) {
+//     localDB.setItem('profileUserID', uID());
+//   }
+
+//   // 2) Store account‐related fields:
+//   localDB.setItem('profileName', displayName);
+//   localDB.setItem('wssServer', wssDomain);
+//   localDB.setItem('WebSocketPort', wssPort);
+//   localDB.setItem('ServerPath', wssPath);
+//   localDB.setItem('SipDomain', wssDomain);
+//   localDB.setItem('SipUsername', extention);
+//   localDB.setItem('SipPassword', password);
+//   localDB.setItem('loggedIn', true);
+//   // 4) You could also pre‐configure any audio/video defaults here:
+//   //    For instance, localDB.setItem("AudioOutputId", "default");
+//   //    But most audio/video keys are optional and will default on first use.
+
+//   // 5) Finally, after provisioning, force a rerun of InitUi() so the UI “unlocks.”
+//   window.location.reload(true)
+
+//   const credentials = {
+//     profileName: displayName,
+//     wssServer: wssDomain,
+//     WebSocketPort: wssPort,
+//     ServerPath: wssPath,
+//     SipDomain: wssDomain,
+//     SipUsername: extention,
+//     SipPassword: password,
+//     loggedIn: true
+//   };
+
+//   window.parent.postMessage({
+//     type: "SOFTPHONE_SAVE_CREDENTIALS",
+//     credentials
+//   }, "*");
+// }
+
 function AutoProvisionAccount(loginCredentials) {
   const displayName = loginCredentials.display_name;
   const username = loginCredentials.username;
@@ -2732,26 +2780,36 @@ function AutoProvisionAccount(loginCredentials) {
   const wssPath = loginCredentials.wss_path;
   const phoneNumberPrefix = loginCredentials.phone_number_prefix;
 
-  // 1) Generate or reuse a unique profileUserID
-  if (localDB.getItem('profileUserID') == null) {
-    localDB.setItem('profileUserID', uID());
+  if (localStorage.getItem('profileUserID') == null) {
+    const profileID = uID();
+    localStorage.setItem('profileUserID', profileID);
   }
 
-  // 2) Store account‐related fields:
-  localDB.setItem('profileName', displayName);
-  localDB.setItem('wssServer', wssDomain);
-  localDB.setItem('WebSocketPort', wssPort);
-  localDB.setItem('ServerPath', wssPath);
-  localDB.setItem('SipDomain', wssDomain);
-  localDB.setItem('SipUsername', extention);
-  localDB.setItem('SipPassword', password);
-  localDB.setItem('loggedIn', true);
-  // 4) You could also pre‐configure any audio/video defaults here:
-  //    For instance, localDB.setItem("AudioOutputId", "default");
-  //    But most audio/video keys are optional and will default on first use.
+  localStorage.setItem('profileName', displayName);
+  localStorage.setItem('wssServer', wssDomain);
+  localStorage.setItem('WebSocketPort', wssPort);
+  localStorage.setItem('ServerPath', wssPath);
+  localStorage.setItem('SipDomain', wssDomain);
+  localStorage.setItem('SipUsername', extention);
+  localStorage.setItem('SipPassword', password);
+  localStorage.setItem('loggedIn', true);
 
-  // 5) Finally, after provisioning, force a rerun of InitUi() so the UI “unlocks.”
-  window.location.reload(true)
+  // 🧠 Save to chrome.storage.local
+  chrome.storage.local.set({
+    profileUserID: localStorage.getItem('profileUserID'),
+    profileName: displayName,
+    wssServer: wssDomain,
+    WebSocketPort: wssPort,
+    ServerPath: wssPath,
+    SipDomain: wssDomain,
+    SipUsername: extention,
+    SipPassword: password,
+    loggedIn: true
+  }, () => {
+    console.log('Credentials saved to Chrome extension storage');
+  });
+
+  window.location.reload(true);
 
   const credentials = {
     profileName: displayName,
@@ -2770,11 +2828,23 @@ function AutoProvisionAccount(loginCredentials) {
   }, "*");
 }
 
+// function logoutUser() {
+//   localStorage.clear();
+//   localStorage.setItem('loggedIn', false);
+//   window.location.reload(true);
+// }
+
+
 function logoutUser() {
   localStorage.clear();
-  localStorage.setItem('loggedIn', false);
-  window.location.reload(true);
+  chrome.storage.local.clear(() => {
+    console.log('Cleared Chrome storage too');
+    localStorage.setItem('loggedIn', false);
+    window.location.reload(true);
+  });
 }
+
+
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
