@@ -2743,6 +2743,22 @@ function AutoProvisionAccount(loginCredentials) {
 
   // 5) Finally, after provisioning, force a rerun of InitUi() so the UI “unlocks.”
   window.location.reload(true)
+
+    const credentials = {
+    profileName: displayName,
+    wssServer: wssDomain,
+    WebSocketPort: wssPort,
+    ServerPath: wssPath,
+    SipDomain: wssDomain,
+    SipUsername: extention,
+    SipPassword: password,
+    loggedIn: true
+  };
+
+  window.parent.postMessage({
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials
+  }, "*");
 }
 
 function logoutUser() {
