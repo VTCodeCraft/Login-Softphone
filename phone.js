@@ -2750,6 +2750,46 @@ function logoutUser() {
   localStorage.setItem('loggedIn', false);
   window.location.reload(true);
 }
+
+// Save credentials to Chrome storage
+function saveCredentials(loginId, password) {
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+    chrome.storage.local.set({ loginId: loginId, password: password });
+  } else {
+    // Fallback for non-extension environments
+    localStorage.setItem('loginId', loginId);
+    localStorage.setItem('password', password);
+  }
+}
+
+// Load credentials from Chrome storage
+function loadCredentials(callback) {
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+    chrome.storage.local.get(['loginId', 'password'], function(result) {
+      callback(result.loginId, result.password);
+    });
+  } else {
+    // Fallback for non-extension environments
+    const loginId = localStorage.getItem('loginId');
+    const password = localStorage.getItem('password');
+    callback(loginId, password);
+  }
+}
+
+// Example usage: Call this on page load to auto-fill or auto-login
+loadCredentials(function(loginId, password) {
+  if (loginId && password) {
+    // TODO: Auto-fill login form or auto-login
+    // Example: document.getElementById('loginId').value = loginId;
+    // Example: document.getElementById('password').value = password;
+    // Or call your login function directly
+    // login(loginId, password);
+  }
+});
+
+// Example usage: Call saveCredentials after successful login
+// saveCredentials(userInputLoginId, userInputPassword);
+
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
