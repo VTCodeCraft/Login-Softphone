@@ -9,13 +9,13 @@ async function waitForPreLoads() {
   // ---------- Helpers ----------
   function addMeta(attrs) {
     const m = document.createElement('meta')
-    Object.entries(attrs).forEach(([k,v]) => m.setAttribute(k,v))
+    Object.entries(attrs).forEach(([k, v]) => m.setAttribute(k, v))
     document.head.appendChild(m)
   }
 
   function addLink(attrs) {
     const l = document.createElement('link')
-    Object.entries(attrs).forEach(([k,v]) => l.setAttribute(k,v))
+    Object.entries(attrs).forEach(([k, v]) => l.setAttribute(k, v))
     document.head.appendChild(l)
   }
 
@@ -34,10 +34,10 @@ async function waitForPreLoads() {
     return new Promise((resolve, reject) => {
       const s = document.createElement('script')
       s.src = src
-      if (options.defer)  s.defer  = true
-      if (options.crossorigin)    s.crossOrigin    = options.crossorigin
+      if (options.defer) s.defer = true
+      if (options.crossorigin) s.crossOrigin = options.crossorigin
       if (options.referrerpolicy) s.referrerPolicy = options.referrerpolicy
-      s.onload  = () => resolve(src)
+      s.onload = () => resolve(src)
       s.onerror = () => reject(new Error(`Failed to load ${src}`))
       document.head.appendChild(s)
     })
@@ -45,40 +45,47 @@ async function waitForPreLoads() {
 
   // ---------- 1) Meta tags ----------
   addMeta({ charset: 'utf-8' })
-  addMeta({ name: 'viewport',
+  addMeta({
+    name: 'viewport',
     content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no'
   })
-  addMeta({ name: 'description',
+  addMeta({
+    name: 'description',
     content: 'IVR Solutions Softphone is a fully featured browser based WebRTC SIP phone...'
   })
   addMeta({ name: 'HandheldFriendly', content: 'true' })
   addMeta({ name: 'format-detection', content: 'telephone=no' })
   addMeta({ name: 'mobile-web-app-capable', content: 'yes' })
   addMeta({ name: 'apple-mobile-web-app-capable', content: 'yes' })
-  addLink({ rel: 'icon',                 type: 'image/x-icon', href:  mainUrl+ 'icons/favicon.ico' })
-  addLink({ rel: 'manifest',             type: 'application/manifest+json', href: mainUrl+ 'manifest.json' })
+  addLink({ rel: 'icon', type: 'image/x-icon', href: mainUrl + 'icons/favicon.ico' })
+  addLink({ rel: 'manifest', type: 'application/manifest+json', href: mainUrl + 'manifest.json' })
   addMeta({ name: 'theme-color', media: '(prefers-color-scheme: light)', content: '#f6f6f6' })
-  addMeta({ name: 'theme-color', media: '(prefers-color-scheme: dark)',  content: '#292929' })
+  addMeta({ name: 'theme-color', media: '(prefers-color-scheme: dark)', content: '#292929' })
   addMeta({ 'http-equiv': 'Cache-Control', content: 'no-cache, no-store, must-revalidate' })
-  addMeta({ 'http-equiv': 'Expires',       content: '0' })
+  addMeta({ 'http-equiv': 'Expires', content: '0' })
 
   // ---------- 2) CSS links ----------
-  addLink({ rel: 'stylesheet', type: 'text/css',
+  addLink({
+    rel: 'stylesheet', type: 'text/css',
     href: 'https://dtd6jl0d42sve.cloudfront.net/lib/Normalize/normalize-v8.0.1.css'
   })
-  addLink({ rel: 'stylesheet', type: 'text/css',
+  addLink({
+    rel: 'stylesheet', type: 'text/css',
     href: 'https://dtd6jl0d42sve.cloudfront.net/lib/fonts/font_roboto/roboto.css'
   })
-  addLink({ rel: 'stylesheet', type: 'text/css',
+  addLink({
+    rel: 'stylesheet', type: 'text/css',
     href: 'https://dtd6jl0d42sve.cloudfront.net/lib/fonts/font_awesome/css/font-awesome.min.css'
   })
-  addLink({ rel: 'stylesheet', type: 'text/css',
+  addLink({
+    rel: 'stylesheet', type: 'text/css',
     href: 'https://dtd6jl0d42sve.cloudfront.net/lib/jquery/jquery-ui-1.13.2.min.css'
   })
-  addLink({ rel: 'stylesheet', type: 'text/css',
+  addLink({
+    rel: 'stylesheet', type: 'text/css',
     href: 'https://dtd6jl0d42sve.cloudfront.net/lib/Croppie/Croppie-2.6.4/croppie.css'
   })
-  addLink({ rel: 'stylesheet', type: 'text/css', href:  mainUrl+ 'phone.css' })
+  addLink({ rel: 'stylesheet', type: 'text/css', href: mainUrl + 'phone.css' })
 
   // ---------- 3) Body containers ----------
   const loader = document.createElement('div')
@@ -90,7 +97,7 @@ async function waitForPreLoads() {
   phoneDiv.id = 'Phone'
   appendToBody(phoneDiv)
 
- 
+
 
   // ---------- 4) Hook stubs ----------
   const hookScript = document.createElement('script')
@@ -125,7 +132,7 @@ async function waitForPreLoads() {
       'web_hook_enable_dnd',
       'web_hook_on_edit_media',
       'web_hook_sort_and_filter'
-    ].map(fn => `var ${fn} = function(){}` ).join('\n')}
+    ].map(fn => `var ${fn} = function(){}`).join('\n')}
   `
   appendToBody(hookScript)
 
@@ -133,7 +140,7 @@ async function waitForPreLoads() {
   // 5a) CryptoJS
   await loadScript(
     'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js',
-    { crossorigin:'anonymous', referrerpolicy:'no-referrer' }
+    { crossorigin: 'anonymous', referrerpolicy: 'no-referrer' }
   )
 
   // 5b) jQuery
@@ -351,13 +358,13 @@ let ContactUserName = getDbItem('ContactUserName', ''); // Optional name for con
 let userAgentStr = getDbItem(
   'UserAgentStr',
   'Browser Phone ' +
-    appversion +
-    ' (SIPJS - ' +
-    sipjsversion +
-    ') ' +
-    navUserAgent
+  appversion +
+  ' (SIPJS - ' +
+  sipjsversion +
+  ') ' +
+  navUserAgent
 ); // Set this to whatever you want.
-let hostingPrefix =  mainUrl; // Use if hosting off root directory. eg: "/phone/" or "/static/"
+let hostingPrefix = mainUrl; // Use if hosting off root directory. eg: "/phone/" or "/static/"
 let RegisterExpires = parseInt(getDbItem('RegisterExpires', 300)); // Registration expiry time (in seconds)
 let RegisterExtraHeaders = getDbItem('RegisterExtraHeaders', '{}'); // Parsable Json string of headers to include in register process. eg: '{"foo":"bar"}'
 let RegisterExtraContactParams = getDbItem('RegisterExtraContactParams', '{}'); // Parsable Json string of extra parameters add to the end (after >) of contact header during register. eg: '{"foo":"bar"}'
@@ -521,23 +528,24 @@ let CallQosDataIndexDb = null;
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-  (async function(){const myHeaders = new Headers();
+  (async function () {
+    const myHeaders = new Headers();
     myHeaders.append('Authorization', 'Bearer W2FxuaDyilEMZEgpfHjdLwsx8EJpF9RG');
-    
+
     const raw = JSON.stringify({
       id: clientId,
       domain: window.location.origin,
     });
-    
+
     const requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: raw,
       redirect: 'follow',
     };
-    
+
     let registeredDomainStatus = true;
-    
+
     const welcome = await fetch(
       'https://api.ivrsolutions.in/app/welcome_web',
       requestOptions
@@ -545,265 +553,266 @@ document.addEventListener('DOMContentLoaded', async () => {
       .then((response) => response.json())
       .then((result) => {
         console.log(result);
-        welcome_info = {logo:result.login_logo,countries_allowed:result.countries_allowed}
+        welcome_info = { logo: result.login_logo, countries_allowed: result.countries_allowed }
         return result;
       })
       .catch();
-    
+
     const registeredDomainArray = welcome.registered_domain;
-    
+
     for (let i = 0; i < registeredDomainArray.length; i++) {
       if (window.location.href.split('?')[0] === registeredDomainArray[i]) {
         registeredDomainStatus = true;
         break;
       }
-    }}())
+    }
+  }())
   waitForPreLoads().then(() => {
     // We will use IndexedDB, so connect to it now, and perform any upgrade options
-  PrepareIndexDB();
+    PrepareIndexDB();
 
-  // Load phoneOptions (can also be defined globally)
-  const options = window.phoneOptions || {};
+    // Load phoneOptions (can also be defined globally)
+    const options = window.phoneOptions || {};
 
-  if (options.welcomeScreen !== undefined)
-    welcomeScreen = options.welcomeScreen;
-  if (options.loadAlternateLang !== undefined)
-    loadAlternateLang = options.loadAlternateLang;
-  if (options.profileName !== undefined) profileName = options.profileName;
-  if (options.imagesDirectory !== undefined)
-    imagesDirectory = options.imagesDirectory;
-  if (options.defaultAvatars !== undefined)
-    defaultAvatars = options.defaultAvatars;
-  if (options.wallpaperLight !== undefined)
-    wallpaperLight = options.wallpaperLight;
-  if (options.wallpaperDark !== undefined)
-    wallpaperDark = options.wallpaperDark;
-  if (options.wssServer !== undefined) wssServer = options.wssServer;
-  if (options.WebSocketPort !== undefined)
-    WebSocketPort = options.WebSocketPort;
-  if (options.ServerPath !== undefined) ServerPath = options.ServerPath;
-  if (options.SipDomain !== undefined) SipDomain = options.SipDomain;
-  if (options.SipUsername !== undefined) SipUsername = options.SipUsername;
-  if (options.SipPassword !== undefined) SipPassword = options.SipPassword;
-  if (options.SingleInstance !== undefined)
-    SingleInstance = options.SingleInstance;
-  if (options.TransportConnectionTimeout !== undefined)
-    TransportConnectionTimeout = options.TransportConnectionTimeout;
-  if (options.TransportReconnectionAttempts !== undefined)
-    TransportReconnectionAttempts = options.TransportReconnectionAttempts;
-  if (options.TransportReconnectionTimeout !== undefined)
-    TransportReconnectionTimeout = options.TransportReconnectionTimeout;
-  if (options.SubscribeToYourself !== undefined)
-    SubscribeToYourself = options.SubscribeToYourself;
-  if (options.VoiceMailSubscribe !== undefined)
-    VoiceMailSubscribe = options.VoiceMailSubscribe;
-  if (options.VoicemailDid !== undefined) VoicemailDid = options.VoicemailDid;
-  if (options.SubscribeVoicemailExpires !== undefined)
-    SubscribeVoicemailExpires = options.SubscribeVoicemailExpires;
-  if (options.ContactUserName !== undefined)
-    ContactUserName = options.ContactUserName;
-  if (options.userAgentStr !== undefined) userAgentStr = options.userAgentStr;
-  if (options.hostingPrefix !== undefined)
-    hostingPrefix = options.hostingPrefix;
-  if (options.RegisterExpires !== undefined)
-    RegisterExpires = options.RegisterExpires;
-  if (options.RegisterExtraHeaders !== undefined)
-    RegisterExtraHeaders = options.RegisterExtraHeaders;
-  if (options.RegisterExtraContactParams !== undefined)
-    RegisterExtraContactParams = options.RegisterExtraContactParams;
-  if (options.RegisterContactParams !== undefined)
-    RegisterContactParams = options.RegisterContactParams;
-  if (options.WssInTransport !== undefined)
-    WssInTransport = options.WssInTransport;
-  if (options.IpInContact !== undefined) IpInContact = options.IpInContact;
-  if (options.BundlePolicy !== undefined) BundlePolicy = options.BundlePolicy;
-  if (options.IceStunServerJson !== undefined)
-    IceStunServerJson = options.IceStunServerJson;
-  if (options.IceStunCheckTimeout !== undefined)
-    IceStunCheckTimeout = options.IceStunCheckTimeout;
-  if (options.SubscribeBuddyAccept !== undefined)
-    SubscribeBuddyAccept = options.SubscribeBuddyAccept;
-  if (options.SubscribeBuddyEvent !== undefined)
-    SubscribeBuddyEvent = options.SubscribeBuddyEvent;
-  if (options.SubscribeBuddyExpires !== undefined)
-    SubscribeBuddyExpires = options.SubscribeBuddyExpires;
-  if (options.ProfileDisplayPrefix !== undefined)
-    ProfileDisplayPrefix = options.ProfileDisplayPrefix;
-  if (options.ProfileDisplayPrefixSeparator !== undefined)
-    ProfileDisplayPrefixSeparator = options.ProfileDisplayPrefixSeparator;
-  if (options.InviteExtraHeaders !== undefined)
-    InviteExtraHeaders = options.InviteExtraHeaders;
-  if (options.NoAnswerTimeout !== undefined)
-    NoAnswerTimeout = options.NoAnswerTimeout;
-  if (options.AutoAnswerEnabled !== undefined)
-    AutoAnswerEnabled = options.AutoAnswerEnabled;
-  if (options.DoNotDisturbEnabled !== undefined)
-    DoNotDisturbEnabled = options.DoNotDisturbEnabled;
-  if (options.CallWaitingEnabled !== undefined)
-    CallWaitingEnabled = options.CallWaitingEnabled;
-  if (options.RecordAllCalls !== undefined)
-    RecordAllCalls = options.RecordAllCalls;
-  if (options.StartVideoFullScreen !== undefined)
-    StartVideoFullScreen = options.StartVideoFullScreen;
-  if (options.SelectRingingLine !== undefined)
-    SelectRingingLine = options.SelectRingingLine;
-  if (options.UiMaxWidth !== undefined) UiMaxWidth = options.UiMaxWidth;
-  if (options.UiThemeStyle !== undefined) UiThemeStyle = options.UiThemeStyle;
-  if (options.UiMessageLayout !== undefined)
-    UiMessageLayout = options.UiMessageLayout;
-  if (options.UiCustomConfigMenu !== undefined)
-    UiCustomConfigMenu = options.UiCustomConfigMenu;
-  if (options.UiCustomDialButton !== undefined)
-    UiCustomDialButton = options.UiCustomDialButton;
-  if (options.UiCustomSortAndFilterButton !== undefined)
-    UiCustomSortAndFilterButton = options.UiCustomSortAndFilterButton;
-  if (options.UiCustomAddBuddy !== undefined)
-    UiCustomAddBuddy = options.UiCustomAddBuddy;
-  if (options.UiCustomEditBuddy !== undefined)
-    UiCustomEditBuddy = options.UiCustomEditBuddy;
-  if (options.UiCustomMediaSettings !== undefined)
-    UiCustomMediaSettings = options.UiCustomMediaSettings;
-  if (options.UiCustomMessageAction !== undefined)
-    UiCustomMessageAction = options.UiCustomMessageAction;
-  if (options.AutoGainControl !== undefined)
-    AutoGainControl = options.AutoGainControl;
-  if (options.EchoCancellation !== undefined)
-    EchoCancellation = options.EchoCancellation;
-  if (options.NoiseSuppression !== undefined)
-    NoiseSuppression = options.NoiseSuppression;
-  if (options.MirrorVideo !== undefined) MirrorVideo = options.MirrorVideo;
-  if (options.maxFrameRate !== undefined) maxFrameRate = options.maxFrameRate;
-  if (options.videoHeight !== undefined) videoHeight = options.videoHeight;
-  if (options.MaxVideoBandwidth !== undefined)
-    MaxVideoBandwidth = options.MaxVideoBandwidth;
-  if (options.videoAspectRatio !== undefined)
-    videoAspectRatio = options.videoAspectRatio;
-  if (options.NotificationsActive !== undefined)
-    NotificationsActive = options.NotificationsActive;
-  if (options.StreamBuffer !== undefined) StreamBuffer = options.StreamBuffer;
-  if (options.PosterJpegQuality !== undefined)
-    PosterJpegQuality = options.PosterJpegQuality;
-  if (options.VideoResampleSize !== undefined)
-    VideoResampleSize = options.VideoResampleSize;
-  if (options.RecordingVideoSize !== undefined)
-    RecordingVideoSize = options.RecordingVideoSize;
-  if (options.RecordingVideoFps !== undefined)
-    RecordingVideoFps = options.RecordingVideoFps;
-  if (options.RecordingLayout !== undefined)
-    RecordingLayout = options.RecordingLayout;
-  if (options.DidLength !== undefined) DidLength = options.DidLength;
-  if (options.MaxDidLength !== undefined) MaxDidLength = options.MaxDidLength;
-  if (options.DisplayDateFormat !== undefined)
-    DisplayDateFormat = options.DisplayDateFormat;
-  if (options.DisplayTimeFormat !== undefined)
-    DisplayTimeFormat = options.DisplayTimeFormat;
-  if (options.Language !== undefined) Language = options.Language;
-  if (options.BuddySortBy !== undefined) BuddySortBy = options.BuddySortBy;
-  if (options.SortByTypeOrder !== undefined)
-    SortByTypeOrder = options.SortByTypeOrder;
-  if (options.BuddyAutoDeleteAtEnd !== undefined)
-    BuddyAutoDeleteAtEnd = options.BuddyAutoDeleteAtEnd;
-  if (options.HideAutoDeleteBuddies !== undefined)
-    HideAutoDeleteBuddies = options.HideAutoDeleteBuddies;
-  if (options.BuddyShowExtenNum !== undefined)
-    BuddyShowExtenNum = options.BuddyShowExtenNum;
-  if (options.EnableTextMessaging !== undefined)
-    EnableTextMessaging = options.EnableTextMessaging;
-  if (options.DisableFreeDial !== undefined)
-    DisableFreeDial = options.DisableFreeDial;
-  if (options.DisableBuddies !== undefined)
-    DisableBuddies = options.DisableBuddies;
-  if (options.EnableTransfer !== undefined)
-    EnableTransfer = options.EnableTransfer;
-  if (options.EnableConference !== undefined)
-    EnableConference = options.EnableConference;
-  if (options.AutoAnswerPolicy !== undefined)
-    AutoAnswerPolicy = options.AutoAnswerPolicy;
-  if (options.DoNotDisturbPolicy !== undefined)
-    DoNotDisturbPolicy = options.DoNotDisturbPolicy;
-  if (options.CallWaitingPolicy !== undefined)
-    CallWaitingPolicy = options.CallWaitingPolicy;
-  if (options.CallRecordingPolicy !== undefined)
-    CallRecordingPolicy = options.CallRecordingPolicy;
-  if (options.IntercomPolicy !== undefined)
-    IntercomPolicy = options.IntercomPolicy;
-  if (options.EnableAccountSettings !== undefined)
-    EnableAccountSettings = options.EnableAccountSettings;
-  if (options.EnableAppearanceSettings !== undefined)
-    EnableAppearanceSettings = options.EnableAppearanceSettings;
-  if (options.EnableNotificationSettings !== undefined)
-    EnableNotificationSettings = options.EnableNotificationSettings;
-  if (options.EnableAlphanumericDial !== undefined)
-    EnableAlphanumericDial = options.EnableAlphanumericDial;
-  if (options.EnableVideoCalling !== undefined)
-    EnableVideoCalling = options.EnableVideoCalling;
-  if (options.EnableTextExpressions !== undefined)
-    EnableTextExpressions = options.EnableTextExpressions;
-  if (options.EnableTextDictate !== undefined)
-    EnableTextDictate = options.EnableTextDictate;
-  if (options.EnableRingtone !== undefined)
-    EnableRingtone = options.EnableRingtone;
-  if (options.MaxBuddies !== undefined) MaxBuddies = options.MaxBuddies;
-  if (options.MaxBuddyAge !== undefined) MaxBuddyAge = options.MaxBuddyAge;
-  if (options.ChatEngine !== undefined) ChatEngine = options.ChatEngine;
-  if (options.XmppServer !== undefined) XmppServer = options.XmppServer;
-  if (options.XmppWebsocketPort !== undefined)
-    XmppWebsocketPort = options.XmppWebsocketPort;
-  if (options.XmppWebsocketPath !== undefined)
-    XmppWebsocketPath = options.XmppWebsocketPath;
-  if (options.XmppDomain !== undefined) XmppDomain = options.XmppDomain;
-  if (options.profileUser !== undefined) profileUser = options.profileUser;
-  if (options.XmppRealm !== undefined) XmppRealm = options.XmppRealm;
-  if (options.XmppRealmSeparator !== undefined)
-    XmppRealmSeparator = options.XmppRealmSeparator;
-  if (options.XmppChatGroupService !== undefined)
-    XmppChatGroupService = options.XmppChatGroupService;
-  if (options.loggedIn !== undefined) loggedIn = options.loggedIn;
+    if (options.welcomeScreen !== undefined)
+      welcomeScreen = options.welcomeScreen;
+    if (options.loadAlternateLang !== undefined)
+      loadAlternateLang = options.loadAlternateLang;
+    if (options.profileName !== undefined) profileName = options.profileName;
+    if (options.imagesDirectory !== undefined)
+      imagesDirectory = options.imagesDirectory;
+    if (options.defaultAvatars !== undefined)
+      defaultAvatars = options.defaultAvatars;
+    if (options.wallpaperLight !== undefined)
+      wallpaperLight = options.wallpaperLight;
+    if (options.wallpaperDark !== undefined)
+      wallpaperDark = options.wallpaperDark;
+    if (options.wssServer !== undefined) wssServer = options.wssServer;
+    if (options.WebSocketPort !== undefined)
+      WebSocketPort = options.WebSocketPort;
+    if (options.ServerPath !== undefined) ServerPath = options.ServerPath;
+    if (options.SipDomain !== undefined) SipDomain = options.SipDomain;
+    if (options.SipUsername !== undefined) SipUsername = options.SipUsername;
+    if (options.SipPassword !== undefined) SipPassword = options.SipPassword;
+    if (options.SingleInstance !== undefined)
+      SingleInstance = options.SingleInstance;
+    if (options.TransportConnectionTimeout !== undefined)
+      TransportConnectionTimeout = options.TransportConnectionTimeout;
+    if (options.TransportReconnectionAttempts !== undefined)
+      TransportReconnectionAttempts = options.TransportReconnectionAttempts;
+    if (options.TransportReconnectionTimeout !== undefined)
+      TransportReconnectionTimeout = options.TransportReconnectionTimeout;
+    if (options.SubscribeToYourself !== undefined)
+      SubscribeToYourself = options.SubscribeToYourself;
+    if (options.VoiceMailSubscribe !== undefined)
+      VoiceMailSubscribe = options.VoiceMailSubscribe;
+    if (options.VoicemailDid !== undefined) VoicemailDid = options.VoicemailDid;
+    if (options.SubscribeVoicemailExpires !== undefined)
+      SubscribeVoicemailExpires = options.SubscribeVoicemailExpires;
+    if (options.ContactUserName !== undefined)
+      ContactUserName = options.ContactUserName;
+    if (options.userAgentStr !== undefined) userAgentStr = options.userAgentStr;
+    if (options.hostingPrefix !== undefined)
+      hostingPrefix = options.hostingPrefix;
+    if (options.RegisterExpires !== undefined)
+      RegisterExpires = options.RegisterExpires;
+    if (options.RegisterExtraHeaders !== undefined)
+      RegisterExtraHeaders = options.RegisterExtraHeaders;
+    if (options.RegisterExtraContactParams !== undefined)
+      RegisterExtraContactParams = options.RegisterExtraContactParams;
+    if (options.RegisterContactParams !== undefined)
+      RegisterContactParams = options.RegisterContactParams;
+    if (options.WssInTransport !== undefined)
+      WssInTransport = options.WssInTransport;
+    if (options.IpInContact !== undefined) IpInContact = options.IpInContact;
+    if (options.BundlePolicy !== undefined) BundlePolicy = options.BundlePolicy;
+    if (options.IceStunServerJson !== undefined)
+      IceStunServerJson = options.IceStunServerJson;
+    if (options.IceStunCheckTimeout !== undefined)
+      IceStunCheckTimeout = options.IceStunCheckTimeout;
+    if (options.SubscribeBuddyAccept !== undefined)
+      SubscribeBuddyAccept = options.SubscribeBuddyAccept;
+    if (options.SubscribeBuddyEvent !== undefined)
+      SubscribeBuddyEvent = options.SubscribeBuddyEvent;
+    if (options.SubscribeBuddyExpires !== undefined)
+      SubscribeBuddyExpires = options.SubscribeBuddyExpires;
+    if (options.ProfileDisplayPrefix !== undefined)
+      ProfileDisplayPrefix = options.ProfileDisplayPrefix;
+    if (options.ProfileDisplayPrefixSeparator !== undefined)
+      ProfileDisplayPrefixSeparator = options.ProfileDisplayPrefixSeparator;
+    if (options.InviteExtraHeaders !== undefined)
+      InviteExtraHeaders = options.InviteExtraHeaders;
+    if (options.NoAnswerTimeout !== undefined)
+      NoAnswerTimeout = options.NoAnswerTimeout;
+    if (options.AutoAnswerEnabled !== undefined)
+      AutoAnswerEnabled = options.AutoAnswerEnabled;
+    if (options.DoNotDisturbEnabled !== undefined)
+      DoNotDisturbEnabled = options.DoNotDisturbEnabled;
+    if (options.CallWaitingEnabled !== undefined)
+      CallWaitingEnabled = options.CallWaitingEnabled;
+    if (options.RecordAllCalls !== undefined)
+      RecordAllCalls = options.RecordAllCalls;
+    if (options.StartVideoFullScreen !== undefined)
+      StartVideoFullScreen = options.StartVideoFullScreen;
+    if (options.SelectRingingLine !== undefined)
+      SelectRingingLine = options.SelectRingingLine;
+    if (options.UiMaxWidth !== undefined) UiMaxWidth = options.UiMaxWidth;
+    if (options.UiThemeStyle !== undefined) UiThemeStyle = options.UiThemeStyle;
+    if (options.UiMessageLayout !== undefined)
+      UiMessageLayout = options.UiMessageLayout;
+    if (options.UiCustomConfigMenu !== undefined)
+      UiCustomConfigMenu = options.UiCustomConfigMenu;
+    if (options.UiCustomDialButton !== undefined)
+      UiCustomDialButton = options.UiCustomDialButton;
+    if (options.UiCustomSortAndFilterButton !== undefined)
+      UiCustomSortAndFilterButton = options.UiCustomSortAndFilterButton;
+    if (options.UiCustomAddBuddy !== undefined)
+      UiCustomAddBuddy = options.UiCustomAddBuddy;
+    if (options.UiCustomEditBuddy !== undefined)
+      UiCustomEditBuddy = options.UiCustomEditBuddy;
+    if (options.UiCustomMediaSettings !== undefined)
+      UiCustomMediaSettings = options.UiCustomMediaSettings;
+    if (options.UiCustomMessageAction !== undefined)
+      UiCustomMessageAction = options.UiCustomMessageAction;
+    if (options.AutoGainControl !== undefined)
+      AutoGainControl = options.AutoGainControl;
+    if (options.EchoCancellation !== undefined)
+      EchoCancellation = options.EchoCancellation;
+    if (options.NoiseSuppression !== undefined)
+      NoiseSuppression = options.NoiseSuppression;
+    if (options.MirrorVideo !== undefined) MirrorVideo = options.MirrorVideo;
+    if (options.maxFrameRate !== undefined) maxFrameRate = options.maxFrameRate;
+    if (options.videoHeight !== undefined) videoHeight = options.videoHeight;
+    if (options.MaxVideoBandwidth !== undefined)
+      MaxVideoBandwidth = options.MaxVideoBandwidth;
+    if (options.videoAspectRatio !== undefined)
+      videoAspectRatio = options.videoAspectRatio;
+    if (options.NotificationsActive !== undefined)
+      NotificationsActive = options.NotificationsActive;
+    if (options.StreamBuffer !== undefined) StreamBuffer = options.StreamBuffer;
+    if (options.PosterJpegQuality !== undefined)
+      PosterJpegQuality = options.PosterJpegQuality;
+    if (options.VideoResampleSize !== undefined)
+      VideoResampleSize = options.VideoResampleSize;
+    if (options.RecordingVideoSize !== undefined)
+      RecordingVideoSize = options.RecordingVideoSize;
+    if (options.RecordingVideoFps !== undefined)
+      RecordingVideoFps = options.RecordingVideoFps;
+    if (options.RecordingLayout !== undefined)
+      RecordingLayout = options.RecordingLayout;
+    if (options.DidLength !== undefined) DidLength = options.DidLength;
+    if (options.MaxDidLength !== undefined) MaxDidLength = options.MaxDidLength;
+    if (options.DisplayDateFormat !== undefined)
+      DisplayDateFormat = options.DisplayDateFormat;
+    if (options.DisplayTimeFormat !== undefined)
+      DisplayTimeFormat = options.DisplayTimeFormat;
+    if (options.Language !== undefined) Language = options.Language;
+    if (options.BuddySortBy !== undefined) BuddySortBy = options.BuddySortBy;
+    if (options.SortByTypeOrder !== undefined)
+      SortByTypeOrder = options.SortByTypeOrder;
+    if (options.BuddyAutoDeleteAtEnd !== undefined)
+      BuddyAutoDeleteAtEnd = options.BuddyAutoDeleteAtEnd;
+    if (options.HideAutoDeleteBuddies !== undefined)
+      HideAutoDeleteBuddies = options.HideAutoDeleteBuddies;
+    if (options.BuddyShowExtenNum !== undefined)
+      BuddyShowExtenNum = options.BuddyShowExtenNum;
+    if (options.EnableTextMessaging !== undefined)
+      EnableTextMessaging = options.EnableTextMessaging;
+    if (options.DisableFreeDial !== undefined)
+      DisableFreeDial = options.DisableFreeDial;
+    if (options.DisableBuddies !== undefined)
+      DisableBuddies = options.DisableBuddies;
+    if (options.EnableTransfer !== undefined)
+      EnableTransfer = options.EnableTransfer;
+    if (options.EnableConference !== undefined)
+      EnableConference = options.EnableConference;
+    if (options.AutoAnswerPolicy !== undefined)
+      AutoAnswerPolicy = options.AutoAnswerPolicy;
+    if (options.DoNotDisturbPolicy !== undefined)
+      DoNotDisturbPolicy = options.DoNotDisturbPolicy;
+    if (options.CallWaitingPolicy !== undefined)
+      CallWaitingPolicy = options.CallWaitingPolicy;
+    if (options.CallRecordingPolicy !== undefined)
+      CallRecordingPolicy = options.CallRecordingPolicy;
+    if (options.IntercomPolicy !== undefined)
+      IntercomPolicy = options.IntercomPolicy;
+    if (options.EnableAccountSettings !== undefined)
+      EnableAccountSettings = options.EnableAccountSettings;
+    if (options.EnableAppearanceSettings !== undefined)
+      EnableAppearanceSettings = options.EnableAppearanceSettings;
+    if (options.EnableNotificationSettings !== undefined)
+      EnableNotificationSettings = options.EnableNotificationSettings;
+    if (options.EnableAlphanumericDial !== undefined)
+      EnableAlphanumericDial = options.EnableAlphanumericDial;
+    if (options.EnableVideoCalling !== undefined)
+      EnableVideoCalling = options.EnableVideoCalling;
+    if (options.EnableTextExpressions !== undefined)
+      EnableTextExpressions = options.EnableTextExpressions;
+    if (options.EnableTextDictate !== undefined)
+      EnableTextDictate = options.EnableTextDictate;
+    if (options.EnableRingtone !== undefined)
+      EnableRingtone = options.EnableRingtone;
+    if (options.MaxBuddies !== undefined) MaxBuddies = options.MaxBuddies;
+    if (options.MaxBuddyAge !== undefined) MaxBuddyAge = options.MaxBuddyAge;
+    if (options.ChatEngine !== undefined) ChatEngine = options.ChatEngine;
+    if (options.XmppServer !== undefined) XmppServer = options.XmppServer;
+    if (options.XmppWebsocketPort !== undefined)
+      XmppWebsocketPort = options.XmppWebsocketPort;
+    if (options.XmppWebsocketPath !== undefined)
+      XmppWebsocketPath = options.XmppWebsocketPath;
+    if (options.XmppDomain !== undefined) XmppDomain = options.XmppDomain;
+    if (options.profileUser !== undefined) profileUser = options.profileUser;
+    if (options.XmppRealm !== undefined) XmppRealm = options.XmppRealm;
+    if (options.XmppRealmSeparator !== undefined)
+      XmppRealmSeparator = options.XmppRealmSeparator;
+    if (options.XmppChatGroupService !== undefined)
+      XmppChatGroupService = options.XmppChatGroupService;
+    if (options.loggedIn !== undefined) loggedIn = options.loggedIn;
 
-  // Single Instance Check
-  if (SingleInstance === true) {
-    console.log('Instance ID :', instanceID);
-    localDB.setItem('InstanceId', instanceID);
-    window.addEventListener('storage', onLocalStorageEvent, false);
-  }
+    // Single Instance Check
+    if (SingleInstance === true) {
+      console.log('Instance ID :', instanceID);
+      localDB.setItem('InstanceId', instanceID);
+      window.addEventListener('storage', onLocalStorageEvent, false);
+    }
 
-  // Load Language File
-  fetch(hostingPrefix + 'lang/en.json')
-    .then((res) => res.json())
-    .then((data) => {
-      lang = data;
-      if (typeof web_hook_on_language_pack_loaded !== 'undefined')
-        web_hook_on_language_pack_loaded(lang);
+    // Load Language File
+    fetch(hostingPrefix + 'lang/en.json')
+      .then((res) => res.json())
+      .then((data) => {
+        lang = data;
+        if (typeof web_hook_on_language_pack_loaded !== 'undefined')
+          web_hook_on_language_pack_loaded(lang);
 
-      if (loadAlternateLang === true) {
-        const userLang = GetAlternateLanguage();
-        if (userLang) {
-          console.log('Loading Alternate Language Pack: ', userLang);
-          fetch(hostingPrefix + 'lang/' + userLang + '.json')
-            .then((res) => res.json())
-            .then((altData) => {
-              if (typeof web_hook_on_language_pack_loaded !== 'undefined')
-                web_hook_on_language_pack_loaded(altData);
-              lang = altData;
-            })
-            .finally(() => {
-              console.log('Alternate Language Pack loaded: ', lang);
-              InitUi();
-            });
+        if (loadAlternateLang === true) {
+          const userLang = GetAlternateLanguage();
+          if (userLang) {
+            console.log('Loading Alternate Language Pack: ', userLang);
+            fetch(hostingPrefix + 'lang/' + userLang + '.json')
+              .then((res) => res.json())
+              .then((altData) => {
+                if (typeof web_hook_on_language_pack_loaded !== 'undefined')
+                  web_hook_on_language_pack_loaded(altData);
+                lang = altData;
+              })
+              .finally(() => {
+                console.log('Alternate Language Pack loaded: ', lang);
+                InitUi();
+              });
+          } else {
+            console.log('No Alternate Language Found.');
+            InitUi();
+          }
         } else {
-          console.log('No Alternate Language Found.');
           InitUi();
         }
-      } else {
+      })
+      .catch((err) => {
+        console.error('Failed to load language:', err);
         InitUi();
-      }
-    })
-    .catch((err) => {
-      console.error('Failed to load language:', err);
-      InitUi();
-    });
-  }).catch(err => {console.log("first function call",err)})
-  
+      });
+  }).catch(err => { console.log("first function call", err) })
+
 });
 
 
@@ -1811,8 +1820,8 @@ function EditBuddyWindow(buddy) {
     lang.eg_full_name +
     "' value='" +
     (buddyJson.DisplayName &&
-    buddyJson.DisplayName != 'null' &&
-    buddyJson.DisplayName != 'undefined'
+      buddyJson.DisplayName != 'null' &&
+      buddyJson.DisplayName != 'undefined'
       ? buddyJson.DisplayName
       : '') +
     "'></div>";
@@ -1827,8 +1836,8 @@ function EditBuddyWindow(buddy) {
     lang.eg_general_manager +
     "' value='" +
     (buddyJson.Description &&
-    buddyJson.Description != 'null' &&
-    buddyJson.Description != 'undefined'
+      buddyJson.Description != 'null' &&
+      buddyJson.Description != 'undefined'
       ? buddyJson.Description
       : '') +
     "'></div>";
@@ -1856,8 +1865,8 @@ function EditBuddyWindow(buddy) {
       lang.eg_internal_subscribe_extension +
       "' value='" +
       (buddyJson.SubscribeUser &&
-      buddyJson.SubscribeUser != 'null' &&
-      buddyJson.SubscribeUser != 'undefined'
+        buddyJson.SubscribeUser != 'null' &&
+        buddyJson.SubscribeUser != 'undefined'
         ? buddyJson.SubscribeUser
         : '') +
       "'></div>";
@@ -1872,8 +1881,8 @@ function EditBuddyWindow(buddy) {
     lang.eg_mobile_number +
     "' value='" +
     (buddyJson.MobileNumber &&
-    buddyJson.MobileNumber != 'null' &&
-    buddyJson.MobileNumber != 'undefined'
+      buddyJson.MobileNumber != 'null' &&
+      buddyJson.MobileNumber != 'undefined'
       ? buddyJson.MobileNumber
       : '') +
     "'></div>";
@@ -1884,8 +1893,8 @@ function EditBuddyWindow(buddy) {
     lang.eg_email +
     "' value='" +
     (buddyJson.Email &&
-    buddyJson.Email != 'null' &&
-    buddyJson.Email != 'undefined'
+      buddyJson.Email != 'null' &&
+      buddyJson.Email != 'undefined'
       ? buddyJson.Email
       : '') +
     "'></div>";
@@ -1896,8 +1905,8 @@ function EditBuddyWindow(buddy) {
     lang.eg_contact_number_1 +
     "' value='" +
     (buddyJson.ContactNumber1 &&
-    buddyJson.ContactNumber1 != 'null' &&
-    buddyJson.ContactNumber1 != 'undefined'
+      buddyJson.ContactNumber1 != 'null' &&
+      buddyJson.ContactNumber1 != 'undefined'
       ? buddyJson.ContactNumber1
       : '') +
     "'></div>";
@@ -1908,8 +1917,8 @@ function EditBuddyWindow(buddy) {
     lang.eg_contact_number_2 +
     "' value='" +
     (buddyJson.ContactNumber2 &&
-    buddyJson.ContactNumber2 != 'null' &&
-    buddyJson.ContactNumber2 != 'undefined'
+      buddyJson.ContactNumber2 != 'null' &&
+      buddyJson.ContactNumber2 != 'undefined'
       ? buddyJson.ContactNumber2
       : '') +
     "'></div>";
@@ -2127,12 +2136,12 @@ function EditBuddyWindow(buddy) {
           if (fileSize <= 52428800) {
             console.log(
               'Adding (' +
-                uploadId +
-                '): ' +
-                fileName +
-                ' of size: ' +
-                fileSize +
-                'bytes'
+              uploadId +
+              '): ' +
+              fileName +
+              ' of size: ' +
+              fileSize +
+              'bytes'
             );
 
             var reader = new FileReader();
@@ -2462,7 +2471,7 @@ function InitUi() {
   // Finally, show the dialer now that everything else is set up
   ShowDial();
 }
- 
+
 //Mic Icon Changer
 function updateMicIcon(allowed) {
   const mic = document.getElementById('micIcon');
@@ -2604,7 +2613,7 @@ function updateMicIcon(allowed) {
 // }
 
 //Login Function
-async function testingLogin(countryCode,loginNumber,loginPassword) {
+async function testingLogin(countryCode, loginNumber, loginPassword) {
   try {
     var CryptoJSAesJson = {
       encrypt: function (value, password) {
@@ -2641,75 +2650,75 @@ async function testingLogin(countryCode,loginNumber,loginPassword) {
     let loginCredentials = {}
 
     const myHeaders = new Headers();
-          myHeaders.append('Content-Type', 'application/json');
-          myHeaders.append(
-            'Authorization',
-            'Bearer W2FxuaDyilEMZEgpfHjdLwsx8EJpF9RG'
-          );
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append(
+      'Authorization',
+      'Bearer W2FxuaDyilEMZEgpfHjdLwsx8EJpF9RG'
+    );
 
-          const ipOptions = {
-            method: 'GET',
-            redirect: 'follow',
-          };
+    const ipOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
 
-          const ipAddress = await fetch(
-            'https://api.ipify.org?format=json',
-            ipOptions
-          )
-            .then((response) => response.json())
-            .then((result) => {
-              return result;
-            })
-            .catch();
+    const ipAddress = await fetch(
+      'https://api.ipify.org?format=json',
+      ipOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        return result;
+      })
+      .catch();
 
-          const deviceModel = navigator.userAgent;
-          const raw = JSON.stringify({
-            country_code: countryCode,
-            phone: loginNumber,
-            password: loginPassword,
-            token: '',
-            type: 'web',
-            device_id: '',
-            ip_address: ipAddress.ip,
-            device_model: deviceModel,
-            timestamp: serialDate,
-            website_domain: window.location.origin,
-            website_url: window.location.href,
-          });
+    const deviceModel = navigator.userAgent;
+    const raw = JSON.stringify({
+      country_code: countryCode,
+      phone: loginNumber,
+      password: loginPassword,
+      token: '',
+      type: 'web',
+      device_id: '',
+      ip_address: ipAddress.ip,
+      device_model: deviceModel,
+      timestamp: serialDate,
+      website_domain: window.location.origin,
+      website_url: window.location.href,
+    });
 
-          const requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow',
-          };
+    const requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow',
+    };
 
-          apiResponse = await fetch(
-            'https://api.ivrsolutions.in/app/agent_web_login',
-            requestOptions
-          )
-            .then((response) => response.json())
-            .then((result) => {
-              if(result.status > 200){
-                showFloatingError('Login was unsuccessful, Please Check you credentials')
-                throw new Error(result.message)
-              }else{
-                return result;
-              }
-            }).catch(err => {
-              console.error(err)
-            });
-          if(!apiResponse){return}
-          showFloatingError('Login was successful','success')
-          const secretKey = serialDate + apiResponse.time;
-          loginCredentials = CryptoJSAesJson.decrypt(
-            apiResponse.data,
-            secretKey
-          );
-    
+    apiResponse = await fetch(
+      'https://api.ivrsolutions.in/app/agent_web_login',
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status > 200) {
+          showFloatingError('Login was unsuccessful, Please Check you credentials')
+          throw new Error(result.message)
+        } else {
+          return result;
+        }
+      }).catch(err => {
+        console.error(err)
+      });
+    if (!apiResponse) { return }
+    showFloatingError('Login was successful', 'success')
+    const secretKey = serialDate + apiResponse.time;
+    loginCredentials = CryptoJSAesJson.decrypt(
+      apiResponse.data,
+      secretKey
+    );
+
     AutoProvisionAccount(loginCredentials);
   } catch (e) {
-   
+
   }
 }
 
@@ -2744,7 +2753,7 @@ function AutoProvisionAccount(loginCredentials) {
   // 5) Finally, after provisioning, force a rerun of InitUi() so the UI “unlocks.”
   window.location.reload(true)
 
-    const credentials = {
+  const credentials = {
     profileName: displayName,
     wssServer: wssDomain,
     WebSocketPort: wssPort,
@@ -2875,8 +2884,8 @@ function showLoginDialog() {
       </div>
     </div>
   `);
-  
-  
+
+
 
   // Assemble and append to the Phone container
   $overlay.append($modal);
@@ -2886,9 +2895,9 @@ function showLoginDialog() {
 
   // Login button handler (empty for your logic)
   $overlay.find('#loginBtn').on('click', () => {
-    const cc     = $overlay.find('#countryCode').val();
+    const cc = $overlay.find('#countryCode').val();
     const mobile = $overlay.find('#mobileField').val().trim();
-    const pass   = $overlay.find('#passwordField').val();
+    const pass = $overlay.find('#passwordField').val();
     // Log the values of the three variables
     console.log("Country Code:", cc);
     console.log("Mobile Number:", mobile);
@@ -2897,8 +2906,18 @@ function showLoginDialog() {
     // Check if mobile or password are empty
     if (!mobile || !pass) {
       console.error("Error: Mobile number or password cannot be empty.");
-    } else{
-      testingLogin(cc,mobile,pass)
+    } else {
+      // ✅ Save login credentials in Chrome local storage
+      chrome.storage.local.set({
+        softphoneLogin: {
+          countryCode: cc,
+          mobileNumber: mobile,
+          password: pass
+        }
+      }, () => {
+        console.log("🔐 Login credentials saved to chrome.storage.local");
+      });
+      testingLogin(cc, mobile, pass)
       $('.loading').remove()
     }
     // TODO: insert your login logic here, e.g.:
@@ -3218,12 +3237,12 @@ function CreateUserAgent() {
   ) {
     try {
       options.contactParams = JSON.parse(RegisterContactParams);
-    } catch (e) {}
+    } catch (e) { }
   }
   if (WssInTransport) {
     try {
       options.contactParams.transport = 'wss';
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // Add (Hardcode) other RTCPeerConnection({ rtcConfiguration }) config dictionary options here
@@ -3285,7 +3304,7 @@ function CreateUserAgent() {
           RegistererOptions.extraHeaders.push(key + ': ' + value);
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // Added to the contact AFTER the '>' (not permanent)
@@ -3303,7 +3322,7 @@ function CreateUserAgent() {
           RegistererOptions.extraContactHeaderParams.push(key + '=' + value);
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   userAgent.registerer = new SIP.Registerer(userAgent, RegistererOptions);
@@ -3463,7 +3482,7 @@ function Unregister(skipUnsubscribe) {
     $('#regStatus').html(lang.unsubscribing);
     try {
       UnsubscribeAll();
-    } catch (e) {}
+    } catch (e) { }
   }
 
   console.log('Unregister...');
@@ -4590,7 +4609,7 @@ function onSessionReceivedBye(lineObj, response) {
   response.accept(); // Send OK
 
   teardownSession(lineObj);
-  
+
 }
 function onSessionReinvited(lineObj, response) {
   // This may be used to include video streams
@@ -4913,7 +4932,7 @@ function onTrackAddedEvent(lineObj, includeVideo) {
     web_hook_on_modify('trackAdded', session);
 }
 
-function displayPersistentNotes(lineNum,callId, apiEndpoint = '/api/saveCallNotes', initialText = '') {
+function displayPersistentNotes(lineNum, callId, apiEndpoint = '/api/saveCallNotes', initialText = '') {
   // 1) Grab notes & bail if empty
   const text = (initialText || '').trim();
   if (!text) return;
@@ -4936,11 +4955,11 @@ function displayPersistentNotes(lineNum,callId, apiEndpoint = '/api/saveCallNote
     : 'rgba(255,255,255,0.5)'
   ).show();
 
-  
+
   // 3) Ensure panel
   let $panel = $('#persistent-notes-area');
-  if(!isDark){
-    $panel.css('background-color','#fff')
+  if (!isDark) {
+    $panel.css('background-color', '#fff')
   }
   if (!$panel.length) {
     $panel = $('<div id="persistent-notes-area" class="notes-container"></div>')
@@ -4950,8 +4969,8 @@ function displayPersistentNotes(lineNum,callId, apiEndpoint = '/api/saveCallNote
         transform: 'translate(-50%,-50%)',
         padding: '16px',
         zIndex: 10001,
-        width:'30rem',
-        height:'20rem',
+        width: '30rem',
+        height: '20rem',
         maxWidth: '90vw'
       })
       .appendTo('body');
@@ -4985,25 +5004,25 @@ function displayPersistentNotes(lineNum,callId, apiEndpoint = '/api/saveCallNote
     if (!finalNotes) return Alert('Please enter some notes.');
 
     // derive callId however you prefer...
-    const payload = {sip_call_id:callId,note:finalNotes };
-     console.log(payload)
+    const payload = { sip_call_id: callId, note: finalNotes };
+    console.log(payload)
 
     fetch('https://api.ivrsolutions.in/v1/add_note', {
       method: 'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer 9d9e342f9478836c02171cbcf68d0c7b'},
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer 9d9e342f9478836c02171cbcf68d0c7b' },
       body: JSON.stringify(payload)
     })
-    .then(r => r.json())
-    .then((r) => {
-      console.log(r)
-      showFloatingError('Note was successfuly saved','success')
-      $overlay.hide();
-      $panel.hide().empty();
-    })
-    .catch(err => {
-      console.error(err);
-      showFloatingError('Some error occured while saving the note')
-    });
+      .then(r => r.json())
+      .then((r) => {
+        console.log(r)
+        showFloatingError('Note was successfuly saved', 'success')
+        $overlay.hide();
+        $panel.hide().empty();
+      })
+      .catch(err => {
+        console.error(err);
+        showFloatingError('Some error occured while saving the note')
+      });
   });
 }
 
@@ -5015,9 +5034,9 @@ function teardownSession(lineObj) {
 
   var session = lineObj.SipSession;
   // session.data.IvrCallId = session.request.getHeader('Call-ID')
-  
-  
- 
+
+
+
   if (session.data.teardownComplete == true) return;
   session.data.teardownComplete = true; // Run this code only once
   // Call UI
@@ -5113,13 +5132,13 @@ function teardownSession(lineObj) {
       }
     }
   }
-  
+
   const callId = session.request.getHeader('Call-ID')
   var lineNum = lineObj.LineNumber;
   var $textarea = $('#line-' + lineNum + '-notes-text');
   if ($textarea.length) {
     var currentNotes = $textarea.val().trim();
-    session.data.notes = currentNotes; 
+    session.data.notes = currentNotes;
   } else {
     // if never opened, leave it as-is or default to empty
     session.data.notes = session.data.notes || '';
@@ -5128,24 +5147,24 @@ function teardownSession(lineObj) {
   // Close up the UI
   window.setTimeout(function () {
     RemoveLine(lineObj);
-  
 
-  UpdateBuddyList();
-  
-  if (session.data.earlyReject != true) {
-    UpdateUI();
-  }
-  if (currentNotes !== '') {
-    // use a zero-delay timeout so the panel can detach itself
-      displayPersistentNotes(lineNum, callId,'/api/saveCallNotes',currentNotes);
-  }
 
-}, 1000);
+    UpdateBuddyList();
+
+    if (session.data.earlyReject != true) {
+      UpdateUI();
+    }
+    if (currentNotes !== '') {
+      // use a zero-delay timeout so the panel can detach itself
+      displayPersistentNotes(lineNum, callId, '/api/saveCallNotes', currentNotes);
+    }
+
+  }, 1000);
   // Custom Web hook
   if (typeof web_hook_on_terminate !== 'undefined')
     web_hook_on_terminate(session);
-  
-  
+
+
 }
 
 // Mic and Speaker Levels
@@ -5324,7 +5343,7 @@ function StartRemoteAudioMediaMonitoring(lineNum, session) {
     // Create remote SoundMeter
     console.log(
       'SoundMeter for RemoteAudio Connected, displaying levels for Line: ' +
-        lineNum
+      lineNum
     );
     soundMeter.levelsInterval = window.setInterval(function () {
       // Calculate Levels (0 - 255)
@@ -5579,7 +5598,7 @@ function StartLocalAudioMediaMonitoring(lineNum, session) {
 
     console.log(
       'SoundMeter for LocalAudio Connected, displaying levels for Line: ' +
-        lineNum
+      lineNum
     );
     soundMeter.levelsInterval = window.setInterval(function () {
       // Calculate Levels (0 - 255)
@@ -5754,15 +5773,15 @@ class SoundMeter {
     this.networkInterval = null;
     try {
       this.source.disconnect();
-    } catch (e) {}
+    } catch (e) { }
     this.source = null;
     try {
       this.AnalyserNode.disconnect();
-    } catch (e) {}
+    } catch (e) { }
     this.AnalyserNode = null;
     try {
       this.context.close();
-    } catch (e) {}
+    } catch (e) { }
     this.context = null;
 
     // Save to IndexDb
@@ -7311,7 +7330,7 @@ function AddCallMessage(buddy, session) {
     SessionId: sessionId,
     CallDirection: callDirection,
     Terminate: hangupBy,
-    Notes:session.data.notes,
+    Notes: session.data.notes,
     // CRM
     MessageData: null,
     Tags: [],
@@ -7525,7 +7544,7 @@ function updateScroll(buddy) {
     if (history.children().length > 0)
       history.children().last().get(0).scrollIntoView(false);
     history.get(0).scrollTop = history.get(0).scrollHeight;
-  } catch (e) {}
+  } catch (e) { }
 }
 function PreviewImage(obj) {
   OpenWindow(obj.src, 'Preview Image', 600, 800, false, true); //no close, no resize
@@ -7581,9 +7600,9 @@ function UpdateBuddyActivity(buddy, lastAct) {
   }
   console.log(
     'Last Activity for ' +
-      buddyObj.CallerIDName +
-      ' is now: ' +
-      buddyObj.lastActivity
+    buddyObj.CallerIDName +
+    ' is now: ' +
+    buddyObj.lastActivity
   );
 
   // Take Out
@@ -7746,7 +7765,7 @@ function VideoCall(lineObj, dialledNumber, extraHeaders) {
           spdOptions.extraHeaders.push(key + ': ' + value);
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   $('#line-' + lineObj.LineNumber + '-msg').html(lang.starting_video_call);
@@ -7917,10 +7936,10 @@ function AudioCallMenu(buddy, obj) {
     // only one number provided, call it
     console.log(
       'Automatically calling only number - AudioCall(' +
-        buddy +
-        ', ' +
-        items[0].value +
-        ')'
+      buddy +
+      ', ' +
+      items[0].value +
+      ')'
     );
 
     DialByLine('audio', buddy, items[0].value);
@@ -8017,7 +8036,7 @@ function AudioCall(lineObj, dialledNumber, extraHeaders) {
           spdOptions.extraHeaders.push(key + ': ' + value);
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   $('#line-' + lineObj.LineNumber + '-msg').html(lang.starting_audio_call);
@@ -8627,7 +8646,7 @@ function PlayVideoCallRecording(obj, cdrId, uID, buddy) {
       videoObj.oncanplaythrough = function () {
         try {
           videoObj.scrollIntoViewIfNeeded(false);
-        } catch (e) {}
+        } catch (e) { }
         videoObj
           .play()
           .then(function () {
@@ -9966,7 +9985,7 @@ function holdSession(lineNum) {
                 ) {
                   console.log(
                     'Muting Mixed Audio Track : ' +
-                      session.data.AudioSourceTrack.label
+                    session.data.AudioSourceTrack.label
                   );
                   session.data.AudioSourceTrack.enabled = false;
                 }
@@ -10049,7 +10068,7 @@ function unholdSession(lineNum) {
                 ) {
                   console.log(
                     'Unmuting Mixed Audio Track : ' +
-                      session.data.AudioSourceTrack.label
+                    session.data.AudioSourceTrack.label
                   );
                   session.data.AudioSourceTrack.enabled = true;
                 }
@@ -10149,7 +10168,7 @@ function UnmuteSession(lineNum) {
         ) {
           console.log(
             'Unmuting Mixed Audio Track : ' +
-              session.data.AudioSourceTrack.label
+            session.data.AudioSourceTrack.label
           );
           session.data.AudioSourceTrack.enabled = true;
         }
@@ -10209,10 +10228,10 @@ function sendDTMF(lineNum, itemStr) {
       ) {
         console.log(
           'Sending DTMF (' +
-            itemStr +
-            '): ' +
-            lineObj.LineNumber +
-            ' child session'
+          itemStr +
+          '): ' +
+          lineObj.LineNumber +
+          ' child session'
         );
 
         var result =
@@ -10228,19 +10247,19 @@ function sendDTMF(lineNum, itemStr) {
       } else {
         console.warn(
           'Cannot Send DTMF (' +
-            itemStr +
-            '): ' +
-            lineObj.LineNumber +
-            ' is on hold, and the child session is not established'
+          itemStr +
+          '): ' +
+          lineObj.LineNumber +
+          ' is on hold, and the child session is not established'
         );
       }
     } else {
       console.warn(
         'Cannot Send DTMF (' +
-          itemStr +
-          '): ' +
-          lineObj.LineNumber +
-          ' is on hold, and there is no child session'
+        itemStr +
+        '): ' +
+        lineObj.LineNumber +
+        ' is on hold, and there is no child session'
       );
     }
   } else {
@@ -10270,10 +10289,10 @@ function sendDTMF(lineNum, itemStr) {
     } else {
       console.warn(
         'Cannot Send DTMF (' +
-          itemStr +
-          '): ' +
-          lineObj.LineNumber +
-          ' session is not establishing or established'
+        itemStr +
+        '): ' +
+        lineObj.LineNumber +
+        ' session is not establishing or established'
       );
     }
   }
@@ -10321,9 +10340,9 @@ function switchVideoSource(lineNum, srcId) {
         if (RTCRtpSender.track && RTCRtpSender.track.kind == 'video') {
           console.log(
             'Switching Video Track : ' +
-              RTCRtpSender.track.label +
-              ' to ' +
-              newMediaTrack.label
+            RTCRtpSender.track.label +
+            ' to ' +
+            newMediaTrack.label
           );
           RTCRtpSender.track.stop();
           RTCRtpSender.replaceTrack(newMediaTrack);
@@ -10415,8 +10434,8 @@ function SendCanvas(lineNum) {
     if (RTCRtpSender.track && RTCRtpSender.track.kind == 'video') {
       console.log(
         'Switching Track : ' +
-          RTCRtpSender.track.label +
-          ' to Scratchpad Canvas'
+        RTCRtpSender.track.label +
+        ' to Scratchpad Canvas'
       );
       RTCRtpSender.track.stop();
       RTCRtpSender.replaceTrack(canvasMediaTrack);
@@ -10627,8 +10646,8 @@ function ShareScreen(lineNum) {
           if (RTCRtpSender.track && RTCRtpSender.track.kind == 'video') {
             console.log(
               'Switching Video Track : ' +
-                RTCRtpSender.track.label +
-                ' to Screen'
+              RTCRtpSender.track.label +
+              ' to Screen'
             );
             RTCRtpSender.track.stop();
             RTCRtpSender.replaceTrack(newMediaTrack);
@@ -10660,8 +10679,8 @@ function ShareScreen(lineNum) {
           if (RTCRtpSender.track && RTCRtpSender.track.kind == 'video') {
             console.log(
               'Switching Video Track : ' +
-                RTCRtpSender.track.label +
-                ' to Screen'
+              RTCRtpSender.track.label +
+              ' to Screen'
             );
             RTCRtpSender.track.stop();
             RTCRtpSender.replaceTrack(newMediaTrack);
@@ -10693,8 +10712,8 @@ function ShareScreen(lineNum) {
           if (RTCRtpSender.track && RTCRtpSender.track.kind == 'video') {
             console.log(
               'Switching Video Track : ' +
-                RTCRtpSender.track.label +
-                ' to Screen'
+              RTCRtpSender.track.label +
+              ' to Screen'
             );
             RTCRtpSender.track.stop();
             RTCRtpSender.replaceTrack(newMediaTrack);
@@ -11176,30 +11195,30 @@ function CloseUpSettings() {
   try {
     settingsVideoStreamTrack.stop();
     console.log('settingsVideoStreamTrack... stopped');
-  } catch (e) {}
+  } catch (e) { }
   try {
     var localVideo = $('#local-video-preview').get(0);
     localVideo.srcObject = null;
-  } catch {}
+  } catch { }
   settingsVideoStream = null;
 
   // Microphone Preview
   try {
     settingsMicrophoneStreamTrack.stop();
     console.log('settingsMicrophoneStreamTrack... stopped');
-  } catch (e) {}
+  } catch (e) { }
   settingsMicrophoneStream = null;
 
   // Microphone Meter
   try {
     settingsMicrophoneSoundMeter.stop();
-  } catch (e) {}
+  } catch (e) { }
   settingsMicrophoneSoundMeter = null;
 
   // Speaker Preview
   try {
     window.SettingsOutputAudio.pause();
-  } catch (e) {}
+  } catch (e) { }
   window.SettingsOutputAudio = null;
 
   try {
@@ -11207,19 +11226,19 @@ function CloseUpSettings() {
     tracks.forEach(function (track) {
       track.stop();
     });
-  } catch (e) {}
+  } catch (e) { }
   window.SettingsOutputStream = null;
 
   try {
     var soundMeter = window.SettingsOutputStreamMeter;
     soundMeter.stop();
-  } catch (e) {}
+  } catch (e) { }
   window.SettingsOutputStreamMeter = null;
 
   // Ringer Preview
   try {
     window.SettingsRingerAudio.pause();
-  } catch (e) {}
+  } catch (e) { }
   window.SettingsRingerAudio = null;
 
   try {
@@ -11227,13 +11246,13 @@ function CloseUpSettings() {
     tracks.forEach(function (track) {
       track.stop();
     });
-  } catch (e) {}
+  } catch (e) { }
   window.SettingsRingerStream = null;
 
   try {
     var soundMeter = window.SettingsRingerStreamMeter;
     soundMeter.stop();
-  } catch (e) {}
+  } catch (e) { }
   window.SettingsRingerStreamMeter = null;
 }
 function ShowContacts() {
@@ -11555,7 +11574,7 @@ function DialByLine(type, buddy, numToDial, CallerID, extraHeaders) {
     $('#line-' + newLineNumber)
       .get(0)
       .scrollIntoViewIfNeeded();
-  } catch (e) {}
+  } catch (e) { }
 }
 function SelectLine(lineNum) {
   var lineObj = FindLineByNumber(lineNum);
@@ -12072,26 +12091,26 @@ function AddLineHtml(lineObj, direction) {
   }
 
   // ─────────────────────────────────────────────────────────
-// NOTES BUTTON + TEXTAREA (with fa-edit icon)
-html +=
-'<button id="line-' +
-lineObj.LineNumber +
-'-btn-Notes" ' +
-'onclick="toggleNotesBox(\'' + lineObj.LineNumber + '\')" ' +
-'class="roundButtons dialButtons inCallButtons" title="Add Notes">' +
-  '<i class="fa fa-edit"></i>' +
-'</button>';
+  // NOTES BUTTON + TEXTAREA (with fa-edit icon)
+  html +=
+    '<button id="line-' +
+    lineObj.LineNumber +
+    '-btn-Notes" ' +
+    'onclick="toggleNotesBox(\'' + lineObj.LineNumber + '\')" ' +
+    'class="roundButtons dialButtons inCallButtons" title="Add Notes">' +
+    '<i class="fa fa-edit"></i>' +
+    '</button>';
 
-// NOTES CONTAINER (initially hidden, with a class for styling)
-html +=
-'<div id="line-' +
-lineObj.LineNumber +
-'-notes-container" class="notes-container" style="display:none; padding:10px;">' +
-  '<textarea id="line-' +
-  lineObj.LineNumber +
-  '-notes-text" class="notes-textarea" rows="4" placeholder="Enter call notes here…"></textarea>' +
-'</div>';
-// ─────────────────────────────────────────────────────────
+  // NOTES CONTAINER (initially hidden, with a class for styling)
+  html +=
+    '<div id="line-' +
+    lineObj.LineNumber +
+    '-notes-container" class="notes-container" style="display:none; padding:10px;">' +
+    '<textarea id="line-' +
+    lineObj.LineNumber +
+    '-notes-text" class="notes-textarea" rows="4" placeholder="Enter call notes here…"></textarea>' +
+    '</div>';
+  // ─────────────────────────────────────────────────────────
 
   // Expand UI (Video Only)
   html +=
@@ -14071,8 +14090,8 @@ function SortBuddies() {
       return a.AllowAutoDelete === b.AllowAutoDelete
         ? 0
         : a.AllowAutoDelete
-        ? 1
-        : -1;
+          ? 1
+          : -1;
     });
   }
   // Sort Out Pinned
@@ -14087,7 +14106,7 @@ function SelectBuddy(buddy) {
 
   var displayName =
     BuddyShowExtenNum == true &&
-    (buddyObj.type == 'extension' || buddyObj.type == 'xmpp')
+      (buddyObj.type == 'extension' || buddyObj.type == 'xmpp')
       ? ' ' + buddyObj.ExtNo + ' - ' + buddyObj.CallerIDName
       : buddyObj.CallerIDName;
   $('#contact-' + buddyObj.identity + '-name').html(displayName);
@@ -14167,7 +14186,7 @@ function SelectBuddy(buddy) {
     $('#contact-' + buddy)
       .get(0)
       .scrollIntoViewIfNeeded();
-  } catch (e) {}
+  } catch (e) { }
 
   // Save Selected
   localDB.setItem('SelectedBuddy', buddy);
@@ -14496,8 +14515,8 @@ function RefreshStream(buddyObj, filter) {
           if (streamVisible && !item.Read) {
             console.log(
               'Buddy stream is now visible, marking XMPP message(' +
-                item.ItemId +
-                ') as read'
+              item.ItemId +
+              ') as read'
             );
             MarkMessageRead(buddyObj, item.ItemId);
             XmppSendDisplayReceipt(buddyObj, item.ItemId);
@@ -15066,8 +15085,8 @@ function RedrawStage(lineNum, videoChanged) {
       .find('.callerID')
       .html(
         administratorIndicator +
-          adminMuteIndicator +
-          thisRemoteVideoStream.CallerIdName
+        adminMuteIndicator +
+        thisRemoteVideoStream.CallerIdName
       );
   });
 
@@ -15198,9 +15217,9 @@ function ShowMessageMenu(obj, typeStr, cdrId, buddy) {
             .format(DisplayDateFormat + ' ' + DisplayTimeFormat);
           var CallAnswer = cdr.CallAnswer
             ? moment
-                .utc(cdr.CallAnswer.replace(' UTC', ''))
-                .local()
-                .format(DisplayDateFormat + ' ' + DisplayTimeFormat)
+              .utc(cdr.CallAnswer.replace(' UTC', ''))
+              .local()
+              .format(DisplayDateFormat + ' ' + DisplayTimeFormat)
             : null;
           var ringTime = cdr.RingTime ? cdr.RingTime : 0;
           var CallEnd = moment
@@ -15288,10 +15307,10 @@ function ShowMessageMenu(obj, typeStr, cdrId, buddy) {
           var startCallMessage =
             cdr.CallDirection == 'inbound'
               ? lang.you_received_a_call_from +
-                ' ' +
-                srcCallerID +
-                ' ' +
-                withVideo
+              ' ' +
+              srcCallerID +
+              ' ' +
+              withVideo
               : lang.you_made_a_call_to + ' ' + dstCallerID + ' ' + withVideo;
           callDetails.push({
             Message: startCallMessage,
@@ -15301,15 +15320,15 @@ function ShowMessageMenu(obj, typeStr, cdrId, buddy) {
             var answerCallMessage =
               cdr.CallDirection == 'inbound'
                 ? lang.you_answered_after +
-                  ' ' +
-                  ringTime +
-                  ' ' +
-                  lang.seconds_plural
+                ' ' +
+                ringTime +
+                ' ' +
+                lang.seconds_plural
                 : lang.they_answered_after +
-                  ' ' +
-                  ringTime +
-                  ' ' +
-                  lang.seconds_plural;
+                ' ' +
+                ringTime +
+                ' ' +
+                lang.seconds_plural;
             callDetails.push({
               Message: answerCallMessage,
               TimeStr: cdr.CallAnswer,
@@ -15319,13 +15338,13 @@ function ShowMessageMenu(obj, typeStr, cdrId, buddy) {
             var msg =
               transfer.type == 'Blind'
                 ? lang.you_started_a_blind_transfer_to +
-                  ' ' +
-                  transfer.to +
-                  '. '
+                ' ' +
+                transfer.to +
+                '. '
                 : lang.you_started_an_attended_transfer_to +
-                  ' ' +
-                  transfer.to +
-                  '. ';
+                ' ' +
+                transfer.to +
+                '. ';
             if (transfer.accept && transfer.accept.complete == true) {
               msg += lang.the_call_was_completed;
             } else if (transfer.accept.disposition != '') {
@@ -15767,12 +15786,12 @@ function TagKeyPress(event, obj, cdrId, buddy) {
 
     $('#cdr-tags-' + cdrId + ' li:last').before(
       '<li onclick="TagClick(this, \'' +
-        cdrId +
-        "', '" +
-        buddy +
-        '\')">' +
-        $(obj).val() +
-        '</li>'
+      cdrId +
+      "', '" +
+      buddy +
+      '\')">' +
+      $(obj).val() +
+      '</li>'
     );
     $(obj).val('');
 
@@ -16020,7 +16039,7 @@ function ShowDictate(buddy) {
   buddyObj.recognition.onstart = function () {
     instructions.html(
       '<i class="fa fa-microphone" style="font-size: 21px"></i><i class="fa fa-cog fa-spin" style="font-size:10px; vertical-align:text-bottom; margin-left:2px"></i> ' +
-        lang.im_listening
+      lang.im_listening
     );
     updateScroll(buddy);
   };
@@ -16685,7 +16704,7 @@ function ShowMyProfile() {
     playButton.click(function () {
       try {
         window.SettingsOutputAudio.pause();
-      } catch (e) {}
+      } catch (e) { }
       window.SettingsOutputAudio = null;
 
       try {
@@ -16693,13 +16712,13 @@ function ShowMyProfile() {
         tracks.forEach(function (track) {
           track.stop();
         });
-      } catch (e) {}
+      } catch (e) { }
       window.SettingsOutputStream = null;
 
       try {
         var soundMeter = window.SettingsOutputStreamMeter;
         soundMeter.stop();
-      } catch (e) {}
+      } catch (e) { }
       window.SettingsOutputStreamMeter = null;
 
       // Load Sample
@@ -16762,7 +16781,7 @@ function ShowMyProfile() {
     playRingButton.click(function () {
       try {
         window.SettingsRingerAudio.pause();
-      } catch (e) {}
+      } catch (e) { }
       window.SettingsRingerAudio = null;
 
       try {
@@ -16770,13 +16789,13 @@ function ShowMyProfile() {
         tracks.forEach(function (track) {
           track.stop();
         });
-      } catch (e) {}
+      } catch (e) { }
       window.SettingsRingerStream = null;
 
       try {
         var soundMeter = window.SettingsRingerStreamMeter;
         soundMeter.stop();
-      } catch (e) {}
+      } catch (e) { }
       window.SettingsRingerStreamMeter = null;
 
       // Load Sample
@@ -16871,13 +16890,13 @@ function ShowMyProfile() {
           track.stop();
         });
         window.SettingsMicrophoneStream = null;
-      } catch (e) {}
+      } catch (e) { }
 
       try {
         soundMeter = window.SettingsMicrophoneSoundMeter;
         soundMeter.stop();
         window.SettingsMicrophoneSoundMeter = null;
-      } catch (e) {}
+      } catch (e) { }
 
       // Get Microphone
       var constraints = {
@@ -17397,12 +17416,12 @@ function ShowMyProfile() {
           if (fileSize <= 52428800) {
             console.log(
               'Adding (' +
-                uploadId +
-                '): ' +
-                fileName +
-                ' of size: ' +
-                fileSize +
-                'bytes'
+              uploadId +
+              '): ' +
+              fileName +
+              ' of size: ' +
+              fileSize +
+              'bytes'
             );
 
             var reader = new FileReader();
@@ -17659,9 +17678,9 @@ function ChangeSettings(lineNum, obj) {
                 if (RTCRtpSender.track && RTCRtpSender.track.kind == 'audio') {
                   console.log(
                     'Switching Audio Track : ' +
-                      RTCRtpSender.track.label +
-                      ' to ' +
-                      newMediaTrack.label
+                    RTCRtpSender.track.label +
+                    ' to ' +
+                    newMediaTrack.label
                   );
                   RTCRtpSender.track.stop(); // Must stop, or this mic will stay in use
                   RTCRtpSender.replaceTrack(newMediaTrack)
@@ -17701,10 +17720,10 @@ function ChangeSettings(lineNum, obj) {
           var sinkId = newid;
           console.log(
             'Attempting to set Audio Output SinkID for line ' +
-              lineNum +
-              ' [' +
-              sinkId +
-              ']'
+            lineNum +
+            ' [' +
+            sinkId +
+            ']'
           );
 
           // Remote Audio
@@ -18104,98 +18123,98 @@ function CreateImageEditor(buddy, placeholderImage) {
   toolBarDiv.css('margin-bottom', '5px');
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Select" onclick="ImageEditor_Select(\'' +
-      buddy +
-      '\')"><i class="fa fa-mouse-pointer"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-mouse-pointer"></i></button>'
   );
   toolBarDiv.append('&nbsp;|&nbsp;');
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Draw" onclick="ImageEditor_FreedrawPen(\'' +
-      buddy +
-      '\')"><i class="fa fa-pencil"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-pencil"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Paint" onclick="ImageEditor_FreedrawPaint(\'' +
-      buddy +
-      '\')"><i class="fa fa-paint-brush"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-paint-brush"></i></button>'
   );
   toolBarDiv.append('&nbsp;|&nbsp;');
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Select Line Color" onclick="ImageEditor_SetectLineColor(\'' +
-      buddy +
-      '\')"><i class="fa fa-pencil-square-o" style="color:rgb(255, 0, 0)"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-pencil-square-o" style="color:rgb(255, 0, 0)"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Select Fill Color" onclick="ImageEditor_SetectFillColor(\'' +
-      buddy +
-      '\')"><i class="fa fa-pencil-square" style="color:rgb(255, 0, 0)"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-pencil-square" style="color:rgb(255, 0, 0)"></i></button>'
   );
   toolBarDiv.append('&nbsp;|&nbsp;');
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Add Circle" onclick="ImageEditor_AddCircle(\'' +
-      buddy +
-      '\')"><i class="fa fa-circle"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-circle"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Add Rectangle" onclick="ImageEditor_AddRectangle(\'' +
-      buddy +
-      '\')"><i class="fa fa-stop"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-stop"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Add Triangle" onclick="ImageEditor_AddTriangle(\'' +
-      buddy +
-      '\')"><i class="fa fa-play"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-play"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Add Emoji" onclick="ImageEditor_SetectEmoji(\'' +
-      buddy +
-      '\')"><i class="fa fa-smile-o"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-smile-o"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Add Text" onclick="ImageEditor_AddText(\'' +
-      buddy +
-      '\')"><i class="fa fa-font"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-font"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Delete Selected Items" onclick="ImageEditor_Clear(\'' +
-      buddy +
-      '\')"><i class="fa fa-times"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-times"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Clear All" onclick="ImageEditor_ClearAll(\'' +
-      buddy +
-      '\')"><i class="fa fa-trash"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-trash"></i></button>'
   );
   toolBarDiv.append('&nbsp;|&nbsp;');
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Pan" onclick="ImageEditor_Pan(\'' +
-      buddy +
-      '\')"><i class="fa fa-hand-paper-o"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-hand-paper-o"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Zoom In" onclick="ImageEditor_ZoomIn(\'' +
-      buddy +
-      '\')"><i class="fa fa-search-plus"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-search-plus"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Zoom Out" onclick="ImageEditor_ZoomOut(\'' +
-      buddy +
-      '\')"><i class="fa fa-search-minus"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-search-minus"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Reset Pan & Zoom" onclick="ImageEditor_ResetZoom(\'' +
-      buddy +
-      '\')"><i class="fa fa-search" aria-hidden="true"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-search" aria-hidden="true"></i></button>'
   );
   toolBarDiv.append('&nbsp;|&nbsp;');
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Cancel" onclick="ImageEditor_Cancel(\'' +
-      buddy +
-      '\')"><i class="fa fa-times-circle"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-times-circle"></i></button>'
   );
   toolBarDiv.append(
     '<button class="toolBarButtons" title="Send" onclick="ImageEditor_Send(\'' +
-      buddy +
-      '\')"><i class="fa fa-paper-plane"></i></button>'
+    buddy +
+    '\')"><i class="fa fa-paper-plane"></i></button>'
   );
   $('#contact-' + buddy + '-imagePastePreview').append(toolBarDiv);
 
@@ -18378,7 +18397,7 @@ function RemoveCanvas(canvasId) {
         CanvasCollection.splice(c, 1);
         break;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
   console.log('There are ' + CanvasCollection.length + ' canvas now.');
 }
@@ -18673,8 +18692,8 @@ function onFileDragDrop(e, buddy) {
       } else {
         alert(
           "The file '" +
-            fileObj.name +
-            "' is bigger than 50MB, you cannot upload this file"
+          fileObj.name +
+          "' is bigger than 50MB, you cannot upload this file"
         );
       }
     };
@@ -18831,9 +18850,9 @@ function Alert(messageStr, TitleStr, onOk) {
   if (alertObj != null) {
     console.error(
       'Alert not null, while Alert called: ' +
-        TitleStr +
-        ', saying:' +
-        messageStr
+      TitleStr +
+      ', saying:' +
+      messageStr
     );
     return;
   } else {
@@ -18976,7 +18995,7 @@ function showFloatingError(message, type = "error") {
 
 
 // inject this **after** your showFloatingError() helper
-window.Alert = function(message, title, onOk) {
+window.Alert = function (message, title, onOk) {
   showFloatingError(message);
   if (typeof onOk === 'function') onOk();
 };
@@ -18993,9 +19012,9 @@ function Confirm(messageStr, TitleStr, onOk, onCancel) {
   if (confirmObj != null) {
     console.error(
       'Confirm not null, while Confrim called with Title: ' +
-        TitleStr +
-        ', saying: ' +
-        messageStr
+      TitleStr +
+      ', saying: ' +
+      messageStr
     );
     return;
   } else {
@@ -19078,9 +19097,9 @@ function Prompt(
   if (promptObj != null) {
     console.error(
       'Prompt not null, while Prompt called with Title: ' +
-        TitleStr +
-        ', saying: ' +
-        messageStr
+      TitleStr +
+      ', saying: ' +
+      messageStr
     );
     return;
   } else {
@@ -19176,28 +19195,28 @@ function PopupMenu(obj, menu) {
       if (item.icon != null) {
         menuObj.append(
           '<li value="' +
-            item.value +
-            '" ' +
-            header +
-            ' ' +
-            disabled +
-            '><div><span class="' +
-            item.icon +
-            ' ui-icon"></span>' +
-            item.text +
-            '</div></li>'
+          item.value +
+          '" ' +
+          header +
+          ' ' +
+          disabled +
+          '><div><span class="' +
+          item.icon +
+          ' ui-icon"></span>' +
+          item.text +
+          '</div></li>'
         );
       } else {
         menuObj.append(
           '<li value="' +
-            item.value +
-            '" ' +
-            header +
-            ' ' +
-            disabled +
-            '><div>' +
-            item.text +
-            '</div></li>'
+          item.value +
+          '" ' +
+          header +
+          ' ' +
+          disabled +
+          '><div>' +
+          item.text +
+          '</div></li>'
         );
       }
     });
@@ -19205,8 +19224,8 @@ function PopupMenu(obj, menu) {
   menuObj.append('<li><div>-</div></li>');
   menuObj.append(
     '<li><div style="text-align:center; padding-right: 2em">' +
-      lang.cancel +
-      '</div></li>'
+    lang.cancel +
+    '</div></li>'
   );
 
   // Attach UL to body
@@ -19252,10 +19271,10 @@ function HidePopup(timeout) {
         menuObj.menu('destroy');
         try {
           menuObj.empty();
-        } catch (e) {}
+        } catch (e) { }
         try {
           menuObj.remove();
-        } catch (e) {}
+        } catch (e) { }
         menuObj = null;
       }
     }, timeout);
@@ -19264,10 +19283,10 @@ function HidePopup(timeout) {
       menuObj.menu('destroy');
       try {
         menuObj.empty();
-      } catch (e) {}
+      } catch (e) { }
       try {
         menuObj.remove();
-      } catch (e) {}
+      } catch (e) { }
       menuObj = null;
     }
   }
@@ -19497,10 +19516,10 @@ function onPresenceChange(presence) {
     // This is a presence update for the picture change
     console.log(
       'Presence: ' +
-        buddyObj.ExtNo +
-        ' - ' +
-        buddyObj.CallerIDName +
-        ' vCard change'
+      buddyObj.ExtNo +
+      ' - ' +
+      buddyObj.CallerIDName +
+      ' vCard change'
     );
 
     // Should check if the hash is different, could have been a non-picture change..
@@ -19514,14 +19533,14 @@ function onPresenceChange(presence) {
     // This is a regulare
     console.log(
       'Presence: ' +
-        buddyObj.ExtNo +
-        ' - ' +
-        buddyObj.CallerIDName +
-        ' is now: ' +
-        pres +
-        '(' +
-        status +
-        ')'
+      buddyObj.ExtNo +
+      ' - ' +
+      buddyObj.CallerIDName +
+      ' is now: ' +
+      pres +
+      '(' +
+      status +
+      ')'
     );
 
     buddyObj.presence = pres;
@@ -20032,10 +20051,10 @@ function onMessage(message) {
   if (isCorrection && targetCorrectionMsg != '') {
     console.log(
       'Message ' +
-        targetCorrectionMsg +
-        ' for ' +
-        buddyObj.CallerIDName +
-        ' was corrected'
+      targetCorrectionMsg +
+      ' for ' +
+      buddyObj.CallerIDName +
+      ' was corrected'
     );
     CorrectMessage(buddyObj, targetCorrectionMsg, originalMessage);
   }
@@ -20060,10 +20079,10 @@ function onMessage(message) {
   if (eventStr == 'delivered' && targetDeliveryMsg != '') {
     console.log(
       'Message ' +
-        targetDeliveryMsg +
-        ' for ' +
-        buddyObj.CallerIDName +
-        ' was delivered'
+      targetDeliveryMsg +
+      ' for ' +
+      buddyObj.CallerIDName +
+      ' was delivered'
     );
     MarkDeliveryReceipt(buddyObj, targetDeliveryMsg, true);
 
@@ -20072,10 +20091,10 @@ function onMessage(message) {
   if (eventStr == 'displayed' && targetDeliveryMsg != '') {
     console.log(
       'Message ' +
-        targetDeliveryMsg +
-        ' for ' +
-        buddyObj.CallerIDName +
-        ' was displayed'
+      targetDeliveryMsg +
+      ' for ' +
+      buddyObj.CallerIDName +
+      ' was displayed'
     );
     MarkDisplayReceipt(buddyObj, targetDeliveryMsg, true);
 
