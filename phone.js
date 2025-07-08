@@ -2898,15 +2898,6 @@ function showLoginDialog() {
     if (!mobile || !pass) {
       console.error("Error: Mobile number or password cannot be empty.");
     } else{
-      chrome.storage.local.set({
-      softphoneLogin: {
-        countryCode: cc,
-        mobileNumber: mobile,
-        password: pass
-      }
-    }, () => {
-      console.log("🔐 Login credentials saved to chrome.storage.local");
-    });
       testingLogin(cc,mobile,pass)
       $('.loading').remove()
     }
