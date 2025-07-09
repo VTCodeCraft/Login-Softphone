@@ -525,6 +525,7 @@ let settingsVideoStreamTrack = null;
 
 let CallRecordingsIndexDb = null;
 let CallQosDataIndexDb = null;
+let savedInstanceID = null;
 
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -773,6 +774,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (SingleInstance === true) {
       console.log('Instance ID :', instanceID);
       localDB.setItem('InstanceId', instanceID);
+      savedInstanceID = instanceID;
       window.addEventListener('storage', onLocalStorageEvent, false);
     }
 
@@ -2761,7 +2763,8 @@ function AutoProvisionAccount(loginCredentials) {
     SipDomain: wssDomain,
     SipUsername: extention,
     SipPassword: password,
-    loggedIn: true
+    loggedIn: true,
+    instanceID: savedInstanceID || localDB.getItem('InstanceId') || null
   };
 
   window.parent.postMessage({
@@ -2907,18 +2910,8 @@ function showLoginDialog() {
     if (!mobile || !pass) {
       console.error("Error: Mobile number or password cannot be empty.");
     } else {
-      window.parent.postMessage({
-      type: "SOFTPHONE_SAVE_CREDENTIALS",
-      credentials: {
-        countryCode: cc,
-        mobile: mobile,
-        password: pass
-      }
-    }, "*");
-
-    // Call your login logic
-    testingLogin(cc, mobile, pass);
-    $('.loading').remove();
+      testingLogin(cc, mobile, pass)
+      $('.loading').remove()
     }
     // TODO: insert your login logic here, e.g.:
     // $.post('/api/login', { countryCode: cc, mobile, password: pass })
