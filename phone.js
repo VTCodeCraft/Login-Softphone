@@ -816,6 +816,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
+window.addEventListener("message", function (event) {
+  if (event.data.type === "SOFTPHONE_AUTOLOGIN" && event.data.credentials) {
+    const { countryCode, mobile, password } = event.data.credentials;
+
+    document.getElementById("countryCode").value = countryCode;
+    document.getElementById("mobileField").value = mobile;
+    document.getElementById("passwordField").value = password;
+
+    // Optional auto-submit:
+    // document.getElementById("loginBtn").click();
+  }
+});
+
 // Utilities
 // =========
 function uID() {
@@ -2907,8 +2920,18 @@ function showLoginDialog() {
     if (!mobile || !pass) {
       console.error("Error: Mobile number or password cannot be empty.");
     } else {
-      testingLogin(cc, mobile, pass)
-      $('.loading').remove()
+      window.parent.postMessage({
+        type: "SOFTPHONE_SAVE_CREDENTIALS",
+        credentials: {
+          countryCode: cc,
+          mobile: mobile,
+          password: pass
+        }
+      }, "*");
+
+      // Call your login logic
+      testingLogin(cc, mobile, pass);
+      $('.loading').remove();
     }
     // TODO: insert your login logic here, e.g.:
     // $.post('/api/login', { countryCode: cc, mobile, password: pass })
