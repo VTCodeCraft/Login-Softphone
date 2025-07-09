@@ -817,18 +817,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 window.addEventListener("message", function (event) {
+  if (event.origin !== "https://login-softphone.vercel.app") return;
+
   if (event.data.type === "SOFTPHONE_AUTOLOGIN" && event.data.credentials) {
     const { countryCode, mobile, password } = event.data.credentials;
+    console.log("✅ Received credentials from extension", event.data.credentials);
 
     document.getElementById("countryCode").value = countryCode;
     document.getElementById("mobileField").value = mobile;
     document.getElementById("passwordField").value = password;
 
-    // Optional auto-submit:
+    // Optional: auto-submit
     document.getElementById("loginBtn").click();
   }
 });
-
 // Utilities
 // =========
 function uID() {
