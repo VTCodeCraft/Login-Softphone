@@ -3615,6 +3615,16 @@ function ReceiveCall(session) {
   }
 
   console.log('New Incoming Call!', callerID + ' <' + did + '>');
+  
+  
+  window.parent.postMessage({
+    type: "SOFTPHONE_INCOMING_CALL",
+    data: {
+      from: callerID || did,
+      number: did,
+      callerID
+    }
+  }, "*");
 
   var CurrentCalls = countSessions(session.id);
   console.log('Current Call Count:', CurrentCalls);
