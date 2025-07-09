@@ -525,6 +525,8 @@ let settingsVideoStreamTrack = null;
 
 let CallRecordingsIndexDb = null;
 let CallQosDataIndexDb = null;
+
+//for extension
 let savedInstanceID = null;
 
 
@@ -774,7 +776,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (SingleInstance === true) {
       console.log('Instance ID :', instanceID);
       localDB.setItem('InstanceId', instanceID);
-      savedInstanceID = instanceID;
+      savedInstanceID = instanceID; //for extension
       window.addEventListener('storage', onLocalStorageEvent, false);
     }
 
@@ -2755,6 +2757,7 @@ function AutoProvisionAccount(loginCredentials) {
   // 5) Finally, after provisioning, force a rerun of InitUi() so the UI “unlocks.”
   window.location.reload(true)
 
+  //for extension
   const credentials = {
     profileName: displayName,
     wssServer: wssDomain,
@@ -2764,9 +2767,10 @@ function AutoProvisionAccount(loginCredentials) {
     SipUsername: extention,
     SipPassword: password,
     loggedIn: true,
-    instanceID: savedInstanceID || localDB.getItem('InstanceId') || null
+    instanceID: savedInstanceID || localDB.getItem('InstanceId') || null //for extension
   };
 
+  //for extension
   window.parent.postMessage({
     type: "SOFTPHONE_SAVE_CREDENTIALS",
     credentials
@@ -3616,7 +3620,7 @@ function ReceiveCall(session) {
 
   console.log('New Incoming Call!', callerID + ' <' + did + '>');
   
-  
+  //for extension
   window.parent.postMessage({
     type: "SOFTPHONE_INCOMING_CALL",
     data: {
