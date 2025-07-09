@@ -816,21 +816,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-window.addEventListener("message", function (event) {
-  if (event.origin !== "https://login-softphone.vercel.app") return;
-
-  if (event.data.type === "SOFTPHONE_AUTOLOGIN" && event.data.credentials) {
-    const { countryCode, mobile, password } = event.data.credentials;
-    console.log("✅ Received credentials from extension", event.data.credentials);
-
-    document.getElementById("countryCode").value = countryCode;
-    document.getElementById("mobileField").value = mobile;
-    document.getElementById("passwordField").value = password;
-
-    // Optional: auto-submit
-    document.getElementById("loginBtn").click();
-  }
-});
 // Utilities
 // =========
 function uID() {
@@ -2768,21 +2753,21 @@ function AutoProvisionAccount(loginCredentials) {
   // 5) Finally, after provisioning, force a rerun of InitUi() so the UI “unlocks.”
   window.location.reload(true)
 
-  // const credentials = {
-  //   profileName: displayName,
-  //   wssServer: wssDomain,
-  //   WebSocketPort: wssPort,
-  //   ServerPath: wssPath,
-  //   SipDomain: wssDomain,
-  //   SipUsername: extention,
-  //   SipPassword: password,
-  //   loggedIn: true
-  // };
+  const credentials = {
+    profileName: displayName,
+    wssServer: wssDomain,
+    WebSocketPort: wssPort,
+    ServerPath: wssPath,
+    SipDomain: wssDomain,
+    SipUsername: extention,
+    SipPassword: password,
+    loggedIn: true
+  };
 
-  // window.parent.postMessage({
-  //   type: "SOFTPHONE_SAVE_CREDENTIALS",
-  //   credentials
-  // }, "*");
+  window.parent.postMessage({
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials
+  }, "*");
 }
 
 function logoutUser() {
@@ -2923,17 +2908,17 @@ function showLoginDialog() {
       console.error("Error: Mobile number or password cannot be empty.");
     } else {
       window.parent.postMessage({
-        type: "SOFTPHONE_SAVE_CREDENTIALS",
-        credentials: {
-          countryCode: cc,
-          mobile: mobile,
-          password: pass
-        }
-      }, "*");
+      type: "SOFTPHONE_SAVE_CREDENTIALS",
+      credentials: {
+        countryCode: cc,
+        mobile: mobile,
+        password: pass
+      }
+    }, "*");
 
-      // Call your login logic
-      testingLogin(cc, mobile, pass);
-      $('.loading').remove();
+    // Call your login logic
+    testingLogin(cc, mobile, pass);
+    $('.loading').remove();
     }
     // TODO: insert your login logic here, e.g.:
     // $.post('/api/login', { countryCode: cc, mobile, password: pass })
