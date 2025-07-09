@@ -825,7 +825,7 @@ window.addEventListener("message", function (event) {
     document.getElementById("passwordField").value = password;
 
     // Optional auto-submit:
-    // document.getElementById("loginBtn").click();
+    document.getElementById("loginBtn").click();
   }
 });
 
