@@ -2726,7 +2726,7 @@ async function testingLogin(countryCode, loginNumber, loginPassword) {
   }
 }
 
-async function AutoProvisionAccount(loginCredentials) {
+function AutoProvisionAccount(loginCredentials) {
   const displayName = loginCredentials.display_name;
   const username = loginCredentials.username;
   const extention = loginCredentials.extention;
@@ -2736,12 +2736,11 @@ async function AutoProvisionAccount(loginCredentials) {
   const wssPath = loginCredentials.wss_path;
   const phoneNumberPrefix = loginCredentials.phone_number_prefix;
 
-  // 1) Generate or reuse a unique profileUserID
+  // Save to local DB first
   if (localDB.getItem('profileUserID') == null) {
     localDB.setItem('profileUserID', uID());
   }
 
-  // 2) Store account-related fields in localStorage
   localDB.setItem('profileName', displayName);
   localDB.setItem('wssServer', wssDomain);
   localDB.setItem('WebSocketPort', wssPort);
@@ -2751,7 +2750,7 @@ async function AutoProvisionAccount(loginCredentials) {
   localDB.setItem('SipPassword', password);
   localDB.setItem('loggedIn', true);
 
-  // 3) Save to Chrome extension storage
+  // Prepare credentials for Chrome Extension
   const credentials = {
     profileName: displayName,
     wssServer: wssDomain,
@@ -2764,34 +2763,29 @@ async function AutoProvisionAccount(loginCredentials) {
     instanceID: savedInstanceID || localDB.getItem('InstanceId') || null
   };
 
-  try {
-    chrome.storage.local.set({ softphoneCredentials: credentials }, () => {
-      console.log("✅ Credentials saved to Chrome extension storage");
-    });
-  } catch (e) {
-    console.warn("⚠️ Failed to save credentials to extension storage:", e);
-  }
+  // Post message to content script (extension) — MUST go to `window.top` from iframe
+  window.top.postMessage({
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials: credentials
+  }, "*"); // Or use precise origin instead of "*"
 
-  // 4) Reload to apply config
-  window.location.reload(true);
+  // Reload after a short delay (gives extension time to receive it)
+  setTimeout(() => window.location.reload(true), 300);
 }
 
+
 function logoutUser() {
-  // 1) Clear localStorage
+  // 1. Clear Local Storage (localDB)
   localStorage.clear();
-  localStorage.setItem("loggedIn", false);
+  localStorage.setItem('loggedIn', false);
 
-  // 2) Clear extension storage
-  try {
-    chrome.storage.local.remove('softphoneCredentials', () => {
-      console.log("🧹 Cleared credentials from Chrome extension storage");
-    });
-  } catch (e) {
-    console.warn("⚠️ Failed to clear Chrome extension storage:", e);
-  }
+  // 2. Notify Chrome Extension to clear its stored credentials
+  window.top.postMessage({ type: "SOFTPHONE_LOGOUT" }, "*");
 
-  // 3) Reload
-  window.location.reload(true);
+  // 3. Wait briefly, then reload the app
+  setTimeout(() => {
+    window.location.reload(true);
+  }, 300);
 }
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
