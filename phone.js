@@ -527,7 +527,7 @@ let CallRecordingsIndexDb = null;
 let CallQosDataIndexDb = null;
 
 //for extension
-let savedInstanceID = null;
+// let savedInstanceID = null;
 
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -776,7 +776,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (SingleInstance === true) {
       console.log('Instance ID :', instanceID);
       localDB.setItem('InstanceId', instanceID);
-      savedInstanceID = instanceID; //for extension
       window.addEventListener('storage', onLocalStorageEvent, false);
     }
 
@@ -2760,7 +2759,7 @@ function AutoProvisionAccount(loginCredentials) {
     SipUsername: extention,
     SipPassword: password,
     loggedIn: true,
-    instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
+    instanceID:localStorage.getItem('InstanceId') || null
   };
 
   // ✅ Send to Chrome Extension storage
