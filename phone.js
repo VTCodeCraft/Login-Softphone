@@ -2727,6 +2727,29 @@ async function testingLogin(countryCode, loginNumber, loginPassword) {
 }
 
 async function AutoProvisionAccount(loginCredentials) {
+  const displayName = loginCredentials.display_name;
+  const username = loginCredentials.username;
+  const extention = loginCredentials.extention;
+  const password = loginCredentials.password;
+  const wssDomain = loginCredentials.wss_domain;
+  const wssPort = loginCredentials.wss_port;
+  const wssPath = loginCredentials.wss_path;
+  const phoneNumberPrefix = loginCredentials.phone_number_prefix;
+
+  // 1) Generate or reuse a unique profileUserID
+  if (localDB.getItem('profileUserID') == null) {
+    localDB.setItem('profileUserID', uID());
+  }
+
+  // 2) Store account‐related fields:
+  localDB.setItem('profileName', displayName);
+  localDB.setItem('wssServer', wssDomain);
+  localDB.setItem('WebSocketPort', wssPort);
+  localDB.setItem('ServerPath', wssPath);
+  localDB.setItem('SipDomain', wssDomain);
+  localDB.setItem('SipUsername', extention);
+  localDB.setItem('SipPassword', password);
+  localDB.setItem('loggedIn', true);
   const creds = {
     profileName: loginCredentials.display_name,
     wssServer: loginCredentials.wss_domain,
