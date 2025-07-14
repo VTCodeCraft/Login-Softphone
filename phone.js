@@ -2761,7 +2761,7 @@ function AutoProvisionAccount(loginCredentials) {
       SipPassword: localDB.getItem('SipPassword'),
       loggedIn: true,
       profileUserID: localDB.getItem('profileUserID'),
-      instanceID: localDB.getItem('InstanceId') || null
+      instanceID: localDB.getItem('InstanceId')
     };
 
     // Send to extension after delay
@@ -2789,7 +2789,7 @@ function logoutUser() {
   // Step 2: Wait before sending logout state to Chrome extension
   setTimeout(() => {
     const logoutState = {
-      instanceID: localStorage.getItem("InstanceId") || null,
+      instanceID: localStorage.getItem("InstanceId"),
       loggedIn: false
     };
 
