@@ -2728,14 +2728,31 @@ async function testingLogin(countryCode, loginNumber, loginPassword) {
 
 async function AutoProvisionAccount(loginCredentials) {
   const displayName = loginCredentials.display_name;
+  const username = loginCredentials.username;
   const extention = loginCredentials.extention;
   const password = loginCredentials.password;
   const wssDomain = loginCredentials.wss_domain;
   const wssPort = loginCredentials.wss_port;
   const wssPath = loginCredentials.wss_path;
+  const phoneNumberPrefix = loginCredentials.phone_number_prefix;
 
-  // Send credentials to the extension
-  const extensionCredentials = {
+  // 1) Generate or reuse a unique profileUserID
+  if (localDB.getItem('profileUserID') == null) {
+    localDB.setItem('profileUserID', uID());
+  }
+
+  // 2) Store account-related fields in localStorage
+  localDB.setItem('profileName', displayName);
+  localDB.setItem('wssServer', wssDomain);
+  localDB.setItem('WebSocketPort', wssPort);
+  localDB.setItem('ServerPath', wssPath);
+  localDB.setItem('SipDomain', wssDomain);
+  localDB.setItem('SipUsername', extention);
+  localDB.setItem('SipPassword', password);
+  localDB.setItem('loggedIn', true);
+
+  // 3) Save to Chrome extension storage
+  const credentials = {
     profileName: displayName,
     wssServer: wssDomain,
     WebSocketPort: wssPort,
@@ -2744,60 +2761,38 @@ async function AutoProvisionAccount(loginCredentials) {
     SipUsername: extention,
     SipPassword: password,
     loggedIn: true,
-    instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
+    instanceID: savedInstanceID || localDB.getItem('InstanceId') || null
   };
 
-  window.parent.postMessage({
-    type: "SOFTPHONE_SAVE_CREDENTIALS",
-    credentials: extensionCredentials
-  }, "*");
+  try {
+    chrome.storage.local.set({ softphoneCredentials: credentials }, () => {
+      console.log("✅ Credentials saved to Chrome extension storage");
+    });
+  } catch (e) {
+    console.warn("⚠️ Failed to save credentials to extension storage:", e);
+  }
 
-  // Wait for extension to store credentials
-  await new Promise(resolve => setTimeout(resolve, 200));
-
-  // Ask extension to return credentials back to populate localStorage
-  window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
+  // 4) Reload to apply config
+  window.location.reload(true);
 }
 
 function logoutUser() {
-  // Ask extension to clear its credentials
-  window.parent.postMessage({ type: "SOFTPHONE_LOGOUT" }, "*");
+  // 1) Clear localStorage
+  localStorage.clear();
+  localStorage.setItem("loggedIn", false);
+
+  // 2) Clear extension storage
+  try {
+    chrome.storage.local.remove('softphoneCredentials', () => {
+      console.log("🧹 Cleared credentials from Chrome extension storage");
+    });
+  } catch (e) {
+    console.warn("⚠️ Failed to clear Chrome extension storage:", e);
+  }
+
+  // 3) Reload
+  window.location.reload(true);
 }
-
-
-window.addEventListener("message", (event) => {
-  // Make sure it's from the extension
-  if (event.origin !== "chrome-extension://" && event.origin !== "https://login-softphone.vercel.app") return;
-
-  // Extension confirms credentials cleared, now clear localStorage
-  if (event.data.type === "SOFTPHONE_LOGOUT_COMPLETE") {
-    localStorage.clear();
-    localStorage.setItem("loggedIn", false);
-    window.location.reload(true);
-  }
-
-  // Extension sends credentials back, store them in localStorage
-  if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
-    const creds = event.data.credentials;
-    if (!creds) return;
-
-    // Store to localStorage
-    localStorage.setItem("profileName", creds.profileName);
-    localStorage.setItem("wssServer", creds.wssServer);
-    localStorage.setItem("WebSocketPort", creds.WebSocketPort);
-    localStorage.setItem("ServerPath", creds.ServerPath);
-    localStorage.setItem("SipDomain", creds.SipDomain);
-    localStorage.setItem("SipUsername", creds.SipUsername);
-    localStorage.setItem("SipPassword", creds.SipPassword);
-    localStorage.setItem("loggedIn", creds.loggedIn);
-    if (creds.instanceID) {
-      localStorage.setItem("InstanceId", creds.instanceID);
-    }
-
-    // Force re-init
-    window.location.reload(true);
-  }
-});
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
