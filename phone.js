@@ -2726,62 +2726,43 @@ async function testingLogin(countryCode, loginNumber, loginPassword) {
   }
 }
 
-function AutoProvisionAccount(loginCredentials) {
-  const displayName = loginCredentials.display_name;
-  const username = loginCredentials.username;
-  const extention = loginCredentials.extention;
-  const password = loginCredentials.password;
-  const wssDomain = loginCredentials.wss_domain;
-  const wssPort = loginCredentials.wss_port;
-  const wssPath = loginCredentials.wss_path;
-  const phoneNumberPrefix = loginCredentials.phone_number_prefix;
-
-  // 1) Generate or reuse a unique profileUserID
-  if (localDB.getItem('profileUserID') == null) {
-    localDB.setItem('profileUserID', uID());
-  }
-
-  // 2) Store account‐related fields:
-  localDB.setItem('profileName', displayName);
-  localDB.setItem('wssServer', wssDomain);
-  localDB.setItem('WebSocketPort', wssPort);
-  localDB.setItem('ServerPath', wssPath);
-  localDB.setItem('SipDomain', wssDomain);
-  localDB.setItem('SipUsername', extention);
-  localDB.setItem('SipPassword', password);
-  localDB.setItem('loggedIn', true);
-  // 4) You could also pre‐configure any audio/video defaults here:
-  //    For instance, localDB.setItem("AudioOutputId", "default");
-  //    But most audio/video keys are optional and will default on first use.
-
-  // 5) Finally, after provisioning, force a rerun of InitUi() so the UI “unlocks.”
-  window.location.reload(true)
-
-  //for extension
-  const credentials = {
-    profileName: displayName,
-    wssServer: wssDomain,
-    WebSocketPort: wssPort,
-    ServerPath: wssPath,
-    SipDomain: wssDomain,
-    SipUsername: extention,
-    SipPassword: password,
+async function AutoProvisionAccount(loginCredentials) {
+  const creds = {
+    profileName: loginCredentials.display_name,
+    wssServer: loginCredentials.wss_domain,
+    WebSocketPort: loginCredentials.wss_port,
+    ServerPath: loginCredentials.wss_path,
+    SipDomain: loginCredentials.wss_domain,
+    SipUsername: loginCredentials.extention,
+    SipPassword: loginCredentials.password,
     loggedIn: true,
-    instanceID: savedInstanceID || localDB.getItem('InstanceId') || null //for extension
+    instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
   };
 
-  //for extension
-  window.parent.postMessage({
-    type: "SOFTPHONE_SAVE_CREDENTIALS",
-    credentials
-  }, "*");
+  // Send credentials to extension
+  window.parent.postMessage({ type: "SOFTPHONE_SAVE_CREDENTIALS", credentials: creds }, "*");
+
+  // Wait a little for extension to save
+  await new Promise(resolve => setTimeout(resolve, 200));
+
+  // Ask extension to send back credentials
+  window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 }
 
 function logoutUser() {
-  localStorage.clear();
-  localStorage.setItem('loggedIn', false);
-  window.location.reload(true);
+  // Clear extension storage
+  window.parent.postMessage({ type: "SOFTPHONE_LOGOUT" }, "*");
 }
+
+window.addEventListener("message", (event) => {
+  if (event.data.type === "SOFTPHONE_LOGOUT_COMPLETE") {
+    // Final cleanup after extension clears storage
+    localStorage.clear();
+    localStorage.setItem("loggedIn", false);
+    window.location.reload(true);
+  }
+});
+
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
