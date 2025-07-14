@@ -2734,23 +2734,23 @@ function AutoProvisionAccount(loginCredentials) {
   const wssDomain = loginCredentials.wss_domain;
   const wssPort = loginCredentials.wss_port;
   const wssPath = loginCredentials.wss_path;
-  const phoneNumberPrefix = loginCredentials.phone_number_prefix;
 
-  // Save to local DB first
-  if (localDB.getItem('profileUserID') == null) {
-    localDB.setItem('profileUserID', uID());
+  // Generate or reuse a unique profileUserID
+  if (localStorage.getItem('profileUserID') == null) {
+    localStorage.setItem('profileUserID', uID());
   }
 
-  localDB.setItem('profileName', displayName);
-  localDB.setItem('wssServer', wssDomain);
-  localDB.setItem('WebSocketPort', wssPort);
-  localDB.setItem('ServerPath', wssPath);
-  localDB.setItem('SipDomain', wssDomain);
-  localDB.setItem('SipUsername', extention);
-  localDB.setItem('SipPassword', password);
-  localDB.setItem('loggedIn', true);
+  // Save to local DB
+  localStorage.setItem('profileName', displayName);
+  localStorage.setItem('wssServer', wssDomain);
+  localStorage.setItem('WebSocketPort', wssPort);
+  localStorage.setItem('ServerPath', wssPath);
+  localStorage.setItem('SipDomain', wssDomain);
+  localStorage.setItem('SipUsername', extention);
+  localStorage.setItem('SipPassword', password);
+  localStorage.setItem('loggedIn', true);
 
-  // Prepare credentials for Chrome Extension
+  // Prepare credentials object
   const credentials = {
     profileName: displayName,
     wssServer: wssDomain,
@@ -2760,32 +2760,47 @@ function AutoProvisionAccount(loginCredentials) {
     SipUsername: extention,
     SipPassword: password,
     loggedIn: true,
-    instanceID: savedInstanceID || localDB.getItem('InstanceId') || null
+    instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
   };
 
-  // Post message to content script (extension) — MUST go to `window.top` from iframe
-  window.top.postMessage({
+  // ✅ Send to Chrome Extension storage
+  window.parent.postMessage({
     type: "SOFTPHONE_SAVE_CREDENTIALS",
-    credentials: credentials
-  }, "*"); // Or use precise origin instead of "*"
+    credentials
+  }, "*");
 
-  // Reload after a short delay (gives extension time to receive it)
-  setTimeout(() => window.location.reload(true), 300);
+  // Reload to finish login
+  window.location.reload(true);
 }
 
 
+
 function logoutUser() {
-  // 1. Clear Local Storage (localDB)
+  // Step 1: Read current local DB state (if needed)
+  const logoutState = {
+    profileName: localStorage.getItem("profileName") || null,
+    wssServer: localStorage.getItem("wssServer") || null,
+    WebSocketPort: localStorage.getItem("WebSocketPort") || null,
+    ServerPath: localStorage.getItem("ServerPath") || null,
+    SipDomain: localStorage.getItem("SipDomain") || null,
+    SipUsername: localStorage.getItem("SipUsername") || null,
+    SipPassword: localStorage.getItem("SipPassword") || null,
+    loggedIn: false,
+    instanceID: localStorage.getItem("InstanceId") || null
+  };
+
+  // Step 2: Save to Chrome extension storage (optional - final state)
+  window.parent.postMessage({
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials: logoutState
+  }, "*");
+
+  // Step 3: Clear local DB
   localStorage.clear();
-  localStorage.setItem('loggedIn', false);
+  localStorage.setItem("loggedIn", false);
 
-  // 2. Notify Chrome Extension to clear its stored credentials
-  window.top.postMessage({ type: "SOFTPHONE_LOGOUT" }, "*");
-
-  // 3. Wait briefly, then reload the app
-  setTimeout(() => {
-    window.location.reload(true);
-  }, 300);
+  // Step 4: Reload the UI
+  window.location.reload(true);
 }
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
