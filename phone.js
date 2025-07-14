@@ -251,11 +251,6 @@ async function waitForPreLoads() {
       // if (creds.instanceID) localStorage.setItem('InstanceId', creds.instanceID);
 
       localStorage.setItem('loggedIn', 'true');
-
-      // Optionally reload UI or InitUi()
-      if (typeof InitUi === 'function') {
-        InitUi();
-      }
     }
   });
 }
