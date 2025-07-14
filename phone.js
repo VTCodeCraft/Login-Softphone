@@ -242,6 +242,7 @@ window.addEventListener("message", (event) => {
   console.log("HELLO");
   
   if (event.origin !== "chrome-extension://folemaabbnmnmgficfibnfghnpekmmai") return;
+  console.log("HELLO2");
   if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
     const creds = event.data.credentials;
     if (creds && creds.loggedIn) {
