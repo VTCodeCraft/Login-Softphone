@@ -241,9 +241,8 @@ window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 window.addEventListener("message", (event) => {
   console.log("HELLO");
   
-  if (event.origin !== "chrome-extension://folemaabbnmnmgficfibnfghnpekmmai") return;
-  console.log("HELLO2");
   if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
+    console.log("HELLO2");
     const creds = event.data.credentials;
     if (creds && creds.loggedIn) {
       console.log("🔁 Syncing from Chrome storage to localStorage", creds);
