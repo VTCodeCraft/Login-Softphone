@@ -2778,15 +2778,15 @@ function AutoProvisionAccount(loginCredentials) {
 function logoutUser() {
   // Step 1: Read current local DB state (if needed)
   const logoutState = {
-    profileName: localStorage.getItem("profileName") || null,
-    wssServer: localStorage.getItem("wssServer") || null,
-    WebSocketPort: localStorage.getItem("WebSocketPort") || null,
-    ServerPath: localStorage.getItem("ServerPath") || null,
-    SipDomain: localStorage.getItem("SipDomain") || null,
-    SipUsername: localStorage.getItem("SipUsername") || null,
-    SipPassword: localStorage.getItem("SipPassword") || null,
-    loggedIn: false,
-    instanceID: localStorage.getItem("InstanceId")
+    // profileName: localStorage.getItem("profileName") || null,
+    // wssServer: localStorage.getItem("wssServer") || null,
+    // WebSocketPort: localStorage.getItem("WebSocketPort") || null,
+    // ServerPath: localStorage.getItem("ServerPath") || null,
+    // SipDomain: localStorage.getItem("SipDomain") || null,
+    // SipUsername: localStorage.getItem("SipUsername") || null,
+    // SipPassword: localStorage.getItem("SipPassword") || null,
+    instanceID: localStorage.getItem("InstanceId"),
+    loggedIn: false
   };
 
   // Step 2: Save to Chrome extension storage (optional - final state)
