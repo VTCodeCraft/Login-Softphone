@@ -234,6 +234,28 @@ const navUserAgent = window.navigator.userAgent; // TODO: change to Navigator.us
 const instanceID = String(Date.now());
 const localDB = window.localStorage;
 
+window.addEventListener("message", (event) => {
+  if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS" && event.data.credentials) {
+    console.log("🔁 Syncing from Chrome storage to localStorage");
+    const creds = event.data.credentials;
+
+    for (const key in creds) {
+      if (creds[key] !== undefined && creds[key] !== null) {
+        localStorage.setItem(key, creds[key]);
+      }
+    }
+
+    // Optional: reload again to apply changes
+    if (creds.loggedIn === true && window.location.href.indexOf("login") > -1) {
+      console.log("🔁 Reloading to apply synced credentials...");
+      window.location.reload();
+    }
+  }
+});
+
+// Ask extension for credentials on load
+window.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
+
 
 // Set the following to null to disable
 let welcomeScreen = '<div class="UiWindowField"><pre style="font-size: 12px">';
@@ -2615,28 +2637,6 @@ function updateMicIcon(allowed) {
 //   // 4) Build the full dialer UI now that provisioning is complete:
 
 // }
-
-window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://login-softphone.vercel.app") return;
-
-  if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
-    const creds = event.data.credentials;
-    if (creds && creds.loggedIn) {
-      console.log("🔁 Syncing from Chrome storage to localStorage");
-
-      // Copy each key from Chrome storage into localStorage
-      Object.entries(creds).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          localStorage.setItem(key, value);
-        }
-      });
-
-      // Optional: reload UI after credentials are loaded
-      window.location.reload(true);
-    }
-  }
-});
 
 //Login Function
 async function testingLogin(countryCode, loginNumber, loginPassword) {
