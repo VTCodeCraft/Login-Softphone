@@ -222,9 +222,9 @@ async function waitForPreLoads() {
 
   // When this function returns, **all** critical scripts are loaded & executed.
 
+}
 
-
-  //for extension 
+//for extension 
 
   // 1. Ask for credentials from extension
   window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
@@ -254,8 +254,6 @@ async function waitForPreLoads() {
       }
     }
   });
-
-}
 
 
 
