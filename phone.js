@@ -234,36 +234,33 @@ const navUserAgent = window.navigator.userAgent; // TODO: change to Navigator.us
 const instanceID = String(Date.now());
 const localDB = window.localStorage;
 
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://login-softphone.vercel.app") return;
+// Ask extension for stored credentials
+window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 
+// Listen for response
+window.addEventListener("message", (event) => {
+  if (event.origin !== "chrome-extension://folemaabbnmnmgficfibnfghnpekmmai") return;
   if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
     const creds = event.data.credentials;
-    if (!creds || !creds.loggedIn) return;
+    if (creds && creds.loggedIn) {
+      console.log("🔁 Syncing from Chrome storage to localStorage", creds);
 
-    console.log("🔁 Syncing from Chrome storage to localStorage", creds);
+      localStorage.setItem("profileName", creds.profileName || "");
+      localStorage.setItem("wssServer", creds.wssServer || "");
+      localStorage.setItem("WebSocketPort", creds.WebSocketPort || "");
+      localStorage.setItem("ServerPath", creds.ServerPath || "");
+      localStorage.setItem("SipDomain", creds.SipDomain || "");
+      localStorage.setItem("SipUsername", creds.SipUsername || "");
+      localStorage.setItem("SipPassword", creds.SipPassword || "");
+      localStorage.setItem("profileUserID", creds.profileUserID || "");
+      localStorage.setItem("InstanceId", creds.instanceID || "");
+      localStorage.setItem("loggedIn", "true");
 
-    // Populate localStorage (or localDB) from the credentials
-    localStorage.setItem('profileName', creds.profileName || '');
-    localStorage.setItem('wssServer', creds.wssServer || '');
-    localStorage.setItem('WebSocketPort', creds.WebSocketPort || '');
-    localStorage.setItem('ServerPath', creds.ServerPath || '');
-    localStorage.setItem('SipDomain', creds.SipDomain || '');
-    localStorage.setItem('SipUsername', creds.SipUsername || '');
-    localStorage.setItem('SipPassword', creds.SipPassword || '');
-    localStorage.setItem('loggedIn', 'true');
-    localStorage.setItem('profileUserID', creds.profileUserID || '');
-    localStorage.setItem('InstanceId', creds.instanceID || '');
-
-    // ✅ Then re-run UI init if needed
-    if (typeof InitUi === "function") {
-      InitUi(); // optional, only if required
+      // Optional: trigger UI re-initialization
+      window.location.reload(true);
     }
   }
 });
-
-// 🔁 Request credentials on startup (add BEFORE InitUi)
-window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 
 
 // Set the following to null to disable
