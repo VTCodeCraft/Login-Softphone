@@ -245,7 +245,6 @@ window.addEventListener("message", (event) => {
       }
     }
 
-    // Optional: reload again to apply changes
     if (creds.loggedIn === true && window.location.href.indexOf("login") > -1) {
       console.log("🔁 Reloading to apply synced credentials...");
       window.location.reload();
@@ -253,9 +252,8 @@ window.addEventListener("message", (event) => {
   }
 });
 
-// Ask extension for credentials on load
+// Trigger the extension to send credentials
 window.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
-
 
 // Set the following to null to disable
 let welcomeScreen = '<div class="UiWindowField"><pre style="font-size: 12px">';
