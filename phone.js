@@ -235,25 +235,36 @@ const instanceID = String(Date.now());
 const localDB = window.localStorage;
 
 window.addEventListener("message", (event) => {
-  if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS" && event.data.credentials) {
-    console.log("🔁 Syncing from Chrome storage to localStorage");
+  if (event.origin !== "https://login-softphone.vercel.app") return;
+
+  if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
     const creds = event.data.credentials;
+    if (!creds || !creds.loggedIn) return;
 
-    for (const key in creds) {
-      if (creds[key] !== undefined && creds[key] !== null) {
-        localStorage.setItem(key, creds[key]);
-      }
-    }
+    console.log("🔁 Syncing from Chrome storage to localStorage", creds);
 
-    if (creds.loggedIn === true && window.location.href.indexOf("login") > -1) {
-      console.log("🔁 Reloading to apply synced credentials...");
-      window.location.reload();
+    // Populate localStorage (or localDB) from the credentials
+    localStorage.setItem('profileName', creds.profileName || '');
+    localStorage.setItem('wssServer', creds.wssServer || '');
+    localStorage.setItem('WebSocketPort', creds.WebSocketPort || '');
+    localStorage.setItem('ServerPath', creds.ServerPath || '');
+    localStorage.setItem('SipDomain', creds.SipDomain || '');
+    localStorage.setItem('SipUsername', creds.SipUsername || '');
+    localStorage.setItem('SipPassword', creds.SipPassword || '');
+    localStorage.setItem('loggedIn', 'true');
+    localStorage.setItem('profileUserID', creds.profileUserID || '');
+    localStorage.setItem('InstanceId', creds.instanceID || '');
+
+    // ✅ Then re-run UI init if needed
+    if (typeof InitUi === "function") {
+      InitUi(); // optional, only if required
     }
   }
 });
 
-// Trigger the extension to send credentials
-window.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
+// 🔁 Request credentials on startup (add BEFORE InitUi)
+window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
+
 
 // Set the following to null to disable
 let welcomeScreen = '<div class="UiWindowField"><pre style="font-size: 12px">';
