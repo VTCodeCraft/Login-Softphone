@@ -2771,7 +2771,7 @@ window.addEventListener("load", () => {
         SipUsername: localStorage.getItem("SipUsername"),
         SipPassword: localStorage.getItem("SipPassword"),
         profileUserID: localStorage.getItem("profileUserID"),
-        instanceID: localStorage.getItem("InstanceId") || null,
+        instanceID: localStorage.getItem("InstanceId"),
         loggedIn: true
       }
     : { loggedIn: false };
