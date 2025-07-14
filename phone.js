@@ -2771,7 +2771,7 @@ function AutoProvisionAccount(loginCredentials) {
     }, "*");
 
     console.log("📦 Delayed send of full credentials to extension", credentials);
-  }, 200); // delay (ms)
+  }, 500); // delay (ms)
 
   // Reload to finish login
   window.location.reload(true);
