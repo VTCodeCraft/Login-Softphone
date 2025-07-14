@@ -2760,7 +2760,7 @@ function AutoProvisionAccount(loginCredentials) {
     SipUsername: extention,
     SipPassword: password,
     loggedIn: true,
-    instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
+    // instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
   };
 
   // ✅ Send to Chrome Extension storage
@@ -2785,7 +2785,7 @@ function logoutUser() {
     // SipDomain: localStorage.getItem("SipDomain") || null,
     // SipUsername: localStorage.getItem("SipUsername") || null,
     // SipPassword: localStorage.getItem("SipPassword") || null,
-    instanceID: localStorage.getItem("InstanceId"),
+    // instanceID: localStorage.getItem("InstanceId"),
     loggedIn: false
   };
 
