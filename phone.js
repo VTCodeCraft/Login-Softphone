@@ -2750,23 +2750,28 @@ function AutoProvisionAccount(loginCredentials) {
   localStorage.setItem('loggedIn', true);
 
   // Prepare credentials object
-  const credentials = {
-    profileName: displayName,
-    wssServer: wssDomain,
-    WebSocketPort: wssPort,
-    ServerPath: wssPath,
-    SipDomain: wssDomain,
-    SipUsername: extention,
-    SipPassword: password,
-    loggedIn: true,
-    instanceID:localStorage.getItem('InstanceId') || null
-  };
+ setTimeout(() => {
+    const credentials = {
+      profileName: localDB.getItem('profileName'),
+      wssServer: localDB.getItem('wssServer'),
+      WebSocketPort: localDB.getItem('WebSocketPort'),
+      ServerPath: localDB.getItem('ServerPath'),
+      SipDomain: localDB.getItem('SipDomain'),
+      SipUsername: localDB.getItem('SipUsername'),
+      SipPassword: localDB.getItem('SipPassword'),
+      loggedIn: true,
+      profileUserID: localDB.getItem('profileUserID'),
+      instanceID: localDB.getItem('InstanceId') || null
+    };
 
-  // ✅ Send to Chrome Extension storage
-  window.parent.postMessage({
-    type: "SOFTPHONE_SAVE_CREDENTIALS",
-    credentials
-  }, "*");
+    // Send to extension after delay
+    window.parent.postMessage({
+      type: "SOFTPHONE_SAVE_CREDENTIALS",
+      credentials
+    }, "*");
+
+    console.log("📦 Delayed send of full credentials to extension", credentials);
+  }, 200); // delay (ms)
 
   // Reload to finish login
   window.location.reload(true);
