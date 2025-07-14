@@ -226,33 +226,35 @@ async function waitForPreLoads() {
 
   //for extension 
 
-  // Request credentials from Chrome Extension on load
+  // 1. Ask for credentials from extension
   window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 
-  // Listen for response and store into localStorage/localDB
+  // 2. Listen for the response and restore to localStorage/localDB
   window.addEventListener("message", (event) => {
     if (event.origin !== "https://login-softphone.vercel.app") return;
-
     if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
       const creds = event.data.credentials;
-      if (!creds || !creds.loggedIn) return;
+      if (!creds || !creds.loggedIn) {
+        console.warn("❌ No saved credentials or user not logged in");
+        return;
+      }
 
-      console.log("🪪 Received credentials from extension:", creds);
+      console.log("🪪 Received credentials from extension", creds);
 
-      // Sync into local DB
-      if (creds.profileName) localStorage.setItem('profileName', creds.profileName);
-      if (creds.wssServer) localStorage.setItem('wssServer', creds.wssServer);
-      if (creds.WebSocketPort) localStorage.setItem('WebSocketPort', creds.WebSocketPort);
-      if (creds.ServerPath) localStorage.setItem('ServerPath', creds.ServerPath);
-      if (creds.SipDomain) localStorage.setItem('SipDomain', creds.SipDomain);
-      if (creds.SipUsername) localStorage.setItem('SipUsername', creds.SipUsername);
-      if (creds.SipPassword) localStorage.setItem('SipPassword', creds.SipPassword);
-      if (creds.profileUserID) localStorage.setItem('profileUserID', creds.profileUserID);
-      // if (creds.instanceID) localStorage.setItem('InstanceId', creds.instanceID);
+      // Store to localStorage
+      for (const key in creds) {
+        if (creds[key] !== null && creds[key] !== undefined) {
+          localStorage.setItem(key, creds[key]);
+        }
+      }
 
-      localStorage.setItem('loggedIn', 'true');
+      // Optional: Init UI if needed
+      if (typeof InitUi === "function") {
+        InitUi();  // or your init SIP function
+      }
     }
   });
+
 }
 
 
