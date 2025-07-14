@@ -336,7 +336,7 @@ let SipDomain = getDbItem('SipDomain', null); // eg: raspberrypi.local
 let SipUsername = getDbItem('SipUsername', null); // eg: webrtc
 let SipPassword = getDbItem('SipPassword', null); // eg: webrtc
 
-let SingleInstance = getDbItem('SingleInstance', '0') == '0'; // Un-registers this account if the phone is opened in another tab/window
+let SingleInstance = getDbItem('SingleInstance', '1') == '1'; // Un-registers this account if the phone is opened in another tab/window
 
 let TransportConnectionTimeout = parseInt(
   getDbItem('TransportConnectionTimeout', 15)
