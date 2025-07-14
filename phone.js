@@ -5,40 +5,6 @@ const clientId = params.get('id');
 
 let welcome_info = {}
 let mainUrl = 'https://cdn.founderscart.com/app/ivrsolutions/webrtc/softphone/'
-
-// Step 1: Ask the Chrome Extension for credentials
-window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
-
-// Step 2: When credentials come back, populate localStorage and init UI
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://login-softphone.vercel.app") return;
-
-  if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
-    const creds = event.data.credentials;
-    if (!creds || !creds.loggedIn) {
-      console.log("🧼 No credentials found or not logged in.");
-      return;
-    }
-
-    console.log("🪪 Setting localStorage from extension", creds);
-
-    // Copy credentials to localStorage
-    for (const key in creds) {
-      if (creds[key] !== undefined && creds[key] !== null) {
-        localStorage.setItem(key, creds[key]);
-      }
-    }
-
-    // Trigger UI unlock
-    if (typeof InitUi === "function") {
-      InitUi(); // This should reinitialize your SIP UI
-    } else {
-      console.warn("⚠️ InitUi not found.");
-    }
-  }
-});
-
-
 async function waitForPreLoads() {
   // ---------- Helpers ----------
   function addMeta(attrs) {
