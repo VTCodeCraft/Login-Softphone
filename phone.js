@@ -2786,7 +2786,7 @@ function logoutUser() {
     SipUsername: localStorage.getItem("SipUsername") || null,
     SipPassword: localStorage.getItem("SipPassword") || null,
     loggedIn: false,
-    instanceID: localStorage.getItem("InstanceId") || null
+    instanceID: localStorage.getItem("InstanceId")
   };
 
   // Step 2: Save to Chrome extension storage (optional - final state)
