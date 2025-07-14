@@ -2774,9 +2774,7 @@ function AutoProvisionAccount(loginCredentials) {
   }, 500); // delay (ms)
 
   // Reload to finish login
-  setTimeout(() => {
-    window.location.reload(true);
-  }, 600); // slightly after storage update
+  window.location.reload(true);
 }
 
 
@@ -2805,7 +2803,7 @@ function logoutUser() {
   // Step 4: Reload UI after delay (optional, or immediate)
   setTimeout(() => {
     window.location.reload(true);
-  }, 600); // slightly after storage update
+  }, 600);
 }
 
 // function ShowLoggedInstructions() {
