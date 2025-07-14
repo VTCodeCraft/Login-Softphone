@@ -5,6 +5,40 @@ const clientId = params.get('id');
 
 let welcome_info = {}
 let mainUrl = 'https://cdn.founderscart.com/app/ivrsolutions/webrtc/softphone/'
+
+// Step 1: Ask the Chrome Extension for credentials
+window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
+
+// Step 2: When credentials come back, populate localStorage and init UI
+window.addEventListener("message", (event) => {
+  if (event.origin !== "https://login-softphone.vercel.app") return;
+
+  if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
+    const creds = event.data.credentials;
+    if (!creds || !creds.loggedIn) {
+      console.log("🧼 No credentials found or not logged in.");
+      return;
+    }
+
+    console.log("🪪 Setting localStorage from extension", creds);
+
+    // Copy credentials to localStorage
+    for (const key in creds) {
+      if (creds[key] !== undefined && creds[key] !== null) {
+        localStorage.setItem(key, creds[key]);
+      }
+    }
+
+    // Trigger UI unlock
+    if (typeof InitUi === "function") {
+      InitUi(); // This should reinitialize your SIP UI
+    } else {
+      console.warn("⚠️ InitUi not found.");
+    }
+  }
+});
+
+
 async function waitForPreLoads() {
   // ---------- Helpers ----------
   function addMeta(attrs) {
@@ -221,39 +255,7 @@ async function waitForPreLoads() {
   // }
 
   // When this function returns, **all** critical scripts are loaded & executed.
-
 }
-
-//for extension 
-
-  // 1. Ask for credentials from extension
-  window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
-
-  // 2. Listen for the response and restore to localStorage/localDB
-  window.addEventListener("message", (event) => {
-    if (event.origin !== "https://login-softphone.vercel.app") return;
-    if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
-      const creds = event.data.credentials;
-      if (!creds || !creds.loggedIn) {
-        console.warn("❌ No saved credentials or user not logged in");
-        return;
-      }
-
-      console.log("🪪 Received credentials from extension", creds);
-
-      // Store to localStorage
-      for (const key in creds) {
-        if (creds[key] !== null && creds[key] !== undefined) {
-          localStorage.setItem(key, creds[key]);
-        }
-      }
-
-      // Optional: Init UI if needed
-      if (typeof InitUi === "function") {
-        InitUi();  // or your init SIP function
-      }
-    }
-  });
 
 
 
@@ -3671,7 +3673,7 @@ function ReceiveCall(session) {
   }
 
   console.log('New Incoming Call!', callerID + ' <' + did + '>');
-
+  
   //for extension
   window.parent.postMessage({
     type: "SOFTPHONE_INCOMING_CALL",
