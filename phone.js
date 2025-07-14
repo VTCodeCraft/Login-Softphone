@@ -259,7 +259,7 @@ window.addEventListener("message", (event) => {
       localStorage.setItem("loggedIn", "true");
 
       // Optional: trigger UI re-initialization
-      window.location.reload(true);
+      // window.location.reload(true);
     }
   }
 });
