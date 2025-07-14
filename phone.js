@@ -221,6 +221,43 @@ async function waitForPreLoads() {
   // }
 
   // When this function returns, **all** critical scripts are loaded & executed.
+
+
+
+  //for extension 
+
+  // Request credentials from Chrome Extension on load
+  window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
+
+  // Listen for response and store into localStorage/localDB
+  window.addEventListener("message", (event) => {
+    if (event.origin !== "https://login-softphone.vercel.app") return;
+
+    if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
+      const creds = event.data.credentials;
+      if (!creds || !creds.loggedIn) return;
+
+      console.log("🪪 Received credentials from extension:", creds);
+
+      // Sync into local DB
+      if (creds.profileName) localStorage.setItem('profileName', creds.profileName);
+      if (creds.wssServer) localStorage.setItem('wssServer', creds.wssServer);
+      if (creds.WebSocketPort) localStorage.setItem('WebSocketPort', creds.WebSocketPort);
+      if (creds.ServerPath) localStorage.setItem('ServerPath', creds.ServerPath);
+      if (creds.SipDomain) localStorage.setItem('SipDomain', creds.SipDomain);
+      if (creds.SipUsername) localStorage.setItem('SipUsername', creds.SipUsername);
+      if (creds.SipPassword) localStorage.setItem('SipPassword', creds.SipPassword);
+      if (creds.profileUserID) localStorage.setItem('profileUserID', creds.profileUserID);
+      // if (creds.instanceID) localStorage.setItem('InstanceId', creds.instanceID);
+
+      localStorage.setItem('loggedIn', 'true');
+
+      // Optionally reload UI or InitUi()
+      if (typeof InitUi === 'function') {
+        InitUi();
+      }
+    }
+  });
 }
 
 
@@ -3639,7 +3676,7 @@ function ReceiveCall(session) {
   }
 
   console.log('New Incoming Call!', callerID + ' <' + did + '>');
-  
+
   //for extension
   window.parent.postMessage({
     type: "SOFTPHONE_INCOMING_CALL",
