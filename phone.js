@@ -239,7 +239,7 @@ window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 
 // Listen for response
 window.addEventListener("message", (event) => {
-  console.log("🔁 Syncing from Chrome storage to localStorage");
+  console.log("HELLO");
   
   if (event.origin !== "chrome-extension://folemaabbnmnmgficfibnfghnpekmmai") return;
   if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
