@@ -223,30 +223,6 @@ async function waitForPreLoads() {
   // When this function returns, **all** critical scripts are loaded & executed.
 }
 
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://login-softphone.vercel.app") return;
-
-  if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
-    const creds = event.data.credentials;
-    if (creds && creds.loggedIn) {
-      console.log("🔁 Syncing credentials from extension to localStorage");
-
-      Object.entries(creds).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          localStorage.setItem(key, value);
-        }
-      });
-
-      window.location.reload(true);
-    }
-  }
-
-  if (event.data.type === "SOFTPHONE_LOGOUT_COMPLETE") {
-    localStorage.clear();
-    localStorage.setItem("loggedIn", false);
-    window.location.reload(true);
-  }
-});
 
 
 
@@ -2797,38 +2773,35 @@ function AutoProvisionAccount(loginCredentials) {
   window.location.reload(true);
 }
 
+
+
 function logoutUser() {
-  // Send logout request to extension
-  window.parent.postMessage({ type: "SOFTPHONE_LOGOUT" }, "*");
+  // Step 1: Read current local DB state (if needed)
+  const logoutState = {
+    // profileName: localStorage.getItem("profileName") || null,
+    // wssServer: localStorage.getItem("wssServer") || null,
+    // WebSocketPort: localStorage.getItem("WebSocketPort") || null,
+    // ServerPath: localStorage.getItem("ServerPath") || null,
+    // SipDomain: localStorage.getItem("SipDomain") || null,
+    // SipUsername: localStorage.getItem("SipUsername") || null,
+    // SipPassword: localStorage.getItem("SipPassword") || null,
+    // instanceID: localStorage.getItem("InstanceId"),
+    loggedIn: false
+  };
+
+  // Step 2: Save to Chrome extension storage (optional - final state)
+  window.parent.postMessage({
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials: logoutState
+  }, "*");
+
+  // Step 3: Clear local DB
+  localStorage.clear();
+  localStorage.setItem("loggedIn", false);
+
+  // Step 4: Reload the UI
+  window.location.reload(true);
 }
-
-// function logoutUser() {
-//   // Step 1: Read current local DB state (if needed)
-//   const logoutState = {
-//     // profileName: localStorage.getItem("profileName") || null,
-//     // wssServer: localStorage.getItem("wssServer") || null,
-//     // WebSocketPort: localStorage.getItem("WebSocketPort") || null,
-//     // ServerPath: localStorage.getItem("ServerPath") || null,
-//     // SipDomain: localStorage.getItem("SipDomain") || null,
-//     // SipUsername: localStorage.getItem("SipUsername") || null,
-//     // SipPassword: localStorage.getItem("SipPassword") || null,
-//     // instanceID: localStorage.getItem("InstanceId"),
-//     loggedIn: false
-//   };
-
-//   // Step 2: Save to Chrome extension storage (optional - final state)
-//   window.parent.postMessage({
-//     type: "SOFTPHONE_SAVE_CREDENTIALS",
-//     credentials: logoutState
-//   }, "*");
-
-//   // Step 3: Clear local DB
-//   localStorage.clear();
-//   localStorage.setItem("loggedIn", false);
-
-//   // Step 4: Reload the UI
-//   window.location.reload(true);
-// }
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
