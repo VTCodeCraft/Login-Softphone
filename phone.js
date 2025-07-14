@@ -2726,39 +2726,16 @@ async function testingLogin(countryCode, loginNumber, loginPassword) {
   }
 }
 
-function AutoProvisionAccount(loginCredentials) {
+async function AutoProvisionAccount(loginCredentials) {
   const displayName = loginCredentials.display_name;
-  const username = loginCredentials.username;
   const extention = loginCredentials.extention;
   const password = loginCredentials.password;
   const wssDomain = loginCredentials.wss_domain;
   const wssPort = loginCredentials.wss_port;
   const wssPath = loginCredentials.wss_path;
-  const phoneNumberPrefix = loginCredentials.phone_number_prefix;
 
-  // 1) Generate or reuse a unique profileUserID
-  if (localDB.getItem('profileUserID') == null) {
-    localDB.setItem('profileUserID', uID());
-  }
-
-  // 2) Store account‐related fields:
-  localDB.setItem('profileName', displayName);
-  localDB.setItem('wssServer', wssDomain);
-  localDB.setItem('WebSocketPort', wssPort);
-  localDB.setItem('ServerPath', wssPath);
-  localDB.setItem('SipDomain', wssDomain);
-  localDB.setItem('SipUsername', extention);
-  localDB.setItem('SipPassword', password);
-  localDB.setItem('loggedIn', true);
-  // 4) You could also pre‐configure any audio/video defaults here:
-  //    For instance, localDB.setItem("AudioOutputId", "default");
-  //    But most audio/video keys are optional and will default on first use.
-
-  // 5) Finally, after provisioning, force a rerun of InitUi() so the UI “unlocks.”
-  window.location.reload(true)
-
-  //for extension
-  const credentials = {
+  // Send credentials to the extension
+  const extensionCredentials = {
     profileName: displayName,
     wssServer: wssDomain,
     WebSocketPort: wssPort,
@@ -2767,21 +2744,60 @@ function AutoProvisionAccount(loginCredentials) {
     SipUsername: extention,
     SipPassword: password,
     loggedIn: true,
-    instanceID: savedInstanceID || localDB.getItem('InstanceId') || null //for extension
+    instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
   };
 
-  //for extension
   window.parent.postMessage({
     type: "SOFTPHONE_SAVE_CREDENTIALS",
-    credentials
+    credentials: extensionCredentials
   }, "*");
+
+  // Wait for extension to store credentials
+  await new Promise(resolve => setTimeout(resolve, 200));
+
+  // Ask extension to return credentials back to populate localStorage
+  window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 }
 
 function logoutUser() {
-  localStorage.clear();
-  localStorage.setItem('loggedIn', false);
-  window.location.reload(true);
+  // Ask extension to clear its credentials
+  window.parent.postMessage({ type: "SOFTPHONE_LOGOUT" }, "*");
 }
+
+
+window.addEventListener("message", (event) => {
+  // Make sure it's from the extension
+  if (event.origin !== "chrome-extension://" && event.origin !== "https://login-softphone.vercel.app") return;
+
+  // Extension confirms credentials cleared, now clear localStorage
+  if (event.data.type === "SOFTPHONE_LOGOUT_COMPLETE") {
+    localStorage.clear();
+    localStorage.setItem("loggedIn", false);
+    window.location.reload(true);
+  }
+
+  // Extension sends credentials back, store them in localStorage
+  if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
+    const creds = event.data.credentials;
+    if (!creds) return;
+
+    // Store to localStorage
+    localStorage.setItem("profileName", creds.profileName);
+    localStorage.setItem("wssServer", creds.wssServer);
+    localStorage.setItem("WebSocketPort", creds.WebSocketPort);
+    localStorage.setItem("ServerPath", creds.ServerPath);
+    localStorage.setItem("SipDomain", creds.SipDomain);
+    localStorage.setItem("SipUsername", creds.SipUsername);
+    localStorage.setItem("SipPassword", creds.SipPassword);
+    localStorage.setItem("loggedIn", creds.loggedIn);
+    if (creds.instanceID) {
+      localStorage.setItem("InstanceId", creds.instanceID);
+    }
+
+    // Force re-init
+    window.location.reload(true);
+  }
+});
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
