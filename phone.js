@@ -2726,7 +2726,7 @@ async function testingLogin(countryCode, loginNumber, loginPassword) {
   }
 }
 
-async function AutoProvisionAccount(loginCredentials) {
+function AutoProvisionAccount(loginCredentials) {
   const displayName = loginCredentials.display_name;
   const username = loginCredentials.username;
   const extention = loginCredentials.extention;
@@ -2750,42 +2750,38 @@ async function AutoProvisionAccount(loginCredentials) {
   localDB.setItem('SipUsername', extention);
   localDB.setItem('SipPassword', password);
   localDB.setItem('loggedIn', true);
-  const creds = {
-    profileName: loginCredentials.display_name,
-    wssServer: loginCredentials.wss_domain,
-    WebSocketPort: loginCredentials.wss_port,
-    ServerPath: loginCredentials.wss_path,
-    SipDomain: loginCredentials.wss_domain,
-    SipUsername: loginCredentials.extention,
-    SipPassword: loginCredentials.password,
+  // 4) You could also pre‐configure any audio/video defaults here:
+  //    For instance, localDB.setItem("AudioOutputId", "default");
+  //    But most audio/video keys are optional and will default on first use.
+
+  // 5) Finally, after provisioning, force a rerun of InitUi() so the UI “unlocks.”
+  window.location.reload(true)
+
+  //for extension
+  const credentials = {
+    profileName: displayName,
+    wssServer: wssDomain,
+    WebSocketPort: wssPort,
+    ServerPath: wssPath,
+    SipDomain: wssDomain,
+    SipUsername: extention,
+    SipPassword: password,
     loggedIn: true,
-    instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
+    instanceID: savedInstanceID || localDB.getItem('InstanceId') || null //for extension
   };
 
-  // Send credentials to extension
-  window.parent.postMessage({ type: "SOFTPHONE_SAVE_CREDENTIALS", credentials: creds }, "*");
-
-  // Wait a little for extension to save
-  await new Promise(resolve => setTimeout(resolve, 200));
-
-  // Ask extension to send back credentials
-  window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
+  //for extension
+  window.parent.postMessage({
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials
+  }, "*");
 }
 
 function logoutUser() {
-  // Clear extension storage
-  window.parent.postMessage({ type: "SOFTPHONE_LOGOUT" }, "*");
+  localStorage.clear();
+  localStorage.setItem('loggedIn', false);
+  window.location.reload(true);
 }
-
-window.addEventListener("message", (event) => {
-  if (event.data.type === "SOFTPHONE_LOGOUT_COMPLETE") {
-    // Final cleanup after extension clears storage
-    localStorage.clear();
-    localStorage.setItem("loggedIn", false);
-    window.location.reload(true);
-  }
-});
-
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
