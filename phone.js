@@ -2774,7 +2774,9 @@ function AutoProvisionAccount(loginCredentials) {
   }, 500); // delay (ms)
 
   // Reload to finish login
-  window.location.reload(true);
+  setTimeout(() => {
+    window.location.reload(true);
+  }, 600);
 }
 
 
