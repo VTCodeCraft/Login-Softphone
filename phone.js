@@ -2727,19 +2727,16 @@ async function testingLogin(countryCode, loginNumber, loginPassword) {
 
 function AutoProvisionAccount(loginCredentials) {
   const displayName = loginCredentials.display_name;
-  const username = loginCredentials.username;
   const extention = loginCredentials.extention;
   const password = loginCredentials.password;
   const wssDomain = loginCredentials.wss_domain;
   const wssPort = loginCredentials.wss_port;
   const wssPath = loginCredentials.wss_path;
 
-  // Generate or reuse a unique profileUserID
-  if (localStorage.getItem('profileUserID') == null) {
+  if (!localStorage.getItem('profileUserID')) {
     localStorage.setItem('profileUserID', uID());
   }
 
-  // Save to local DB
   localStorage.setItem('profileName', displayName);
   localStorage.setItem('wssServer', wssDomain);
   localStorage.setItem('WebSocketPort', wssPort);
@@ -2749,64 +2746,44 @@ function AutoProvisionAccount(loginCredentials) {
   localStorage.setItem('SipPassword', password);
   localStorage.setItem('loggedIn', true);
 
-  // Prepare credentials object
- setTimeout(() => {
-    const credentials = {
-      profileName: localDB.getItem('profileName'),
-      wssServer: localDB.getItem('wssServer'),
-      WebSocketPort: localDB.getItem('WebSocketPort'),
-      ServerPath: localDB.getItem('ServerPath'),
-      SipDomain: localDB.getItem('SipDomain'),
-      SipUsername: localDB.getItem('SipUsername'),
-      SipPassword: localDB.getItem('SipPassword'),
-      loggedIn: true,
-      profileUserID: localDB.getItem('profileUserID'),
-      instanceID: localDB.getItem('InstanceId')
-    };
-
-    // Send to extension after delay
-    window.parent.postMessage({
-      type: "SOFTPHONE_SAVE_CREDENTIALS",
-      credentials
-    }, "*");
-
-    console.log("📦 Delayed send of full credentials to extension", credentials);
-  }, 500); // delay (ms)
-
-  // Reload to finish login
-  setTimeout(() => {
-    window.location.reload(true);
-  }, 600);
+  window.location.reload(true); // ⬅ Reload triggers post-login transfer
 }
+
 
 
 
 function logoutUser() {
-  // Step 1: Clear local DB immediately
   localStorage.clear();
-  localStorage.setItem("loggedIn", false);
-
-  // Step 2: Wait before sending logout state to Chrome extension
-  setTimeout(() => {
-    const logoutState = {
-      instanceID: localStorage.getItem("InstanceId"),
-      loggedIn: false
-    };
-
-    // Step 3: Push to Chrome extension storage
-    window.parent.postMessage({
-      type: "SOFTPHONE_SAVE_CREDENTIALS",
-      credentials: logoutState
-    }, "*");
-
-    console.log("🧹 Delayed logout state sent to extension", logoutState);
-  }, 500); // delay in milliseconds
-
-  // Step 4: Reload UI after delay (optional, or immediate)
-  setTimeout(() => {
-    window.location.reload(true);
-  }, 600);
+  localStorage.setItem("loggedIn", false); // Keep flag for after reload
+  window.location.reload(true); // ⬅ Reload triggers logout sync
 }
+
+window.addEventListener("load", () => {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+
+  const credentials = isLoggedIn
+    ? {
+        profileName: localStorage.getItem("profileName"),
+        wssServer: localStorage.getItem("wssServer"),
+        WebSocketPort: localStorage.getItem("WebSocketPort"),
+        ServerPath: localStorage.getItem("ServerPath"),
+        SipDomain: localStorage.getItem("SipDomain"),
+        SipUsername: localStorage.getItem("SipUsername"),
+        SipPassword: localStorage.getItem("SipPassword"),
+        profileUserID: localStorage.getItem("profileUserID"),
+        instanceID: localStorage.getItem("InstanceId") || null,
+        loggedIn: true
+      }
+    : { loggedIn: false };
+
+  // Send to extension
+  window.parent.postMessage({
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials
+  }, "*");
+
+  console.log("🔁 Synced to extension after reload:", credentials);
+});
 
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
