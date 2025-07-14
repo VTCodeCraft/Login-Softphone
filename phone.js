@@ -527,7 +527,7 @@ let CallRecordingsIndexDb = null;
 let CallQosDataIndexDb = null;
 
 //for extension
-// let savedInstanceID = null;
+let savedInstanceID = null;
 
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -776,6 +776,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (SingleInstance === true) {
       console.log('Instance ID :', instanceID);
       localDB.setItem('InstanceId', instanceID);
+      savedInstanceID = instanceID; //for extension
       window.addEventListener('storage', onLocalStorageEvent, false);
     }
 
@@ -2727,16 +2728,19 @@ async function testingLogin(countryCode, loginNumber, loginPassword) {
 
 function AutoProvisionAccount(loginCredentials) {
   const displayName = loginCredentials.display_name;
+  const username = loginCredentials.username;
   const extention = loginCredentials.extention;
   const password = loginCredentials.password;
   const wssDomain = loginCredentials.wss_domain;
   const wssPort = loginCredentials.wss_port;
   const wssPath = loginCredentials.wss_path;
 
-  if (!localStorage.getItem('profileUserID')) {
+  // Generate or reuse a unique profileUserID
+  if (localStorage.getItem('profileUserID') == null) {
     localStorage.setItem('profileUserID', uID());
   }
 
+  // Save to local DB
   localStorage.setItem('profileName', displayName);
   localStorage.setItem('wssServer', wssDomain);
   localStorage.setItem('WebSocketPort', wssPort);
@@ -2746,45 +2750,58 @@ function AutoProvisionAccount(loginCredentials) {
   localStorage.setItem('SipPassword', password);
   localStorage.setItem('loggedIn', true);
 
-  window.location.reload(true); // ⬅ Reload triggers post-login transfer
-}
+  // Prepare credentials object
+  const credentials = {
+    profileName: displayName,
+    wssServer: wssDomain,
+    WebSocketPort: wssPort,
+    ServerPath: wssPath,
+    SipDomain: wssDomain,
+    SipUsername: extention,
+    SipPassword: password,
+    loggedIn: true,
+    instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
+  };
 
-
-
-
-function logoutUser() {
-  localStorage.clear();
-  localStorage.setItem("loggedIn", false); // Keep flag for after reload
-  window.location.reload(true); // ⬅ Reload triggers logout sync
-}
-
-window.addEventListener("load", () => {
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-
-  const credentials = isLoggedIn
-    ? {
-        profileName: localStorage.getItem("profileName"),
-        wssServer: localStorage.getItem("wssServer"),
-        WebSocketPort: localStorage.getItem("WebSocketPort"),
-        ServerPath: localStorage.getItem("ServerPath"),
-        SipDomain: localStorage.getItem("SipDomain"),
-        SipUsername: localStorage.getItem("SipUsername"),
-        SipPassword: localStorage.getItem("SipPassword"),
-        profileUserID: localStorage.getItem("profileUserID"),
-        instanceID: localStorage.getItem("InstanceId"),
-        loggedIn: true
-      }
-    : { loggedIn: false };
-
-  // Send to extension
+  // ✅ Send to Chrome Extension storage
   window.parent.postMessage({
     type: "SOFTPHONE_SAVE_CREDENTIALS",
     credentials
   }, "*");
 
-  console.log("🔁 Synced to extension after reload:", credentials);
-});
+  // Reload to finish login
+  window.location.reload(true);
+}
 
+
+
+function logoutUser() {
+  // Step 1: Read current local DB state (if needed)
+  const logoutState = {
+    // profileName: localStorage.getItem("profileName") || null,
+    // wssServer: localStorage.getItem("wssServer") || null,
+    // WebSocketPort: localStorage.getItem("WebSocketPort") || null,
+    // ServerPath: localStorage.getItem("ServerPath") || null,
+    // SipDomain: localStorage.getItem("SipDomain") || null,
+    // SipUsername: localStorage.getItem("SipUsername") || null,
+    // SipPassword: localStorage.getItem("SipPassword") || null,
+    instanceID: localStorage.getItem("InstanceId"),
+    loggedIn: false
+  };
+
+  // Step 2: Save to Chrome extension storage (optional - final state)
+  window.parent.postMessage({
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials: logoutState
+  }, "*");
+
+  // Step 3: Clear local DB
+  localStorage.clear();
+  localStorage.setItem("loggedIn", false);
+
+  // Step 4: Reload the UI
+  window.location.reload(true);
+}
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
