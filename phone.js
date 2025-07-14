@@ -2774,38 +2774,40 @@ function AutoProvisionAccount(loginCredentials) {
   }, 500); // delay (ms)
 
   // Reload to finish login
-  window.location.reload(true);
+  setTimeout(() => {
+    window.location.reload(true);
+  }, 600); // slightly after storage update
 }
 
 
 
 function logoutUser() {
-  // Step 1: Read current local DB state (if needed)
-  const logoutState = {
-    // profileName: localStorage.getItem("profileName") || null,
-    // wssServer: localStorage.getItem("wssServer") || null,
-    // WebSocketPort: localStorage.getItem("WebSocketPort") || null,
-    // ServerPath: localStorage.getItem("ServerPath") || null,
-    // SipDomain: localStorage.getItem("SipDomain") || null,
-    // SipUsername: localStorage.getItem("SipUsername") || null,
-    // SipPassword: localStorage.getItem("SipPassword") || null,
-    instanceID: localStorage.getItem("InstanceId"),
-    loggedIn: false
-  };
-
-  // Step 2: Save to Chrome extension storage (optional - final state)
-  window.parent.postMessage({
-    type: "SOFTPHONE_SAVE_CREDENTIALS",
-    credentials: logoutState
-  }, "*");
-
-  // Step 3: Clear local DB
+  // Step 1: Clear local DB immediately
   localStorage.clear();
   localStorage.setItem("loggedIn", false);
 
-  // Step 4: Reload the UI
-  window.location.reload(true);
+  // Step 2: Wait before sending logout state to Chrome extension
+  setTimeout(() => {
+    const logoutState = {
+      instanceID: localStorage.getItem("InstanceId") || null,
+      loggedIn: false
+    };
+
+    // Step 3: Push to Chrome extension storage
+    window.parent.postMessage({
+      type: "SOFTPHONE_SAVE_CREDENTIALS",
+      credentials: logoutState
+    }, "*");
+
+    console.log("🧹 Delayed logout state sent to extension", logoutState);
+  }, 500); // delay in milliseconds
+
+  // Step 4: Reload UI after delay (optional, or immediate)
+  setTimeout(() => {
+    window.location.reload(true);
+  }, 600); // slightly after storage update
 }
+
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
