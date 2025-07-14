@@ -1,4 +1,27 @@
 /* eslint-disable prettier/prettier */
+
+window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
+window.addEventListener("message", (event) => {
+  if (event.origin !== "https://login-softphone.vercel.app") return;
+
+  if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
+    const creds = event.data.credentials;
+    if (creds && creds.loggedIn) {
+      console.log("🔁 Syncing from Chrome storage to localStorage");
+
+      // Copy each key from Chrome storage into localStorage
+      Object.entries(creds).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          localStorage.setItem(key, value);
+        }
+      });
+
+      // Optional: reload UI after credentials are loaded
+      window.location.reload(true);
+    }
+  }
+});
+
 const url = new URL(window.location.href);
 const params = new URLSearchParams(url.search);
 const clientId = params.get('id');
