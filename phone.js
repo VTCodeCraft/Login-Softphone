@@ -285,11 +285,15 @@ function requestCredentialsFromExtension(attempt = 0) {
 // First request
 requestCredentialsFromExtension();
 
-// Listener for credentials
 window.addEventListener("message", (event) => {
   if (event.data?.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
     const creds = event.data.credentials;
     if (creds && creds.loggedIn) {
+      if (window.__softphoneReloaded__) {
+        console.log("⏸️ Reload skipped - already reloaded once");
+        return;
+      }
+
       window.__SOFTPHONE_CREDENTIALS_RECEIVED__ = true;
 
       console.log("🔁 Syncing from Chrome storage to localStorage", creds);
@@ -305,10 +309,12 @@ window.addEventListener("message", (event) => {
       localStorage.setItem("InstanceId", creds.instanceID || "");
       localStorage.setItem("loggedIn", "true");
 
+      // ✅ Only reload once
+      window.__softphoneReloaded__ = true;
+
       setTimeout(() => {
         console.log("🔄 Reloading iframe to apply synced credentials");
-        window.location.reload();  // OR:
-        // document.location.href = document.location.href; // Soft reload
+        window.location.reload();
       }, 100);
     }
   }
