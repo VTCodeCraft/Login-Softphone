@@ -274,7 +274,7 @@ function requestCredentialsFromExtension(attempt = 0) {
   console.log(`🔄 Attempting to fetch credentials from extension (try ${attempt + 1})`);
   window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 
-  // Try again if no response received in 500ms
+  // Retry if no response received
   setTimeout(() => {
     if (!window.__SOFTPHONE_CREDENTIALS_RECEIVED__) {
       requestCredentialsFromExtension(attempt + 1);
@@ -282,13 +282,15 @@ function requestCredentialsFromExtension(attempt = 0) {
   }, 500);
 }
 
-// First request
+// 🔁 First request to extension for credentials
 requestCredentialsFromExtension();
 
+// ✅ Listener for credential response
 window.addEventListener("message", (event) => {
   if (event.data?.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
     const creds = event.data.credentials;
-    if (creds && creds.loggedIn) {
+
+    if (creds?.loggedIn) {
       // 🛑 Prevent reload loop using sessionStorage
       if (sessionStorage.getItem("softphoneAlreadyReloaded") === "true") {
         console.log("⏸️ Reload skipped - already reloaded once this session");
@@ -308,15 +310,25 @@ window.addEventListener("message", (event) => {
       localStorage.setItem("InstanceId", creds.instanceID || "");
       localStorage.setItem("loggedIn", "true");
 
-      // ✅ Mark reload done in sessionStorage
       sessionStorage.setItem("softphoneAlreadyReloaded", "true");
 
-      // 🔄 Reload the iframe once to apply credentials
       console.log("🔄 Reloading iframe to apply synced credentials");
+      window.location.reload();
+    }
+
+    if (creds?.loggedIn === false) {
+      console.log("🧹 Logout state received from another tab");
+
+      // 🧽 Clear localStorage and reload
+      localStorage.clear();
+      localStorage.setItem("loggedIn", "false");
+
+      console.log("🔄 Reloading after cross-tab logout");
       window.location.reload();
     }
   }
 });
+
 
 window.addEventListener("message", (event) => {
   if (event.data?.type === "SOFTPHONE_FORCE_LOGOUT") {
@@ -2856,11 +2868,11 @@ function AutoProvisionAccount(loginCredentials) {
     // instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
   };
 
-  // ✅ Send to Chrome Extension storage
+  // Sync credentials with the parent window (Chrome extension)
   window.parent.postMessage({
-    type: "SOFTPHONE_SAVE_CREDENTIALS",
-    credentials
-  }, "*");
+  type: "SOFTPHONE_LOGIN_SYNC",
+  credentials
+}, "*");
 
   // Reload to finish login
   window.location.reload(true);
