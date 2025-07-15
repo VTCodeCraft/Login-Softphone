@@ -321,11 +321,12 @@ window.addEventListener("message", (event) => {
 window.addEventListener("message", (event) => {
   if (event.data?.type === "SOFTPHONE_FORCE_LOGOUT") {
     console.log("🔁 Forced logout received — clearing localStorage");
+
     localStorage.clear();
+    localStorage.setItem("loggedIn", "false");
     window.location.reload(true);
   }
 });
-
 
 // Set the following to null to disable
 let welcomeScreen = '<div class="UiWindowField"><pre style="font-size: 12px">';
@@ -2896,13 +2897,14 @@ function AutoProvisionAccount(loginCredentials) {
 // }
 
 function logoutUser() {
-  // Step 1: Update only `loggedIn` in chrome storage (keep rest of data)
+  // Step 1: Read current chrome storage and set loggedIn: false
   chrome.storage.local.get(["softphoneCredentials"], (result) => {
     const updated = {
       ...result.softphoneCredentials,
       loggedIn: false
     };
 
+    // Save back to chrome storage
     window.parent.postMessage({
       type: "SOFTPHONE_SAVE_CREDENTIALS",
       credentials: updated
