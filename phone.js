@@ -240,7 +240,7 @@ const localDB = window.localStorage;
 // // Listen for response
 // window.addEventListener("message", (event) => {
 //   console.log("HELLO");
-  
+
 //   if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
 //     console.log("HELLO2");
 //     const creds = event.data.credentials;
@@ -305,8 +305,11 @@ window.addEventListener("message", (event) => {
       localStorage.setItem("InstanceId", creds.instanceID || "");
       localStorage.setItem("loggedIn", "true");
 
-      // Optional: reload if UI needs it
-      // window.location.reload(true);
+      setTimeout(() => {
+        console.log("🔄 Reloading iframe to apply synced credentials");
+        window.location.reload();  // OR:
+        // document.location.href = document.location.href; // Soft reload
+      }, 100);
     }
   }
 });
@@ -3717,7 +3720,7 @@ function ReceiveCall(session) {
   }
 
   console.log('New Incoming Call!', callerID + ' <' + did + '>');
-  
+
   //for extension
   window.parent.postMessage({
     type: "SOFTPHONE_INCOMING_CALL",
