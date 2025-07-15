@@ -2897,25 +2897,17 @@ function AutoProvisionAccount(loginCredentials) {
 // }
 
 function logoutUser() {
-  // Step 1: Read current chrome storage and set loggedIn: false
-  chrome.storage.local.get(["softphoneCredentials"], (result) => {
-    const updated = {
-      ...result.softphoneCredentials,
-      loggedIn: false
-    };
-
-    // Save back to chrome storage
-    window.parent.postMessage({
-      type: "SOFTPHONE_SAVE_CREDENTIALS",
-      credentials: updated
-    }, "*");
-  });
+  // Step 1: Set loggedIn = false in Chrome extension storage
+  window.parent.postMessage({
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials: { loggedIn: false }
+  }, "*");
 
   // Step 2: Clear localStorage
   localStorage.clear();
   localStorage.setItem("loggedIn", "false");
 
-  // Step 3: Reload
+  // Step 3: Reload UI
   window.location.reload(true);
 }
 
