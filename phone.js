@@ -291,7 +291,6 @@ window.addEventListener("message", (event) => {
     const creds = event.data.credentials;
 
     if (creds?.loggedIn) {
-      // 🛑 Prevent reload loop using sessionStorage
       if (sessionStorage.getItem("softphoneAlreadyReloaded") === "true") {
         console.log("⏸️ Reload skipped - already reloaded once this session");
         return;
@@ -317,11 +316,17 @@ window.addEventListener("message", (event) => {
     }
 
     if (creds?.loggedIn === false) {
+      if (sessionStorage.getItem("softphoneAlreadyLoggedOut") === "true") {
+        console.log("⏸️ Reload skipped - already logged out this session");
+        return;
+      }
+
       console.log("🧹 Logout state received from another tab");
 
-      // 🧽 Clear localStorage and reload
+      // 🔥 Clear only if not already done
       localStorage.clear();
       localStorage.setItem("loggedIn", "false");
+      sessionStorage.setItem("softphoneAlreadyLoggedOut", "true");
 
       console.log("🔄 Reloading after cross-tab logout");
       window.location.reload();
