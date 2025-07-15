@@ -318,6 +318,14 @@ window.addEventListener("message", (event) => {
   }
 });
 
+window.addEventListener("message", (event) => {
+  if (event.data?.type === "SOFTPHONE_FORCE_LOGOUT") {
+    console.log("🔒 Forced logout from another tab");
+
+    localStorage.clear();
+    window.location.reload(true);
+  }
+});
 
 
 // Set the following to null to disable
