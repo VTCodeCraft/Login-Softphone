@@ -2860,33 +2860,48 @@ function AutoProvisionAccount(loginCredentials) {
 
 
 
-function logoutUser() {
-  // Step 1: Read current local DB state (if needed)
-  const logoutState = {
-    // profileName: localStorage.getItem("profileName") || null,
-    // wssServer: localStorage.getItem("wssServer") || null,
-    // WebSocketPort: localStorage.getItem("WebSocketPort") || null,
-    // ServerPath: localStorage.getItem("ServerPath") || null,
-    // SipDomain: localStorage.getItem("SipDomain") || null,
-    // SipUsername: localStorage.getItem("SipUsername") || null,
-    // SipPassword: localStorage.getItem("SipPassword") || null,
-    // instanceID: localStorage.getItem("InstanceId"),
-    loggedIn: false
-  };
+// function logoutUser() {
+//   // Step 1: Read current local DB state (if needed)
+//   const logoutState = {
+//     // profileName: localStorage.getItem("profileName") || null,
+//     // wssServer: localStorage.getItem("wssServer") || null,
+//     // WebSocketPort: localStorage.getItem("WebSocketPort") || null,
+//     // ServerPath: localStorage.getItem("ServerPath") || null,
+//     // SipDomain: localStorage.getItem("SipDomain") || null,
+//     // SipUsername: localStorage.getItem("SipUsername") || null,
+//     // SipPassword: localStorage.getItem("SipPassword") || null,
+//     // instanceID: localStorage.getItem("InstanceId"),
+//     loggedIn: false
+//   };
 
-  // Step 2: Save to Chrome extension storage (optional - final state)
+//   // Step 2: Save to Chrome extension storage (optional - final state)
+//   window.parent.postMessage({
+//     type: "SOFTPHONE_SAVE_CREDENTIALS",
+//     credentials: logoutState
+//   }, "*");
+
+//   // Step 3: Clear local DB
+//   localStorage.clear();
+//   localStorage.setItem("loggedIn", false);
+
+//   // Step 4: Reload the UI
+//   window.location.reload(true);
+// }
+
+function logoutUser() {
+  // Step 1: Clear local storage immediately
+  localStorage.clear();
+  localStorage.setItem("loggedIn", "false");
+
+  // Step 2: Notify the Chrome extension to sync logout across tabs
   window.parent.postMessage({
-    type: "SOFTPHONE_SAVE_CREDENTIALS",
-    credentials: logoutState
+    type: "SOFTPHONE_LOGOUT_SYNC"
   }, "*");
 
-  // Step 3: Clear local DB
-  localStorage.clear();
-  localStorage.setItem("loggedIn", false);
-
-  // Step 4: Reload the UI
+  // Step 3: Reload the iframe (self)
   window.location.reload(true);
 }
+
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
