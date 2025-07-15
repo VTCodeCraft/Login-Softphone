@@ -289,12 +289,11 @@ window.addEventListener("message", (event) => {
   if (event.data?.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
     const creds = event.data.credentials;
     if (creds && creds.loggedIn) {
-      if (window.__softphoneReloaded__) {
-        console.log("⏸️ Reload skipped - already reloaded once");
+      // 🛑 Prevent reload loop using sessionStorage
+      if (sessionStorage.getItem("softphoneAlreadyReloaded") === "true") {
+        console.log("⏸️ Reload skipped - already reloaded once this session");
         return;
       }
-
-      window.__SOFTPHONE_CREDENTIALS_RECEIVED__ = true;
 
       console.log("🔁 Syncing from Chrome storage to localStorage", creds);
 
@@ -309,13 +308,12 @@ window.addEventListener("message", (event) => {
       localStorage.setItem("InstanceId", creds.instanceID || "");
       localStorage.setItem("loggedIn", "true");
 
-      // ✅ Only reload once
-      window.__softphoneReloaded__ = true;
+      // ✅ Mark reload done in sessionStorage
+      sessionStorage.setItem("softphoneAlreadyReloaded", "true");
 
-      setTimeout(() => {
-        console.log("🔄 Reloading iframe to apply synced credentials");
-        window.location.reload();
-      }, 100);
+      // 🔄 Reload the iframe once to apply credentials
+      console.log("🔄 Reloading iframe to apply synced credentials");
+      window.location.reload();
     }
   }
 });
