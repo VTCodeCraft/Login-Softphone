@@ -320,8 +320,7 @@ window.addEventListener("message", (event) => {
 
 window.addEventListener("message", (event) => {
   if (event.data?.type === "SOFTPHONE_FORCE_LOGOUT") {
-    console.log("🔒 Forced logout from another tab");
-
+    console.log("🔁 Forced logout received — clearing localStorage");
     localStorage.clear();
     window.location.reload(true);
   }
@@ -2897,18 +2896,27 @@ function AutoProvisionAccount(loginCredentials) {
 // }
 
 function logoutUser() {
-  // Step 1: Clear local storage immediately
+  // Step 1: Update only `loggedIn` in chrome storage (keep rest of data)
+  chrome.storage.local.get(["softphoneCredentials"], (result) => {
+    const updated = {
+      ...result.softphoneCredentials,
+      loggedIn: false
+    };
+
+    window.parent.postMessage({
+      type: "SOFTPHONE_SAVE_CREDENTIALS",
+      credentials: updated
+    }, "*");
+  });
+
+  // Step 2: Clear localStorage
   localStorage.clear();
   localStorage.setItem("loggedIn", "false");
 
-  // Step 2: Notify the Chrome extension to sync logout across tabs
-  window.parent.postMessage({
-    type: "SOFTPHONE_LOGOUT_SYNC"
-  }, "*");
-
-  // Step 3: Reload the iframe (self)
+  // Step 3: Reload
   window.location.reload(true);
 }
+
 
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
