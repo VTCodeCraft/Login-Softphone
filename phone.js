@@ -274,7 +274,7 @@ function requestCredentialsFromExtension(attempt = 0) {
   console.log(`🔄 Attempting to fetch credentials from extension (try ${attempt + 1})`);
   window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 
-  // Retry if no response received
+  // Try again if no response received in 500ms
   setTimeout(() => {
     if (!window.__SOFTPHONE_CREDENTIALS_RECEIVED__) {
       requestCredentialsFromExtension(attempt + 1);
@@ -282,15 +282,14 @@ function requestCredentialsFromExtension(attempt = 0) {
   }, 500);
 }
 
-// 🔁 First request to extension for credentials
+// First request
 requestCredentialsFromExtension();
 
-// ✅ Listener for credential response
 window.addEventListener("message", (event) => {
   if (event.data?.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
     const creds = event.data.credentials;
-
-    if (creds?.loggedIn) {
+    if (creds && creds.loggedIn) {
+      // 🛑 Prevent reload loop using sessionStorage
       if (sessionStorage.getItem("softphoneAlreadyReloaded") === "true") {
         console.log("⏸️ Reload skipped - already reloaded once this session");
         return;
@@ -309,40 +308,16 @@ window.addEventListener("message", (event) => {
       localStorage.setItem("InstanceId", creds.instanceID || "");
       localStorage.setItem("loggedIn", "true");
 
+      // ✅ Mark reload done in sessionStorage
       sessionStorage.setItem("softphoneAlreadyReloaded", "true");
 
+      // 🔄 Reload the iframe once to apply credentials
       console.log("🔄 Reloading iframe to apply synced credentials");
       window.location.reload();
     }
-
-    if (creds?.loggedIn === false) {
-      if (sessionStorage.getItem("softphoneAlreadyLoggedOut") === "true") {
-        console.log("⏸️ Reload skipped - already logged out this session");
-        return;
-      }
-
-      console.log("🧹 Logout state received from another tab");
-
-      // 🔥 Clear only if not already done
-      localStorage.clear();
-      localStorage.setItem("loggedIn", "false");
-      sessionStorage.setItem("softphoneAlreadyLoggedOut", "true");
-
-      console.log("🔄 Reloading after cross-tab logout");
-      window.location.reload();
-    }
   }
 });
 
-
-window.addEventListener("message", (event) => {
-  if (event.data?.type === "SOFTPHONE_FORCE_LOGOUT") {
-    console.log("🔒 Forced logout from another tab");
-
-    localStorage.clear();
-    window.location.reload(true);
-  }
-});
 
 
 // Set the following to null to disable
@@ -2873,11 +2848,11 @@ function AutoProvisionAccount(loginCredentials) {
     // instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
   };
 
-  // Sync credentials with the parent window (Chrome extension)
+  // ✅ Send to Chrome Extension storage
   window.parent.postMessage({
-  type: "SOFTPHONE_LOGIN_SYNC",
-  credentials
-}, "*");
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials
+  }, "*");
 
   // Reload to finish login
   window.location.reload(true);
@@ -2885,48 +2860,33 @@ function AutoProvisionAccount(loginCredentials) {
 
 
 
-// function logoutUser() {
-//   // Step 1: Read current local DB state (if needed)
-//   const logoutState = {
-//     // profileName: localStorage.getItem("profileName") || null,
-//     // wssServer: localStorage.getItem("wssServer") || null,
-//     // WebSocketPort: localStorage.getItem("WebSocketPort") || null,
-//     // ServerPath: localStorage.getItem("ServerPath") || null,
-//     // SipDomain: localStorage.getItem("SipDomain") || null,
-//     // SipUsername: localStorage.getItem("SipUsername") || null,
-//     // SipPassword: localStorage.getItem("SipPassword") || null,
-//     // instanceID: localStorage.getItem("InstanceId"),
-//     loggedIn: false
-//   };
-
-//   // Step 2: Save to Chrome extension storage (optional - final state)
-//   window.parent.postMessage({
-//     type: "SOFTPHONE_SAVE_CREDENTIALS",
-//     credentials: logoutState
-//   }, "*");
-
-//   // Step 3: Clear local DB
-//   localStorage.clear();
-//   localStorage.setItem("loggedIn", false);
-
-//   // Step 4: Reload the UI
-//   window.location.reload(true);
-// }
-
 function logoutUser() {
-  // Step 1: Clear local storage immediately
-  localStorage.clear();
-  localStorage.setItem("loggedIn", "false");
+  // Step 1: Read current local DB state (if needed)
+  const logoutState = {
+    // profileName: localStorage.getItem("profileName") || null,
+    // wssServer: localStorage.getItem("wssServer") || null,
+    // WebSocketPort: localStorage.getItem("WebSocketPort") || null,
+    // ServerPath: localStorage.getItem("ServerPath") || null,
+    // SipDomain: localStorage.getItem("SipDomain") || null,
+    // SipUsername: localStorage.getItem("SipUsername") || null,
+    // SipPassword: localStorage.getItem("SipPassword") || null,
+    // instanceID: localStorage.getItem("InstanceId"),
+    loggedIn: false
+  };
 
-  // Step 2: Notify the Chrome extension to sync logout across tabs
+  // Step 2: Save to Chrome extension storage (optional - final state)
   window.parent.postMessage({
-    type: "SOFTPHONE_LOGOUT_SYNC"
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials: logoutState
   }, "*");
 
-  // Step 3: Reload the iframe (self)
+  // Step 3: Clear local DB
+  localStorage.clear();
+  localStorage.setItem("loggedIn", false);
+
+  // Step 4: Reload the UI
   window.location.reload(true);
 }
-
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
