@@ -318,6 +318,14 @@ window.addEventListener("message", (event) => {
   }
 });
 
+window.addEventListener("message", (event) => {
+  if (event.data?.type === "SOFTPHONE_FORCE_LOGOUT") {
+    console.log("🔒 Forced logout from another tab");
+
+    localStorage.clear();
+    window.location.reload(true);
+  }
+});
 
 
 // Set the following to null to disable
@@ -2901,6 +2909,7 @@ function logoutUser() {
   // Step 3: Reload the iframe (self)
   window.location.reload(true);
 }
+
 // function ShowLoggedInstructions() {
 //   // 1) Close any open settings or popups
 //   CloseUpSettings();
