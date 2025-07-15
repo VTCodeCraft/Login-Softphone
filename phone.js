@@ -221,53 +221,6 @@ async function waitForPreLoads() {
   // }
 
   // When this function returns, **all** critical scripts are loaded & executed.
-
-
-  function requestCredentialsFromExtension(attempt = 0) {
-    if (attempt > 5) {
-      console.warn("🕒 Giving up on credential sync after multiple attempts.");
-      return;
-    }
-
-    console.log(`🔄 Attempting to fetch credentials from extension (try ${attempt + 1})`);
-    window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
-
-    // Try again if no response received in 500ms
-    setTimeout(() => {
-      if (!window.__SOFTPHONE_CREDENTIALS_RECEIVED__) {
-        requestCredentialsFromExtension(attempt + 1);
-      }
-    }, 500);
-  }
-
-  // First request
-  requestCredentialsFromExtension();
-
-  // Listener for credentials
-  window.addEventListener("message", (event) => {
-    if (event.data?.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
-      const creds = event.data.credentials;
-      if (creds && creds.loggedIn) {
-        window.__SOFTPHONE_CREDENTIALS_RECEIVED__ = true;
-
-        console.log("🔁 Syncing from Chrome storage to localStorage", creds);
-
-        localStorage.setItem("profileName", creds.profileName || "");
-        localStorage.setItem("wssServer", creds.wssServer || "");
-        localStorage.setItem("WebSocketPort", creds.WebSocketPort || "");
-        localStorage.setItem("ServerPath", creds.ServerPath || "");
-        localStorage.setItem("SipDomain", creds.SipDomain || "");
-        localStorage.setItem("SipUsername", creds.SipUsername || "");
-        localStorage.setItem("SipPassword", creds.SipPassword || "");
-        localStorage.setItem("profileUserID", creds.profileUserID || "");
-        localStorage.setItem("InstanceId", creds.instanceID || "");
-        localStorage.setItem("loggedIn", "true");
-
-        // Optional: reload if UI needs it
-        // window.location.reload(true);
-      }
-    }
-  });
 }
 
 
@@ -287,7 +240,7 @@ const localDB = window.localStorage;
 // // Listen for response
 // window.addEventListener("message", (event) => {
 //   console.log("HELLO");
-
+  
 //   if (event.data.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
 //     console.log("HELLO2");
 //     const creds = event.data.credentials;
@@ -311,6 +264,52 @@ const localDB = window.localStorage;
 //   }
 // });
 
+
+function requestCredentialsFromExtension(attempt = 0) {
+  if (attempt > 5) {
+    console.warn("🕒 Giving up on credential sync after multiple attempts.");
+    return;
+  }
+
+  console.log(`🔄 Attempting to fetch credentials from extension (try ${attempt + 1})`);
+  window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
+
+  // Try again if no response received in 500ms
+  setTimeout(() => {
+    if (!window.__SOFTPHONE_CREDENTIALS_RECEIVED__) {
+      requestCredentialsFromExtension(attempt + 1);
+    }
+  }, 500);
+}
+
+// First request
+requestCredentialsFromExtension();
+
+// Listener for credentials
+window.addEventListener("message", (event) => {
+  if (event.data?.type === "SOFTPHONE_RESPONSE_CREDENTIALS") {
+    const creds = event.data.credentials;
+    if (creds && creds.loggedIn) {
+      window.__SOFTPHONE_CREDENTIALS_RECEIVED__ = true;
+
+      console.log("🔁 Syncing from Chrome storage to localStorage", creds);
+
+      localStorage.setItem("profileName", creds.profileName || "");
+      localStorage.setItem("wssServer", creds.wssServer || "");
+      localStorage.setItem("WebSocketPort", creds.WebSocketPort || "");
+      localStorage.setItem("ServerPath", creds.ServerPath || "");
+      localStorage.setItem("SipDomain", creds.SipDomain || "");
+      localStorage.setItem("SipUsername", creds.SipUsername || "");
+      localStorage.setItem("SipPassword", creds.SipPassword || "");
+      localStorage.setItem("profileUserID", creds.profileUserID || "");
+      localStorage.setItem("InstanceId", creds.instanceID || "");
+      localStorage.setItem("loggedIn", "true");
+
+      // Optional: reload if UI needs it
+      // window.location.reload(true);
+    }
+  }
+});
 
 
 
@@ -3718,7 +3717,7 @@ function ReceiveCall(session) {
   }
 
   console.log('New Incoming Call!', callerID + ' <' + did + '>');
-
+  
   //for extension
   window.parent.postMessage({
     type: "SOFTPHONE_INCOMING_CALL",
