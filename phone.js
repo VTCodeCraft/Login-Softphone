@@ -3206,12 +3206,12 @@ function showLoginDialog() {
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
   const sipData = {
-    wss: $('#sipWss').val("calls247.ivrsolutions.in"),     // calls247.ivrsolutions.in
-    port: $('#sipPort').val("8443"),   // 8443
-    path: $('#sipPath').val("/ws"),   // /ws
-    name: $('#sipName').val("Dev Joshi"),   // Dev Joshi
-    username: $('#sipUser').val("w5105"), // w5105
-    password: $('#sipPass').val("Dj@9910513597") // Dj@9910513597
+    wss: $('#sipWss').val(),     // calls247.ivrsolutions.in
+    port: $('#sipPort').val(),   // 8443
+    path: $('#sipPath').val(),   // /ws
+    name: $('#sipName').val(),   // Dev Joshi
+    username: $('#sipUser').val(), // w5105
+    password: $('#sipPass').val() // Dj@9910513597
   };
   console.log("SIP Login ->", sipData);
 
