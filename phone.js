@@ -247,11 +247,12 @@ function loadJsSIPLibrary(callback) {
     console.log('✅ JsSIP loaded successfully');
     if (callback) callback();
   };
-  script.onerror = () => {
-    console.error('❌ Failed to load JsSIP');
+  script.onerror = (e) => {
+    console.error('❌ Failed to load JsSIP', e);
   };
   document.head.appendChild(script);
 }
+
 
 // // Ask extension for stored credentials
 // window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
