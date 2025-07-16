@@ -3198,7 +3198,7 @@ function showLoginDialog() {
       localStorage.setItem('profileName', sipData.name);
       localStorage.setItem('InstanceId', Date.now());
 
-      location.reload(); // ✅ This reload triggers the softphone to start from localStorage values
+      window.location.reload(); // ✅ This reload triggers the softphone to start from localStorage values
     }
   });
 
