@@ -3220,6 +3220,9 @@ function showLoginDialog() {
       return;
     }
 
+    if (localStorage.getItem('profileUserID') == null) {
+      localStorage.setItem('profileUserID', uID());
+    }
     localStorage.setItem('SipDomain', sipData.wss); // Host only
     localStorage.setItem('wssServer', sipData.wss);
     localStorage.setItem('WebSocketPort', sipData.port);
