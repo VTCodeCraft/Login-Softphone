@@ -2936,11 +2936,132 @@ function logoutUser() {
 //   $('#Phone').html(html).show();
 // }
 
+// function showLoginDialog() {
+//   // Prevent multiple overlays
+//   if ($('#loginOverlay').length) return;
+
+//   // Create overlay backdrop
+//   const $overlay = $(`
+//     <div id="loginOverlay" style="
+//       position: fixed;
+//       top: 0;
+//       left: 0;
+//       width: 100vw;
+//       height: 100vh;
+//       display: flex;
+//       gap:5rem;
+//       flex-direction:column;
+//       align-items: center;
+//       justify-content: center;
+//       z-index: 10000;
+//     "></div>
+//   `);
+
+//   // Create modal container using existing dark-mode classes
+//   const $modal = $(`
+//     <div
+//       style="
+//         width: 90%;
+//         max-width: 360px;
+//         box-sizing: border-box;
+//         margin: 0 auto;
+//         display:flex;
+//         flex-direction:column;
+//         gap:4rem;
+//         align-items:center;
+//         justify-content:center;
+//         padding: 24px;
+//         border-radius: 8px;
+//       "
+//     >
+//       <!-- Logo: 110% of the container, but capped at a little larger than 360px -->
+//       <div style="text-align: center; margin-bottom: 16px;">
+//         <img
+//           src="${welcome_info.logo}"
+//           alt="Logo"
+//           style="
+//             display: inline-block;
+//             width: 100%;
+//             max-width: 400px;
+//             height: auto;
+//             object-fit: contain;
+//           "
+//         />
+//       </div>
+  
+//       <!-- The form -->
+//       <div class="login-modal UiSideField">
+//         <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">
+//           Sign In
+//         </h3>
+//         <div style="display: flex; gap: 8px; margin: 16px 0;">
+//           <select id="countryCode">
+//             <option value="91" selected>+91</option>
+//             <option value="1">+1</option>
+//           </select>
+//           <input
+//             type="text"
+//             id="mobileField"
+//             style="flex: 1; color: white !important;"
+//             placeholder="Mobile number"
+//           />
+//         </div>
+//         <input
+//           type="password"
+//           id="passwordField"
+//           placeholder="Password"
+//           style="width: 100%; margin-bottom: 16px;"
+//         />
+//         <div
+//           class="UiWindowButtonBar"
+//           style="display: flex; gap: 12px; justify-content: center;"
+//         >
+//           <button id="loginBtn" style="flex: 1; max-width: 200px;">Login</button>
+//         </div>
+//       </div>
+//     </div>
+//   `);
+
+
+
+//   // Assemble and append to the Phone container
+//   $overlay.append($modal);
+//   $('#Phone').append($overlay);
+
+//   // Cancel button closes the overlay
+
+//   // Login button handler (empty for your logic)
+//   $overlay.find('#loginBtn').on('click', () => {
+//     const cc = $overlay.find('#countryCode').val();
+//     const mobile = $overlay.find('#mobileField').val().trim();
+//     const pass = $overlay.find('#passwordField').val();
+//     // Log the values of the three variables
+//     console.log("Country Code:", cc);
+//     console.log("Mobile Number:", mobile);
+//     console.log("Password:", pass);
+
+//     // Check if mobile or password are empty
+//     if (!mobile || !pass) {
+//       console.error("Error: Mobile number or password cannot be empty.");
+//     } else {
+//       testingLogin(cc, mobile, pass)
+//       $('.loading').remove()
+//     }
+//     // TODO: insert your login logic here, e.g.:
+//     // $.post('/api/login', { countryCode: cc, mobile, password: pass })
+//     //   .done(/* on success */)
+//     //   .fail(/* on error */);
+
+//     // Remove overlay after click
+//     // $overlay.remove();
+//   });
+//   $('.loading').remove()
+// }
+
+
 function showLoginDialog() {
-  // Prevent multiple overlays
   if ($('#loginOverlay').length) return;
 
-  // Create overlay backdrop
   const $overlay = $(`
     <div id="loginOverlay" style="
       position: fixed;
@@ -2949,116 +3070,147 @@ function showLoginDialog() {
       width: 100vw;
       height: 100vh;
       display: flex;
-      gap:5rem;
-      flex-direction:column;
+      gap: 5rem;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 10000;
     "></div>
   `);
 
-  // Create modal container using existing dark-mode classes
   const $modal = $(`
-    <div
-      style="
-        width: 90%;
-        max-width: 360px;
-        box-sizing: border-box;
-        margin: 0 auto;
-        display:flex;
-        flex-direction:column;
-        gap:4rem;
-        align-items:center;
-        justify-content:center;
-        padding: 24px;
-        border-radius: 8px;
-      "
-    >
-      <!-- Logo: 110% of the container, but capped at a little larger than 360px -->
-      <div style="text-align: center; margin-bottom: 16px;">
-        <img
-          src="${welcome_info.logo}"
-          alt="Logo"
-          style="
-            display: inline-block;
-            width: 100%;
-            max-width: 400px;
-            height: auto;
-            object-fit: contain;
-          "
-        />
+    <div style="
+      width: 90%;
+      max-width: 400px;
+      box-sizing: border-box;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      border-radius: 8px;
+    ">
+      <div style="text-align: center;">
+        <img src="${welcome_info.logo}" alt="Logo" style="
+          display: inline-block;
+          width: 100%;
+          max-width: 400px;
+          height: auto;
+          object-fit: contain;
+        " />
       </div>
-  
-      <!-- The form -->
-      <div class="login-modal UiSideField">
-        <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">
-          Sign In
-        </h3>
+
+      <!-- Toggle Button -->
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button id="ivrToggle" class="toggle-btn active">IVR User</button>
+        <button id="sipToggle" class="toggle-btn">Third Party</button>
+      </div>
+
+      <!-- IVR Login -->
+      <div class="login-modal ivr-form" style="width: 100%;">
+        <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">Sign In</h3>
         <div style="display: flex; gap: 8px; margin: 16px 0;">
           <select id="countryCode">
             <option value="91" selected>+91</option>
             <option value="1">+1</option>
           </select>
-          <input
-            type="text"
-            id="mobileField"
-            style="flex: 1; color: white !important;"
-            placeholder="Mobile number"
-          />
+          <input type="text" id="mobileField" placeholder="Mobile number" style="flex: 1; color: white !important;" />
         </div>
-        <input
-          type="password"
-          id="passwordField"
-          placeholder="Password"
-          style="width: 100%; margin-bottom: 16px;"
-        />
-        <div
-          class="UiWindowButtonBar"
-          style="display: flex; gap: 12px; justify-content: center;"
-        >
+        <input type="password" id="passwordField" placeholder="Password" style="width: 100%; margin-bottom: 16px;" />
+        <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
           <button id="loginBtn" style="flex: 1; max-width: 200px;">Login</button>
+        </div>
+      </div>
+
+      <!-- SIP Login -->
+      <div class="login-modal sip-form" style="width: 100%; display: none;">
+        <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
+        <input type="text" id="sipWss" placeholder="Secure WebSocket Server (wss://...)" class="sip-field" />
+        <input type="text" id="sipPort" placeholder="WebSocket Port (e.g. 4443)" class="sip-field" />
+        <input type="text" id="sipPath" placeholder="WebSocket Path (e.g. /ws)" class="sip-field" />
+        <input type="text" id="sipName" placeholder="Full Name" class="sip-field" />
+        <input type="text" id="sipDomain" placeholder="Domain" class="sip-field" />
+        <input type="text" id="sipUser" placeholder="SIP Username" class="sip-field" />
+        <input type="password" id="sipPass" placeholder="SIP Password" class="sip-field" />
+        <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
+          <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
         </div>
       </div>
     </div>
   `);
 
-
-
-  // Assemble and append to the Phone container
   $overlay.append($modal);
   $('#Phone').append($overlay);
 
-  // Cancel button closes the overlay
+  // Toggle logic
+  $overlay.find('#ivrToggle').on('click', () => {
+    $overlay.find('.ivr-form').show();
+    $overlay.find('.sip-form').hide();
+    $('#ivrToggle').addClass('active');
+    $('#sipToggle').removeClass('active');
+  });
 
-  // Login button handler (empty for your logic)
+  $overlay.find('#sipToggle').on('click', () => {
+    $overlay.find('.ivr-form').hide();
+    $overlay.find('.sip-form').show();
+    $('#sipToggle').addClass('active');
+    $('#ivrToggle').removeClass('active');
+  });
+
+  // IVR Login Button
   $overlay.find('#loginBtn').on('click', () => {
     const cc = $overlay.find('#countryCode').val();
     const mobile = $overlay.find('#mobileField').val().trim();
     const pass = $overlay.find('#passwordField').val();
-    // Log the values of the three variables
-    console.log("Country Code:", cc);
-    console.log("Mobile Number:", mobile);
-    console.log("Password:", pass);
+    console.log("IVR Login ->", { cc, mobile, pass });
 
-    // Check if mobile or password are empty
     if (!mobile || !pass) {
-      console.error("Error: Mobile number or password cannot be empty.");
+      console.error("Mobile or password empty");
     } else {
-      testingLogin(cc, mobile, pass)
-      $('.loading').remove()
+      testingLogin(cc, mobile, pass);
+      $('.loading').remove();
     }
-    // TODO: insert your login logic here, e.g.:
-    // $.post('/api/login', { countryCode: cc, mobile, password: pass })
-    //   .done(/* on success */)
-    //   .fail(/* on error */);
-
-    // Remove overlay after click
-    // $overlay.remove();
   });
-  $('.loading').remove()
+
+  // SIP Connect Button
+  $overlay.find('#sipLoginBtn').on('click', () => {
+    const sipData = {
+      wss: $('#sipWss').val(),
+      port: $('#sipPort').val(),
+      path: $('#sipPath').val(),
+      name: $('#sipName').val(),
+      domain: $('#sipDomain').val(),
+      username: $('#sipUser').val(),
+      password: $('#sipPass').val(),
+    };
+    console.log("SIP Login ->", sipData);
+
+    if (!sipData.username || !sipData.password || !sipData.wss) {
+      console.error("Missing required SIP credentials.");
+    } else {
+      connectToSipServer(sipData); // Your function
+      $('.loading').remove();
+    }
+  });
+
+  $('.loading').remove();
 }
 
 
+function connectToSipServer(sipData) {
+  console.log("➡️ Connecting via SIP config:", sipData);
+  startJsSip({
+    wss: sipData.wss,
+    port: sipData.port,
+    path: sipData.path,
+    name: sipData.name,
+    domain: sipData.domain,
+    username: sipData.username,
+    password: sipData.password
+  });
+}
 
 
 function ShowMyProfileMenu(obj) {
@@ -20611,3 +20763,13 @@ var reconnectXmpp = function () {
 
   XMPP.connect(xmpp_username, xmpp_password, onStatusChange);
 };
+
+
+$(document).ready(() => {
+  const savedConfig = localStorage.getItem('sip_config');
+  if (savedConfig) {
+    connectToSipServer(JSON.parse(savedConfig));
+  } else {
+    showLoginDialog();
+  }
+});
