@@ -3116,11 +3116,9 @@ function showLoginDialog() {
             <option value="91" selected>+91</option>
             <option value="1">+1</option>
           </select>
-          <input type="text" id="mobileField" placeholder="Mobile number"
-            style="flex: 1; color: white !important; background: transparent; border: 1px solid #ccc; padding: 8px;" />
+          <input type="text" id="mobileField" placeholder="Mobile number" style="flex: 1; color: white !important;" />
         </div>
-        <input type="password" id="passwordField" placeholder="Password"
-          style="width: 100%; margin-bottom: 16px; color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
+        <input type="password" id="passwordField" placeholder="Password" style="width: 100%; margin-bottom: 16px;" />
         <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
           <button id="loginBtn" style="flex: 1; max-width: 200px;">Login</button>
         </div>
@@ -3129,20 +3127,13 @@ function showLoginDialog() {
       <!-- SIP Login -->
       <div class="login-modal sip-form" style="width: 100%; display: none;">
         <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
-        <input type="text" id="sipWss" placeholder="Secure WebSocket Server (wss://...)" class="sip-field"
-          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
-        <input type="text" id="sipPort" placeholder="WebSocket Port (e.g. 4443)" class="sip-field"
-          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
-        <input type="text" id="sipPath" placeholder="WebSocket Path (e.g. /ws)" class="sip-field"
-          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
-        <input type="text" id="sipName" placeholder="Full Name" class="sip-field"
-          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
-        <input type="text" id="sipDomain" placeholder="Domain" class="sip-field"
-          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
-        <input type="text" id="sipUser" placeholder="SIP Username" class="sip-field"
-          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
-        <input type="password" id="sipPass" placeholder="SIP Password" class="sip-field"
-          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
+        <input type="text" id="sipWss" placeholder="Secure WebSocket Server (e.g. calls247.ivrsolutions.in)" class="sip-field" style="color:white" />
+        <input type="text" id="sipPath" placeholder="WebSocket Path (e.g. /ws)" class="sip-field" style="color:white" />
+        <input type="text" id="sipPort" placeholder="WebSocket Port (e.g. 8443)" class="sip-field" style="color:white" />
+        <input type="text" id="sipName" placeholder="Full Name" class="sip-field" style="color:white" />
+        <input type="text" id="sipDomain" placeholder="Domain" class="sip-field" style="color:white" />
+        <input type="text" id="sipUser" placeholder="SIP Username" class="sip-field" style="color:white" />
+        <input type="password" id="sipPass" placeholder="SIP Password" class="sip-field" style="color:white" />
         <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
           <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
         </div>
@@ -3186,41 +3177,46 @@ function showLoginDialog() {
   // SIP Connect Button
   $overlay.find('#sipLoginBtn').on('click', () => {
     const sipData = {
-      wss: $('#sipWss').val(),
-      port: $('#sipPort').val(),
-      path: $('#sipPath').val(),
-      name: $('#sipName').val(),
-      domain: $('#sipDomain').val(),
-      username: $('#sipUser').val(),
-      password: $('#sipPass').val(),
+      ServerPath: $('#sipWss').val(),
+      SipPath: $('#sipPath').val(),
+      WebSocketPort: $('#sipPort').val(),
+      profileName: $('#sipName').val(),
+      SipDomain: $('#sipDomain').val(),
+      SipUsername: $('#sipUser').val(),
+      SipPassword: $('#sipPass').val(),
     };
-    console.log("SIP Login ->", sipData);
 
-    if (!sipData.username || !sipData.password || !sipData.wss) {
-      console.error("Missing required SIP credentials.");
+    if (!sipData.ServerPath || !sipData.SipPath || !sipData.WebSocketPort || !sipData.SipUsername || !sipData.SipPassword) {
+      alert("Please fill all required SIP fields.");
+      return;
+    }
+
+    const instanceId = `1752642256${Date.now()}`;
+    localStorage.setItem("InstanceId", instanceId);
+    localStorage.setItem("ServerPath", sipData.ServerPath);
+    localStorage.setItem("SipPath", sipData.SipPath);
+    localStorage.setItem("WebSocketPort", sipData.WebSocketPort);
+    localStorage.setItem("profileName", sipData.profileName || sipData.SipUsername);
+    localStorage.setItem("SipDomain", sipData.SipDomain);
+    localStorage.setItem("SipUsername", sipData.SipUsername);
+    localStorage.setItem("SipPassword", sipData.SipPassword);
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("1752642256195245D-Buddies", JSON.stringify({ TotalRows: 0, DataCollection: [] }));
+
+    console.log("🔐 Third-party SIP login saved to localStorage.");
+    $('#loginOverlay').remove();
+
+    // Launch softphone (you can replace with your actual start function)
+    if (typeof initializeSoftphone === 'function') {
+      initializeSoftphone();
     } else {
-      connectToSipServer(sipData); // Your function
-      $('.loading').remove();
+      location.reload(); // fallback
     }
   });
 
   $('.loading').remove();
 }
 
-
-
-function connectToSipServer(sipData) {
-  console.log("➡️ Connecting via SIP config:", sipData);
-  startJsSip({
-    wss: sipData.wss,
-    port: sipData.port,
-    path: sipData.path,
-    name: sipData.name,
-    domain: sipData.domain,
-    username: sipData.username,
-    password: sipData.password
-  });
-}
 
 
 function ShowMyProfileMenu(obj) {
