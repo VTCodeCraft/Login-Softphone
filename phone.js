@@ -3230,12 +3230,14 @@ function showLoginDialog() {
     wss_path: sipData.wss_path
   };
 
+  console.log("SIP Login ->", loginCredentials);
+
   // ✅ Send to AutoProvisionAccount
   AutoProvisionAccount(loginCredentials);
 
   $('#loginOverlay').remove();
   $('.loading').remove();
-  
+
   window.location.reload(true);
 });
 }
