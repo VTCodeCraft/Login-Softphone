@@ -3231,7 +3231,7 @@ function showLoginDialog() {
   localStorage.setItem('wssServer', sipData.wss);
   localStorage.setItem('WebSocketPort', sipData.port);
   localStorage.setItem('ServerPath', sipData.path);
-  localStorage.setItem('InstanceId', Date.now().toString());
+  localStorage.setItem('InstanceId', instanceID);
   localStorage.setItem('loggedIn', 'true');
 
   $('#loginOverlay').remove();
