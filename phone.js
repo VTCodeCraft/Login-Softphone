@@ -2858,10 +2858,6 @@ function AutoProvisionAccount(loginCredentials) {
   const wssPort = loginCredentials.wss_port;
   const wssPath = loginCredentials.wss_path;
 
-  window.parent.postMessage({
-    type: "SOFTPHONE_SAVE_CREDENTIALS",
-    loginCredentials
-  }, "*");
   // Generate or reuse a unique profileUserID
   if (localStorage.getItem('profileUserID') == null) {
     localStorage.setItem('profileUserID', uID());
