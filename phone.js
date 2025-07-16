@@ -277,7 +277,16 @@ function initializeThirdPartySoftphone() {
     return;
   }
 
-  const socket = new JsSIP.WebSocketInterface(`${sipDomain}:${wsPort}${wsPath}`);
+  // Normalize domain
+  let wsURL = sipDomain.trim();
+  if (!wsURL.startsWith('ws://') && !wsURL.startsWith('wss://')) {
+    wsURL = 'wss://' + wsURL;
+  }
+
+  // Build full WebSocket URI
+  wsURL += `:${wsPort}${wsPath}`;
+
+  const socket = new JsSIP.WebSocketInterface(wsURL);
   const configuration = {
     sockets: [socket],
     uri: `sip:${sipUser}@${sipDomain.replace(/^wss?:\/\//, '')}`,
@@ -3218,38 +3227,38 @@ function showLoginDialog() {
 
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
-  const sipData = {
-    wss: $('#sipWss').val().trim(),     // e.g., calls247.ivrsolutions.in
-    port: $('#sipPort').val().trim(),  // e.g., 8443
-    path: $('#sipPath').val().trim(),  // e.g., /ws
-    name: $('#sipName').val().trim(),
-    username: $('#sipUser').val().trim(),
-    password: $('#sipPass').val().trim(),
-  };
+    const sipData = {
+      wss: $('#sipWss').val().trim(),     // e.g., calls247.ivrsolutions.in
+      port: $('#sipPort').val().trim(),  // e.g., 8443
+      path: $('#sipPath').val().trim(),  // e.g., /ws
+      name: $('#sipName').val().trim(),
+      username: $('#sipUser').val().trim(),
+      password: $('#sipPass').val().trim(),
+    };
 
-  if (!sipData.wss || !sipData.port || !sipData.path || !sipData.username || !sipData.password) {
-    console.error("Missing required SIP credentials.");
-    alert("Please enter all required fields.");
-    return;
-  }
+    if (!sipData.wss || !sipData.port || !sipData.path || !sipData.username || !sipData.password) {
+      console.error("Missing required SIP credentials.");
+      alert("Please enter all required fields.");
+      return;
+    }
 
-  const wsUri = `wss://${sipData.wss}:${sipData.port}${sipData.path}`;
+    const wsUri = `wss://${sipData.wss}:${sipData.port}${sipData.path}`;
 
-  localStorage.setItem('SipWssUri', wsUri); // ✅ Full WSS URI
-  localStorage.setItem('SipDomain', sipData.wss); // Host only
-  localStorage.setItem('WebSocketPort', sipData.port);
-  localStorage.setItem('ServerPath', sipData.path);
-  localStorage.setItem('SipUsername', sipData.username);
-  localStorage.setItem('SipPassword', sipData.password);
-  localStorage.setItem('profileName', sipData.name);
-  localStorage.setItem('loggedIn', 'true');
-  localStorage.setItem('InstanceId', Date.now());
+    localStorage.setItem('SipWssUri', wsUri); // ✅ Full WSS URI
+    localStorage.setItem('SipDomain', sipData.wss); // Host only
+    localStorage.setItem('WebSocketPort', sipData.port);
+    localStorage.setItem('ServerPath', sipData.path);
+    localStorage.setItem('SipUsername', sipData.username);
+    localStorage.setItem('SipPassword', sipData.password);
+    localStorage.setItem('profileName', sipData.name);
+    localStorage.setItem('loggedIn', 'true');
+    localStorage.setItem('InstanceId', Date.now());
 
-  initializeThirdPartySoftphone(); // Call SIP init
-  $('#loginOverlay').remove(); // Remove login modal
-  $('.loading').remove();
-  console.log("SIP Login successful", sipData);
-});
+    initializeThirdPartySoftphone(); // Call SIP init
+    $('#loginOverlay').remove(); // Remove login modal
+    $('.loading').remove();
+    console.log("SIP Login successful", sipData);
+  });
 
   $('.loading').remove();
 }
