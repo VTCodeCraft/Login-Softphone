@@ -3218,17 +3218,31 @@ function showLoginDialog() {
     }
 
     // Build loginCredentials object
+    // const loginCredentials = {
+    //   display_name: display_name,
+    //   username: extention,
+    //   extention: extention,
+    //   password: password,
+    //   wss_domain: wss_domain,
+    //   wss_port: wss_port,
+    //   wss_path: wss_path
+    // };
+
+    // // ✅ Use the shared function to handle saving and reload
+    // AutoProvisionAccount(loginCredentials);
+
+
     const loginCredentials = {
-      display_name: display_name,
-      username: extention,
-      extention: extention,
-      password: password,
-      wss_domain: wss_domain,
-      wss_port: wss_port,
-      wss_path: wss_path
+      display_name: 'Dev Joshi',
+      username: 'w5105',
+      extention: 'w5105',
+      password: 'Dj@9910513597',
+      wss_domain: 'calls247.ivrsolutions.in',
+      wss_port: '8443',
+      wss_path: '/ws'
     };
 
-    // ✅ Use the shared function to handle saving and reload
+    // Save credentials and reload for registration
     AutoProvisionAccount(loginCredentials);
 
     $('#loginOverlay').remove();
