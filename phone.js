@@ -3205,65 +3205,36 @@ function showLoginDialog() {
 
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
-    const sipData = {
-      wss_domain: $('#sipWss').val().trim(),     // e.g., calls247.ivrsolutions.in
-      wss_port: $('#sipPort').val().trim(),      // e.g., 8443
-      wss_path: $('#sipPath').val().trim(),      // e.g., /ws
-      display_name: $('#sipName').val().trim(),
-      extention: $('#sipUser').val().trim(),
-      password: $('#sipPass').val().trim(),
-    };
+    const display_name = $('#sipName').val().trim();
+    const extention = $('#sipUser').val().trim();
+    const password = $('#sipPass').val().trim();
+    const wss_domain = $('#sipWss').val().trim();     // e.g., calls247.ivrsolutions.in
+    const wss_port = $('#sipPort').val().trim();      // e.g., 8443
+    const wss_path = $('#sipPath').val().trim();      // e.g., /ws
 
-    // Validation
-    if (!sipData.wss_domain || !sipData.wss_port || !sipData.wss_path || !sipData.extention || !sipData.password) {
-      console.error("Missing required SIP credentials.");
+    if (!wss_domain || !wss_port || !wss_path || !extention || !password) {
       alert("Please enter all required fields.");
       return;
     }
 
-    // ✅ Generate or reuse unique ID
-    if (!localStorage.getItem('profileUserID')) {
-      localStorage.setItem('profileUserID', uID());
-    }
-
-    // ✅ Save credentials into localStorage
-    localStorage.setItem('profileName', sipData.display_name);
-    localStorage.setItem('wssServer', sipData.wss_domain);
-    localStorage.setItem('WebSocketPort', sipData.wss_port);
-    localStorage.setItem('ServerPath', sipData.wss_path);
-    localStorage.setItem('SipDomain', sipData.wss_domain);
-    localStorage.setItem('SipUsername', sipData.extention);
-    localStorage.setItem('SipPassword', sipData.password);
+    const profileUserID = localStorage.getItem('profileUserID') || uID();
+    localStorage.setItem('profileUserID', profileUserID);
+    localStorage.setItem('profileName', display_name);
+    localStorage.setItem('SipUsername', extention);
+    localStorage.setItem('SipPassword', password);
+    localStorage.setItem('SipDomain', wss_domain);
+    localStorage.setItem('wssServer', wss_domain);
+    localStorage.setItem('WebSocketPort', wss_port);
+    localStorage.setItem('ServerPath', wss_path);
     localStorage.setItem('loggedIn', 'true');
     localStorage.setItem('InstanceId', Date.now());
 
-    // ✅ Optional: sync with Chrome Extension or other windows
-    const credentials = {
-      profileName: sipData.display_name,
-      wssServer: sipData.wss_domain,
-      WebSocketPort: sipData.wss_port,
-      ServerPath: sipData.wss_path,
-      SipDomain: sipData.wss_domain,
-      SipUsername: sipData.extention,
-      SipPassword: sipData.password,
-      loggedIn: true
-    };
-
-    window.parent.postMessage({
-      type: "SOFTPHONE_SAVE_CREDENTIALS",
-      credentials
-    }, "*");
-
-    console.log("✅ Manual SIP login credentials saved", credentials);
-
-    // ✅ Close and reload
     $('#loginOverlay').remove();
     $('.loading').remove();
+
+    // ✅ Reload to trigger softphone init
     window.location.reload(true);
   });
-
-
-  $('.loading').remove();
 }
 
 
