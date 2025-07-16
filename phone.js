@@ -3206,37 +3206,36 @@ function showLoginDialog() {
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
   const sipData = {
-    wss: $('#sipWss').val("calls247.ivrsolutions.in"),     // calls247.ivrsolutions.in
-    port: $('#sipPort').val("8443"),   // 8443
-    path: $('#sipPath').val("/ws"),   // /ws
-    name: $('#sipName').val("Dev Joshi"),   // Dev Joshi
-    username: $('#sipUser').val("w5105"), // w5105
-    password: $('#sipPass').val("Dj@9910513597") // Dj@9910513597
+    wss_domain: $('#sipWss').val().trim(),
+    wss_port: $('#sipPort').val().trim(),
+    wss_path: $('#sipPath').val().trim(),
+    display_name: $('#sipName').val().trim(),
+    extention: $('#sipUser').val().trim(),
+    password: $('#sipPass').val().trim(),
   };
-  console.log("SIP Login ->", sipData);
 
-  if (!sipData.wss || !sipData.port || !sipData.path || !sipData.username || !sipData.password) {
-    alert("Please enter all required fields.");
+  // Validation
+  if (!sipData.wss_domain || !sipData.wss_port || !sipData.wss_path || !sipData.extention || !sipData.password) {
+    alert("Please fill all SIP fields.");
     return;
   }
 
-  if (localStorage.getItem('profileUserID') == null) {
-    localStorage.setItem('profileUserID', uID());
-  }
+  const loginCredentials = {
+    display_name: sipData.display_name,
+    username: sipData.extention,
+    extention: sipData.extention,
+    password: sipData.password,
+    wss_domain: sipData.wss_domain,
+    wss_port: sipData.wss_port,
+    wss_path: sipData.wss_path
+  };
 
-  localStorage.setItem('profileName', sipData.name);
-  localStorage.setItem('SipUsername', sipData.username);
-  localStorage.setItem('SipPassword', sipData.password);
-  localStorage.setItem('SipDomain', sipData.wss);
-  localStorage.setItem('wssServer', sipData.wss);
-  localStorage.setItem('WebSocketPort', sipData.port);
-  localStorage.setItem('ServerPath', sipData.path);
-  localStorage.setItem('loggedIn', 'true');
+  // ✅ Send to AutoProvisionAccount
+  AutoProvisionAccount(loginCredentials);
 
   $('#loginOverlay').remove();
   $('.loading').remove();
-
-  // Trigger softphone re-init
+  
   window.location.reload(true);
 });
 }
