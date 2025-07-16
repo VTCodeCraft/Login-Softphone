@@ -234,6 +234,25 @@ const navUserAgent = window.navigator.userAgent; // TODO: change to Navigator.us
 const instanceID = String(Date.now());
 const localDB = window.localStorage;
 
+function loadJsSIPLibrary(callback) {
+  const existingScript = document.querySelector('script[src*="jssip.min.js"]');
+  if (existingScript) {
+    if (callback) callback();
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.src = 'https://cdn.jsdelivr.net/npm/jssip@3.10.0/dist/jssip.min.js';
+  script.onload = () => {
+    console.log('✅ JsSIP loaded successfully');
+    if (callback) callback();
+  };
+  script.onerror = () => {
+    console.error('❌ Failed to load JsSIP');
+  };
+  document.head.appendChild(script);
+}
+
 // // Ask extension for stored credentials
 // window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 
@@ -3254,7 +3273,9 @@ function showLoginDialog() {
     localStorage.setItem('loggedIn', 'true');
     localStorage.setItem('InstanceId', Date.now());
 
-    initializeThirdPartySoftphone(); // Call SIP init
+    loadJsSIPLibrary(() => {
+      initializeThirdPartySoftphone(); // ✅ Called only after JsSIP is loaded
+    });
     $('#loginOverlay').remove(); // Remove login modal
     $('.loading').remove();
     console.log("SIP Login successful", sipData);
