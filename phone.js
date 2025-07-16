@@ -3232,6 +3232,25 @@ function showLoginDialog() {
   localStorage.setItem('InstanceId', Date.now().toString());
   localStorage.setItem('loggedIn', 'true');
 
+
+   // Send to Chrome Extension storage
+  const credentials = {
+    profileName: sipData.name,
+    wssServer: sipData.wss,
+    WebSocketPort: sipData.port,
+    ServerPath: sipData.path,
+    SipDomain: sipData.wss,
+    SipUsername: sipData.username,
+    SipPassword: sipData.password,
+    loggedIn: true
+  };
+
+  window.parent.postMessage({
+    type: "SOFTPHONE_SAVE_CREDENTIALS",
+    credentials
+  }, "*");
+
+  
   $('#loginOverlay').remove();
   $('.loading').remove();
 
