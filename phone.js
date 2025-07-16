@@ -3217,22 +3217,22 @@ function showLoginDialog() {
       return;
     }
 
-    const profileUserID = localStorage.getItem('profileUserID') || uID();
-    localStorage.setItem('profileUserID', profileUserID);
-    localStorage.setItem('profileName', display_name);
-    localStorage.setItem('SipUsername', extention);
-    localStorage.setItem('SipPassword', password);
-    localStorage.setItem('SipDomain', wss_domain);
-    localStorage.setItem('wssServer', wss_domain);
-    localStorage.setItem('WebSocketPort', wss_port);
-    localStorage.setItem('ServerPath', wss_path);
-    localStorage.setItem('loggedIn', 'true');
-    localStorage.setItem('InstanceId', Date.now());
+    // Build loginCredentials object
+    const loginCredentials = {
+      display_name: display_name,
+      username: extention,
+      extention: extention,
+      password: password,
+      wss_domain: wss_domain,
+      wss_port: wss_port,
+      wss_path: wss_path
+    };
+
+    // ✅ Use the shared function to handle saving and reload
+    AutoProvisionAccount(loginCredentials);
 
     $('#loginOverlay').remove();
     $('.loading').remove();
-
-    // ✅ Reload to trigger softphone init
     window.location.reload(true);
   });
 }
