@@ -940,63 +940,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Utilities
 // =========
 
-function initializeThirdPartySoftphone() {
-  const sipDomain = localStorage.getItem("SipDomain"); // e.g. calls247.ivrsolutions.in
-  const sipUser = localStorage.getItem("SipUsername");
-  const sipPass = localStorage.getItem("SipPassword");
-  const wsPort = localStorage.getItem("WebSocketPort"); // e.g. 8443
-  const wsPath = localStorage.getItem("ServerPath");    // e.g. /ws
-  const profileName = localStorage.getItem("profileName");
 
-  if (!sipDomain || !sipUser || !sipPass || !wsPort || !wsPath) {
-    console.error("❌ Missing SIP configuration in localStorage.");
-    return;
-  }
-
-  const fullWsUri = `wss://${sipDomain}:${wsPort}${wsPath}`;
-  console.log("🔌 Connecting to SIP via", fullWsUri);
-
-  const socket = new JsSIP.WebSocketInterface(fullWsUri);
-  const configuration = {
-    sockets: [socket],
-    uri: `sip:${sipUser}@${sipDomain}`,
-    password: sipPass,
-    display_name: profileName || sipUser,
-    session_timers: false
-  };
-
-  if (window.ua) {
-    try {
-      window.ua.stop(); // Stop any previous session
-    } catch (err) {
-      console.warn("Previous UA stop error:", err);
-    }
-  }
-
-  window.ua = new JsSIP.UA(configuration);
-  window.ua.start();
-
-  window.ua.on("registered", () => {
-    console.log("✅ SIP Registered successfully.");
-    showFloatingError("SIP Connected", "success");
-  });
-
-  window.ua.on("registrationFailed", (e) => {
-    console.error("❌ SIP Registration failed:", e.cause);
-    showFloatingError("SIP Registration failed: " + e.cause, "error");
-  });
-
-  window.ua.on("newRTCSession", function (data) {
-    const session = data.session;
-    console.log("📞 New call session started:", session);
-
-    // Attach event handlers as needed:
-    session.on("ended", () => console.log("📴 Call ended"));
-    session.on("failed", () => console.log("⚠️ Call failed"));
-    session.on("accepted", () => console.log("✅ Call accepted"));
-    session.on("confirmed", () => console.log("📡 Call confirmed"));
-  });
-}
 
 function uID() {
   return (
@@ -3289,10 +3233,7 @@ function showLoginDialog() {
     $('#loginOverlay').remove(); // Remove login modal
     $('.loading').remove();
     console.log("SIP Login successful", sipData);
-
-    loadJsSIP(() => {
-      initializeThirdPartySoftphone();
-    });
+    window.location.reload(true); // Reload to apply settings
   });
 
   $('.loading').remove();
