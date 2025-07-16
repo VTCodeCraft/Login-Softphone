@@ -3205,58 +3205,59 @@ function showLoginDialog() {
 
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
-  const sipData = {
-    wss: $('#sipWss').val().trim(),     // calls247.ivrsolutions.in
-    port: $('#sipPort').val().trim(),   // 8443
-    path: $('#sipPath').val().trim(),   // /ws
-    name: $('#sipName').val().trim(),   // Dev Joshi
-    username: $('#sipUser').val().trim(), // w5105
-    password: $('#sipPass').val().trim()  // Dj@9910513597
-  };
-  console.log("SIP Login ->", sipData);
+    const sipData = {
+      wss: $('#sipWss').val().trim(),         // calls247.ivrsolutions.in
+      port: $('#sipPort').val().trim(),       // 8443
+      path: $('#sipPath').val().trim(),       // /ws
+      name: $('#sipName').val().trim(),       // Dev Joshi
+      username: $('#sipUser').val().trim(),   // w5105
+      password: $('#sipPass').val().trim()    // Dj@9910513597
+    };
 
-  if (!sipData.wss || !sipData.port || !sipData.path || !sipData.username || !sipData.password) {
-    alert("Please enter all required fields.");
-    return;
-  }
+    if (!sipData.wss || !sipData.port || !sipData.path || !sipData.username || !sipData.password) {
+      alert("Please enter all required fields.");
+      return;
+    }
 
-  const profileUserID = localStorage.getItem('profileUserID') || Date.now().toString();
-  localStorage.setItem('profileUserID', profileUserID);
-  localStorage.setItem('profileName', sipData.name);
-  localStorage.setItem('SipUsername', sipData.username);
-  localStorage.setItem('SipPassword', sipData.password);
-  localStorage.setItem('SipDomain', sipData.wss);
-  localStorage.setItem('wssServer', sipData.wss);
-  localStorage.setItem('WebSocketPort', sipData.port);
-  localStorage.setItem('ServerPath', sipData.path);
-  localStorage.setItem('InstanceId', Date.now().toString());
-  localStorage.setItem('loggedIn', 'true');
+    const profileUserID = localStorage.getItem('profileUserID') || Date.now().toString();
+    const instanceId = Date.now().toString();
 
+    // Save to localStorage
+    localStorage.setItem('profileUserID', profileUserID);
+    localStorage.setItem('profileName', sipData.name);
+    localStorage.setItem('SipUsername', sipData.username);
+    localStorage.setItem('SipPassword', sipData.password);
+    localStorage.setItem('SipDomain', sipData.wss);
+    localStorage.setItem('wssServer', sipData.wss);
+    localStorage.setItem('WebSocketPort', sipData.port);
+    localStorage.setItem('ServerPath', sipData.path);
+    localStorage.setItem('InstanceId', instanceId);
+    localStorage.setItem('loggedIn', 'true');
 
-   // Send to Chrome Extension storage
-  const credentials = {
-    profileName: sipData.name,
-    wssServer: sipData.wss,
-    WebSocketPort: sipData.port,
-    ServerPath: sipData.path,
-    SipDomain: sipData.wss,
-    SipUsername: sipData.username,
-    SipPassword: sipData.password,
-    loggedIn: true
-  };
+    // Send to Chrome Extension storage
+    const credentials = {
+      profileName: sipData.name,
+      wssServer: sipData.wss,
+      WebSocketPort: sipData.port,
+      ServerPath: sipData.path,
+      SipDomain: sipData.wss,
+      SipUsername: sipData.username,
+      SipPassword: sipData.password,
+      loggedIn: true
+    };
 
-  window.parent.postMessage({
-    type: "SOFTPHONE_SAVE_CREDENTIALS",
-    credentials
-  }, "*");
+    window.parent.postMessage({
+      type: "SOFTPHONE_SAVE_CREDENTIALS",
+      credentials
+    }, "*");
 
-  
-  $('#loginOverlay').remove();
-  $('.loading').remove();
+    $('#loginOverlay').remove();
+    $('.loading').remove();
 
-  // Trigger softphone re-init
-  window.location.reload(true);
-});
+    // Trigger re-initialization
+    window.location.reload(true);
+  });
+
 }
 
 
