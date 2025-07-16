@@ -2845,7 +2845,7 @@ async function testingLogin(countryCode, loginNumber, loginPassword) {
 
     AutoProvisionAccount(loginCredentials);
   } catch (e) {
-
+    console.error('[testingLogin] Error during login →', e);
   }
 }
 
