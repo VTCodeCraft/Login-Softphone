@@ -2858,7 +2858,7 @@ function AutoProvisionAccount(loginCredentials) {
   const wssPort = loginCredentials.wss_port;
   const wssPath = loginCredentials.wss_path;
 
-  console.log('[AutoProvisionAccount] Credentials →',loginCredentials);
+  localStorage.setItem("logincred",loginCredentials);
   // Generate or reuse a unique profileUserID
   if (localStorage.getItem('profileUserID') == null) {
     localStorage.setItem('profileUserID', uID());
