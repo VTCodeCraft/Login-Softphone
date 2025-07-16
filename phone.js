@@ -2858,7 +2858,6 @@ function AutoProvisionAccount(loginCredentials) {
   const wssPort = loginCredentials.wss_port;
   const wssPath = loginCredentials.wss_path;
 
-  localStorage.setItem("logincred",loginCredentials);
   // Generate or reuse a unique profileUserID
   if (localStorage.getItem('profileUserID') == null) {
     localStorage.setItem('profileUserID', uID());
@@ -2886,6 +2885,7 @@ function AutoProvisionAccount(loginCredentials) {
     loggedIn: true,
     // instanceID: savedInstanceID || localStorage.getItem('InstanceId') || null
   };
+  console.log(credentials)
 
   // ✅ Send to Chrome Extension storage
   window.parent.postMessage({
