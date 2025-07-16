@@ -3276,10 +3276,8 @@ function showLoginDialog() {
       return;
     }
 
-    const wsUri = `wss://${sipData.wss}:${sipData.port}${sipData.path}`;
-
-    localStorage.setItem('SipWssUri', wsUri); // ✅ Full WSS URI
     localStorage.setItem('SipDomain', sipData.wss); // Host only
+    localStorage.setItem('wssServer', sipData.wss);
     localStorage.setItem('WebSocketPort', sipData.port);
     localStorage.setItem('ServerPath', sipData.path);
     localStorage.setItem('SipUsername', sipData.username);
