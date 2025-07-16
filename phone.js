@@ -150,6 +150,10 @@ async function waitForPreLoads() {
 
   // 5d) Moment.js **before** your own code if you depend on it
   await loadScript('https://dtd6jl0d42sve.cloudfront.net/lib/Moment/moment-with-locales-2.24.0.min.js')
+  await loadScript('https://cdn.jsdelivr.net/npm/jssip@3.10.0/dist/jssip.min.js', {
+    crossorigin: 'anonymous',
+    referrerpolicy: 'no-referrer'
+  });
   await loadScript('https://dtd6jl0d42sve.cloudfront.net/lib/SipJS/sip-0.20.0.min.js')
   // await loadScript('./sip-0.20.0.silent.min.js')
   await loadScript('https://dtd6jl0d42sve.cloudfront.net/lib/Croppie/Croppie-2.6.4/croppie.min.js')
@@ -233,25 +237,6 @@ const sipjsversion = '0.20.0';
 const navUserAgent = window.navigator.userAgent; // TODO: change to Navigator.userAgentData
 const instanceID = String(Date.now());
 const localDB = window.localStorage;
-
-function loadJsSIPLibrary(callback) {
-  const existingScript = document.querySelector('script[src*="jssip.min.js"]');
-  if (existingScript) {
-    if (callback) callback();
-    return;
-  }
-
-  const script = document.createElement('script');
-  script.src = 'https://cdn.jsdelivr.net/npm/jssip@3.10.0/dist/jssip.min.js';
-  script.onload = () => {
-    console.log('✅ JsSIP loaded successfully');
-    if (callback) callback();
-  };
-  script.onerror = (e) => {
-    console.error('❌ Failed to load JsSIP', e);
-  };
-  document.head.appendChild(script);
-}
 
 
 // // Ask extension for stored credentials
