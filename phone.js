@@ -264,6 +264,46 @@ const localDB = window.localStorage;
 //   }
 // });
 
+function initializeThirdPartySoftphone() {
+  const sipDomain = localStorage.getItem("SipDomain");
+  const sipUser = localStorage.getItem("SipUsername");
+  const sipPass = localStorage.getItem("SipPassword");
+  const wsPort = localStorage.getItem("WebSocketPort");
+  const wsPath = localStorage.getItem("ServerPath");
+  const profileName = localStorage.getItem("profileName");
+
+  if (!sipDomain || !sipUser || !sipPass) {
+    console.error("Missing SIP credentials.");
+    return;
+  }
+
+  const socket = new JsSIP.WebSocketInterface(`${sipDomain}:${wsPort}${wsPath}`);
+  const configuration = {
+    sockets: [socket],
+    uri: `sip:${sipUser}@${sipDomain.replace(/^wss?:\/\//, '')}`,
+    password: sipPass,
+    display_name: profileName || sipUser,
+    session_timers: false
+  };
+
+  window.ua = new JsSIP.UA(configuration);
+  window.ua.start();
+
+  window.ua.on("registered", () => {
+    console.log("✅ SIP Registered successfully.");
+  });
+
+  window.ua.on("registrationFailed", (e) => {
+    console.error("❌ Registration failed:", e.cause);
+    alert("SIP login failed: " + e.cause);
+  });
+
+  window.ua.on("newRTCSession", function (data) {
+    const session = data.session;
+    console.log("📞 New call session started:", session);
+    // You can handle incoming/outgoing calls here
+  });
+}
 
 function requestCredentialsFromExtension(attempt = 0) {
   if (attempt > 5) {
@@ -2312,15 +2352,18 @@ function InitUi() {
   ApplyThemeColor();
 
   // If the user is NOT logged in, show only the instruction screen and stop
-  if (profileUserID == null || !loggedIn) {
-    showLoginDialog();
-    $('.loading').remove()
-    const elements = document.querySelectorAll('.myClass');
+  const hasThirdPartySIPCreds =
+    localStorage.getItem('SipUsername') &&
+    localStorage.getItem('SipPassword') &&
+    localStorage.getItem('SipDomain');
 
-    // Loop over the NodeList and remove each one
+  if ((profileUserID == null || !loggedIn) && !hasThirdPartySIPCreds) {
+    showLoginDialog();
+    $('.loading').remove();
+    const elements = document.querySelectorAll('.myClass');
     elements.forEach(el => el.remove());
     UpdateUI();
-    return; // do not build any other UI
+    return;
   }
 
 
@@ -3180,25 +3223,27 @@ function showLoginDialog() {
       port: $('#sipPort').val(),
       path: $('#sipPath').val(),
       name: $('#sipName').val(),
-      domain: $('#sipWss').val(), // domain = wss (your latest change)
+      domain: $('#sipWss').val(), // Use wss as domain
       username: $('#sipUser').val(),
       password: $('#sipPass').val(),
     };
 
-    // Validate SIP login fields
     if (!sipData.username || !sipData.password || !sipData.wss) {
       console.error("Missing required SIP credentials.");
+      alert("Please enter all required fields.");
     } else {
       localStorage.setItem('SipDomain', sipData.domain);
       localStorage.setItem('SipUsername', sipData.username);
       localStorage.setItem('SipPassword', sipData.password);
       localStorage.setItem('WebSocketPort', sipData.port);
       localStorage.setItem('ServerPath', sipData.path);
-      localStorage.setItem('loggedIn', true);
+      localStorage.setItem('loggedIn', 'true');
       localStorage.setItem('profileName', sipData.name);
       localStorage.setItem('InstanceId', Date.now());
 
-      window.location.reload(); // ✅ This reload triggers the softphone to start from localStorage values
+      initializeThirdPartySoftphone(); // <-- Initialize SIP after saving
+
+      $('#loginOverlay').remove(); // Close modal
     }
   });
 
