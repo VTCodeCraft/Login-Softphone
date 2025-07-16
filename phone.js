@@ -3220,8 +3220,10 @@ function showLoginDialog() {
     return;
   }
 
-  const profileUserID = localStorage.getItem('profileUserID') || Date.now().toString();
-  localStorage.setItem('profileUserID', profileUserID);
+  if (localStorage.getItem('profileUserID') == null) {
+    localStorage.setItem('profileUserID', uID());
+  }
+
   localStorage.setItem('profileName', sipData.name);
   localStorage.setItem('SipUsername', sipData.username);
   localStorage.setItem('SipPassword', sipData.password);
