@@ -3219,32 +3219,34 @@ function showLoginDialog() {
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
     const sipData = {
-      wss: $('#sipWss').val(),
-      port: $('#sipPort').val(),
-      path: $('#sipPath').val(),
-      name: $('#sipName').val(),
-      domain: $('#sipWss').val(), // Use wss as domain
-      username: $('#sipUser').val(),
-      password: $('#sipPass').val(),
+      wss: $('#sipWss').val().trim(),     // e.g., calls247.ivrsolutions.in
+      port: $('#sipPort').val().trim(),  // e.g., 8443
+      path: $('#sipPath').val().trim(),  // e.g., /ws
+      name: $('#sipName').val().trim(),
+      username: $('#sipUser').val().trim(),
+      password: $('#sipPass').val().trim(),
     };
 
-    if (!sipData.username || !sipData.password || !sipData.wss) {
+    if (!sipData.wss || !sipData.port || !sipData.path || !sipData.username || !sipData.password) {
       console.error("Missing required SIP credentials.");
       alert("Please enter all required fields.");
-    } else {
-      localStorage.setItem('SipDomain', sipData.domain);
-      localStorage.setItem('SipUsername', sipData.username);
-      localStorage.setItem('SipPassword', sipData.password);
-      localStorage.setItem('WebSocketPort', sipData.port);
-      localStorage.setItem('ServerPath', sipData.path);
-      localStorage.setItem('loggedIn', 'true');
-      localStorage.setItem('profileName', sipData.name);
-      localStorage.setItem('InstanceId', Date.now());
-
-      initializeThirdPartySoftphone(); // <-- Initialize SIP after saving
-
-      $('#loginOverlay').remove(); // Close modal
+      return;
     }
+
+    const wsUri = `wss://${sipData.wss}:${sipData.port}${sipData.path}`;
+
+    localStorage.setItem('SipWssUri', wsUri); // ✅ Full WSS URI
+    localStorage.setItem('SipDomain', sipData.wss); // Host only
+    localStorage.setItem('WebSocketPort', sipData.port);
+    localStorage.setItem('ServerPath', sipData.path);
+    localStorage.setItem('SipUsername', sipData.username);
+    localStorage.setItem('SipPassword', sipData.password);
+    localStorage.setItem('profileName', sipData.name);
+    localStorage.setItem('loggedIn', 'true');
+    localStorage.setItem('InstanceId', Date.now());
+
+    initializeThirdPartySoftphone(); // Call SIP init
+    $('#loginOverlay').remove(); // Remove login modal
   });
 
   $('.loading').remove();
@@ -3490,34 +3492,25 @@ function PreloadAudioFiles() {
 // =================
 function CreateUserAgent() {
   console.log('Creating User Agent...');
-  if (
-    SipDomain == null ||
-    SipDomain == '' ||
-    SipDomain == 'null' ||
-    SipDomain == 'undefined'
-  )
-    SipDomain = wssServer; // Sets globally
+
+  // Read values from localStorage
+  const fullWsUri = localStorage.getItem('SipWssUri');
+  SipDomain = localStorage.getItem('SipDomain');
+  SipUsername = localStorage.getItem('SipUsername');
+  SipPassword = localStorage.getItem('SipPassword');
+  profileName = localStorage.getItem('profileName');
+
   var options = {
-    logConfiguration: false, // If true, constructor logs the registerer configuration.
+    logConfiguration: false,
     uri: SIP.UserAgent.makeURI('sip:' + SipUsername + '@' + SipDomain),
     transportOptions: {
-      server: 'wss://' + wssServer + ':' + WebSocketPort + '' + ServerPath,
+      server: fullWsUri, // ✅ Use full URI directly
       traceSip: false,
       connectionTimeout: TransportConnectionTimeout,
-      // keepAliveInterval: 30 // Uncomment this and make this any number greater then 0 for keep alive...
-      // NB, adding a keep alive will NOT fix bad internet, if your connection cannot stay open (permanent WebSocket Connection) you probably
-      // have a router or ISP issue, and if your internet is so poor that you need to some how keep it alive with empty packets
-      // upgrade you internet connection. This is voip we are talking about here.
     },
     sessionDescriptionHandlerFactoryOptions: {
       peerConnectionConfiguration: {
         bundlePolicy: BundlePolicy,
-        // certificates: undefined,
-        // iceCandidatePoolSize: 10,
-        // iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-        // iceTransportPolicy: "all",
-        // peerIdentity: undefined,
-        // rtcpMuxPolicy: "require",
       },
       iceGatheringTimeout: IceStunCheckTimeout,
     },
@@ -3525,58 +3518,39 @@ function CreateUserAgent() {
     displayName: profileName,
     authorizationUsername: SipUsername,
     authorizationPassword: SipPassword,
-    hackIpInContact: IpInContact, // Asterisk should also be set to rewrite contact
+    hackIpInContact: IpInContact,
     userAgentString: userAgentStr,
     autoStart: false,
     autoStop: true,
     register: false,
     noAnswerTimeout: NoAnswerTimeout,
-    // sipExtension100rel: // UNSUPPORTED | SUPPORTED | REQUIRED NOTE: rel100 is not supported
     contactParams: {},
     delegate: {
-      onInvite: function (sip) {
-        ReceiveCall(sip);
-      },
-      onMessage: function (sip) {
-        ReceiveOutOfDialogMessage(sip);
-      },
+      onInvite: ReceiveCall,
+      onMessage: ReceiveOutOfDialogMessage,
     },
   };
+
   if (IceStunServerJson != '') {
     options.sessionDescriptionHandlerFactoryOptions.peerConnectionConfiguration.iceServers =
       JSON.parse(IceStunServerJson);
   }
 
-  // Added to the contact BEFORE the '>' (permanent)
-  if (
-    RegisterContactParams &&
-    RegisterContactParams != '' &&
-    RegisterContactParams != '{}'
-  ) {
+  if (RegisterContactParams && RegisterContactParams != '' && RegisterContactParams != '{}') {
     try {
       options.contactParams = JSON.parse(RegisterContactParams);
-    } catch (e) { }
+    } catch (e) {}
   }
   if (WssInTransport) {
     try {
       options.contactParams.transport = 'wss';
-    } catch (e) { }
+    } catch (e) {}
   }
-
-  // Add (Hardcode) other RTCPeerConnection({ rtcConfiguration }) config dictionary options here
-  // https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
-  // Example:
-  // options.sessionDescriptionHandlerFactoryOptions.peerConnectionConfiguration.rtcpMuxPolicy = "require";
 
   userAgent = new SIP.UserAgent(options);
   userAgent.isRegistered = function () {
-    return (
-      userAgent &&
-      userAgent.registerer &&
-      userAgent.registerer.state == SIP.RegistererState.Registered
-    );
+    return userAgent && userAgent.registerer && userAgent.registerer.state == SIP.RegistererState.Registered;
   };
-  // For some reason this is marked as private... not sure why
   userAgent.sessions = userAgent._sessions;
   userAgent.registrationCompleted = false;
   userAgent.registering = false;
@@ -3586,9 +3560,10 @@ function CreateUserAgent() {
   userAgent.lastVoicemailCount = 0;
 
   console.log('Creating User Agent... Done');
-  // Custom Web hook
-  if (typeof web_hook_on_userAgent_created !== 'undefined')
+
+  if (typeof web_hook_on_userAgent_created !== 'undefined') {
     web_hook_on_userAgent_created(userAgent);
+  }
 
   userAgent.transport.onConnect = function () {
     onTransportConnected();
@@ -3602,19 +3577,14 @@ function CreateUserAgent() {
   };
 
   var RegistererOptions = {
-    logConfiguration: false, // If true, constructor logs the registerer configuration.
+    logConfiguration: false,
     expires: RegisterExpires,
     extraHeaders: [],
     extraContactHeaderParams: [],
-    refreshFrequency: 75, // Determines when a re-REGISTER request is sent. The value should be specified as a percentage of the expiration time (between 50 and 99).
+    refreshFrequency: 75,
   };
 
-  // Added to the SIP Headers
-  if (
-    RegisterExtraHeaders &&
-    RegisterExtraHeaders != '' &&
-    RegisterExtraHeaders != '{}'
-  ) {
+  if (RegisterExtraHeaders && RegisterExtraHeaders != '' && RegisterExtraHeaders != '{}') {
     try {
       var registerExtraHeaders = JSON.parse(RegisterExtraHeaders);
       for (const [key, value] of Object.entries(registerExtraHeaders)) {
@@ -3622,15 +3592,10 @@ function CreateUserAgent() {
           RegistererOptions.extraHeaders.push(key + ': ' + value);
         }
       }
-    } catch (e) { }
+    } catch (e) {}
   }
 
-  // Added to the contact AFTER the '>' (not permanent)
-  if (
-    RegisterExtraContactParams &&
-    RegisterExtraContactParams != '' &&
-    RegisterExtraContactParams != '{}'
-  ) {
+  if (RegisterExtraContactParams && RegisterExtraContactParams != '' && RegisterExtraContactParams != '{}') {
     try {
       var registerExtraContactParams = JSON.parse(RegisterExtraContactParams);
       for (const [key, value] of Object.entries(registerExtraContactParams)) {
@@ -3640,7 +3605,7 @@ function CreateUserAgent() {
           RegistererOptions.extraContactHeaderParams.push(key + '=' + value);
         }
       }
-    } catch (e) { }
+    } catch (e) {}
   }
 
   userAgent.registerer = new SIP.Registerer(userAgent, RegistererOptions);
@@ -3650,7 +3615,6 @@ function CreateUserAgent() {
     console.log('User Agent Registration State:', newState);
     switch (newState) {
       case SIP.RegistererState.Initial:
-        // Nothing to do
         break;
       case SIP.RegistererState.Registered:
         onRegistered();
@@ -3659,7 +3623,6 @@ function CreateUserAgent() {
         onUnregistered();
         break;
       case SIP.RegistererState.Terminated:
-        // Nothing to do
         break;
     }
   });
@@ -3670,6 +3633,7 @@ function CreateUserAgent() {
     onTransportConnectError(error);
   });
 }
+
 
 // Transport Events
 // ================
