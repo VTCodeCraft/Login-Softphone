@@ -2988,7 +2988,7 @@ function logoutUser() {
 //           "
 //         />
 //       </div>
-  
+
 //       <!-- The form -->
 //       <div class="login-modal UiSideField">
 //         <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">
@@ -3175,30 +3175,30 @@ function showLoginDialog() {
 
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
-    const sipWss = $('#sipWss').val();
     const sipData = {
-      WebSocketPort: $('#sipPort').val(),
-      WebSocketPath: $('#sipPath').val(),
-      profileName: $('#sipName').val(),
-      SipUsername: $('#sipUser').val(),
-      SipPassword: $('#sipPass').val(),
-      SipDomain: sipWss,           // copied from wss input
-      ServerPath: sipWss,          // assuming you also want to store this
-      loggedIn: true
+      wss: $('#sipWss').val(),
+      port: $('#sipPort').val(),
+      path: $('#sipPath').val(),
+      name: $('#sipName').val(),
+      domain: $('#sipWss').val(), // domain = wss (your latest change)
+      username: $('#sipUser').val(),
+      password: $('#sipPass').val(),
     };
 
-    if (!sipData.SipUsername || !sipData.SipPassword || !sipWss) {
+    // Validate SIP login fields
+    if (!sipData.username || !sipData.password || !sipData.wss) {
       console.error("Missing required SIP credentials.");
     } else {
-      // Store to localStorage
-      for (const [key, val] of Object.entries(sipData)) {
-        localStorage.setItem(key, val);
-      }
+      localStorage.setItem('SipDomain', sipData.domain);
+      localStorage.setItem('SipUsername', sipData.username);
+      localStorage.setItem('SipPassword', sipData.password);
+      localStorage.setItem('WebSocketPort', sipData.port);
+      localStorage.setItem('ServerPath', sipData.path);
+      localStorage.setItem('loggedIn', true);
+      localStorage.setItem('profileName', sipData.name);
+      localStorage.setItem('InstanceId', Date.now());
 
-      console.log("✅ Saved SIP settings to localStorage");
-      initializeSoftphone?.(); // or your init logic
-      $('.loading').remove();
-      $('#loginOverlay').remove();
+      location.reload(); // ✅ This reload triggers the softphone to start from localStorage values
     }
   });
 
@@ -20757,13 +20757,3 @@ var reconnectXmpp = function () {
 
   XMPP.connect(xmpp_username, xmpp_password, onStatusChange);
 };
-
-
-$(document).ready(() => {
-  const savedConfig = localStorage.getItem('sip_config');
-  if (savedConfig) {
-    connectToSipServer(JSON.parse(savedConfig));
-  } else {
-    showLoginDialog();
-  }
-});
