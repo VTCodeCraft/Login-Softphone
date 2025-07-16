@@ -3157,16 +3157,16 @@ function showLoginDialog() {
       <!-- SIP Login -->
       <div class="login-modal sip-form" style="width: 100%; display: none;">
         <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
-        <input type="text" id="sipWss" placeholder="Secure WebSocket Server (e.g. wss://...)" class="sip-field" />
-        <input type="text" id="sipPath" placeholder="WebSocket Path (e.g. /ws)" class="sip-field" />
-        <input type="text" id="sipPort" placeholder="WebSocket Port (e.g. 8443)" class="sip-field" />
-        <input type="text" id="sipName" placeholder="Full Name" class="sip-field" />
-        <input type="text" id="sipUser" placeholder="SIP Username" class="sip-field" />
-        <input type="password" id="sipPass" placeholder="SIP Password" class="sip-field" />
-      <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
-    <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
-  </div>
-</div>
+        <input type="text" id="sipWss" placeholder="Secure WebSocket Server (e.g. wss://...)" class="sip-field" style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
+        <input type="text" id="sipPath" placeholder="WebSocket Path (e.g. /ws)" class="sip-field" style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
+        <input type="text" id="sipPort" placeholder="WebSocket Port (e.g. 8443)" class="sip-field" style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
+        <input type="text" id="sipName" placeholder="Full Name" class="sip-field" style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
+        <input type="text" id="sipUser" placeholder="SIP Username" class="sip-field" style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
+        <input type="password" id="sipPass" placeholder="SIP Password" class="sip-field" style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
+        <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
+          <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
+        </div>
+      </div>
     </div>
   `);
 
