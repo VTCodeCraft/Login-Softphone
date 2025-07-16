@@ -234,6 +234,7 @@ const navUserAgent = window.navigator.userAgent; // TODO: change to Navigator.us
 const instanceID = String(Date.now());
 const localDB = window.localStorage;
 
+
 // // Ask extension for stored credentials
 // window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 
@@ -910,6 +911,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
   }).catch(err => { console.log("first function call", err) })
 
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
+  const loginType = localStorage.getItem('loginType');
+
+  if (isLoggedIn && loginType === 'sip') {
+    startJsSip({
+      wss: localStorage.getItem('SipDomain'),
+      port: localStorage.getItem('WebSocketPort'),
+      path: localStorage.getItem('ServerPath'),
+      name: localStorage.getItem('profileName'),
+      domain: localStorage.getItem('SipDomain'),
+      username: localStorage.getItem('SipUsername'),
+      password: localStorage.getItem('SipPassword'),
+    });
+  } else if (isLoggedIn && loginType === 'ivr') {
+    // Optionally handle IVR login here (if token-based or API)
+    // verifyLoginToken();
+  } else {
+    showLoginDialog();
+  }
 });
 
 
@@ -3180,25 +3203,26 @@ function showLoginDialog() {
       port: $('#sipPort').val(),
       path: $('#sipPath').val(),
       name: $('#sipName').val(),
-      domain: $('#sipWss').val(), // domain = wss (your latest change)
+      domain: $('#sipWss').val(), // domain = wss
       username: $('#sipUser').val(),
       password: $('#sipPass').val(),
     };
 
-    // Validate SIP login fields
     if (!sipData.username || !sipData.password || !sipData.wss) {
       console.error("Missing required SIP credentials.");
+      alert("Please fill in all SIP fields.");
     } else {
       localStorage.setItem('SipDomain', sipData.domain);
       localStorage.setItem('SipUsername', sipData.username);
       localStorage.setItem('SipPassword', sipData.password);
       localStorage.setItem('WebSocketPort', sipData.port);
       localStorage.setItem('ServerPath', sipData.path);
-      localStorage.setItem('loggedIn', true);
+      localStorage.setItem('loggedIn', 'true');
       localStorage.setItem('profileName', sipData.name);
       localStorage.setItem('InstanceId', Date.now());
+      localStorage.setItem('loginType', 'sip');
 
-      location.reload(); // ✅ This reload triggers the softphone to start from localStorage values
+      location.reload(); // reload triggers auto login
     }
   });
 
