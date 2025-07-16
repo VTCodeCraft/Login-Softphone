@@ -150,10 +150,6 @@ async function waitForPreLoads() {
 
   // 5d) Moment.js **before** your own code if you depend on it
   await loadScript('https://dtd6jl0d42sve.cloudfront.net/lib/Moment/moment-with-locales-2.24.0.min.js')
-  await loadScript('https://cdn.jsdelivr.net/npm/jssip@3.10.0/dist/jssip.min.js', {
-    crossorigin: 'anonymous',
-    referrerpolicy: 'no-referrer'
-  });
   await loadScript('https://dtd6jl0d42sve.cloudfront.net/lib/SipJS/sip-0.20.0.min.js')
   // await loadScript('./sip-0.20.0.silent.min.js')
   await loadScript('https://dtd6jl0d42sve.cloudfront.net/lib/Croppie/Croppie-2.6.4/croppie.min.js')
@@ -239,6 +235,29 @@ const instanceID = String(Date.now());
 const localDB = window.localStorage;
 
 
+
+
+function loadJsSIP(callback) {
+  if (window.JsSIP) {
+    callback();
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.src = 'https://cdn.jsdelivr.net/npm/jssip@3.10.0/dist/jssip.min.js';
+  script.onload = () => {
+    console.log('✅ JsSIP loaded');
+    callback();
+  };
+  script.onerror = () => {
+    console.error('❌ Failed to load JsSIP');
+  };
+  document.head.appendChild(script);
+}
+
+
+
+
 // // Ask extension for stored credentials
 // window.parent.postMessage({ type: "SOFTPHONE_REQUEST_CREDENTIALS" }, "*");
 
@@ -269,55 +288,6 @@ const localDB = window.localStorage;
 //   }
 // });
 
-function initializeThirdPartySoftphone() {
-  const sipDomain = localStorage.getItem("SipDomain");
-  const sipUser = localStorage.getItem("SipUsername");
-  const sipPass = localStorage.getItem("SipPassword");
-  const wsPort = localStorage.getItem("WebSocketPort");
-  const wsPath = localStorage.getItem("ServerPath");
-  const profileName = localStorage.getItem("profileName");
-
-  if (!sipDomain || !sipUser || !sipPass) {
-    console.error("Missing SIP credentials.");
-    return;
-  }
-
-  // Normalize domain
-  let wsURL = sipDomain.trim();
-  if (!wsURL.startsWith('ws://') && !wsURL.startsWith('wss://')) {
-    wsURL = 'wss://' + wsURL;
-  }
-
-  // Build full WebSocket URI
-  wsURL += `:${wsPort}${wsPath}`;
-
-  const socket = new JsSIP.WebSocketInterface(wsURL);
-  const configuration = {
-    sockets: [socket],
-    uri: `sip:${sipUser}@${sipDomain.replace(/^wss?:\/\//, '')}`,
-    password: sipPass,
-    display_name: profileName || sipUser,
-    session_timers: false
-  };
-
-  window.ua = new JsSIP.UA(configuration);
-  window.ua.start();
-
-  window.ua.on("registered", () => {
-    console.log("✅ SIP Registered successfully.");
-  });
-
-  window.ua.on("registrationFailed", (e) => {
-    console.error("❌ Registration failed:", e.cause);
-    alert("SIP login failed: " + e.cause);
-  });
-
-  window.ua.on("newRTCSession", function (data) {
-    const session = data.session;
-    console.log("📞 New call session started:", session);
-    // You can handle incoming/outgoing calls here
-  });
-}
 
 function requestCredentialsFromExtension(attempt = 0) {
   if (attempt > 5) {
@@ -969,6 +939,65 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Utilities
 // =========
+
+function initializeThirdPartySoftphone() {
+  const sipDomain = localStorage.getItem("SipDomain"); // e.g. calls247.ivrsolutions.in
+  const sipUser = localStorage.getItem("SipUsername");
+  const sipPass = localStorage.getItem("SipPassword");
+  const wsPort = localStorage.getItem("WebSocketPort"); // e.g. 8443
+  const wsPath = localStorage.getItem("ServerPath");    // e.g. /ws
+  const profileName = localStorage.getItem("profileName");
+
+  if (!sipDomain || !sipUser || !sipPass || !wsPort || !wsPath) {
+    console.error("❌ Missing SIP configuration in localStorage.");
+    return;
+  }
+
+  const fullWsUri = `wss://${sipDomain}:${wsPort}${wsPath}`;
+  console.log("🔌 Connecting to SIP via", fullWsUri);
+
+  const socket = new JsSIP.WebSocketInterface(fullWsUri);
+  const configuration = {
+    sockets: [socket],
+    uri: `sip:${sipUser}@${sipDomain}`,
+    password: sipPass,
+    display_name: profileName || sipUser,
+    session_timers: false
+  };
+
+  if (window.ua) {
+    try {
+      window.ua.stop(); // Stop any previous session
+    } catch (err) {
+      console.warn("Previous UA stop error:", err);
+    }
+  }
+
+  window.ua = new JsSIP.UA(configuration);
+  window.ua.start();
+
+  window.ua.on("registered", () => {
+    console.log("✅ SIP Registered successfully.");
+    showFloatingError("SIP Connected", "success");
+  });
+
+  window.ua.on("registrationFailed", (e) => {
+    console.error("❌ SIP Registration failed:", e.cause);
+    showFloatingError("SIP Registration failed: " + e.cause, "error");
+  });
+
+  window.ua.on("newRTCSession", function (data) {
+    const session = data.session;
+    console.log("📞 New call session started:", session);
+
+    // Attach event handlers as needed:
+    session.on("ended", () => console.log("📴 Call ended"));
+    session.on("failed", () => console.log("⚠️ Call failed"));
+    session.on("accepted", () => console.log("✅ Call accepted"));
+    session.on("confirmed", () => console.log("📡 Call confirmed"));
+  });
+}
+
 function uID() {
   return (
     Date.now() +
@@ -3259,12 +3288,13 @@ function showLoginDialog() {
     localStorage.setItem('loggedIn', 'true');
     localStorage.setItem('InstanceId', Date.now());
 
-    loadJsSIPLibrary(() => {
-      initializeThirdPartySoftphone(); // ✅ Called only after JsSIP is loaded
-    });
     $('#loginOverlay').remove(); // Remove login modal
     $('.loading').remove();
     console.log("SIP Login successful", sipData);
+
+    loadJsSIP(() => {
+      initializeThirdPartySoftphone();
+    });
   });
 
   $('.loading').remove();
