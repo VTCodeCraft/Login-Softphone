@@ -3206,37 +3206,37 @@ function showLoginDialog() {
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
     const sipData = {
-      wss: $('#sipWss').val().trim(),     // e.g., calls247.ivrsolutions.in
-      port: $('#sipPort').val().trim(),  // e.g., 8443
-      path: $('#sipPath').val().trim(),  // e.g., /ws
-      name: $('#sipName').val().trim(),
-      username: $('#sipUser').val().trim(),
+      wss_domain: $('#sipWss').val().trim(),     // e.g., calls247.ivrsolutions.in
+      wss_port: $('#sipPort').val().trim(),      // e.g., 8443
+      wss_path: $('#sipPath').val().trim(),      // e.g., /ws
+      display_name: $('#sipName').val().trim(),
+      extention: $('#sipUser').val().trim(),
       password: $('#sipPass').val().trim(),
     };
 
-    if (!sipData.wss || !sipData.port || !sipData.path || !sipData.username || !sipData.password) {
+    // Validation
+    if (!sipData.wss_domain || !sipData.wss_port || !sipData.wss_path || !sipData.extention || !sipData.password) {
       console.error("Missing required SIP credentials.");
       alert("Please enter all required fields.");
       return;
     }
 
-    if (localStorage.getItem('profileUserID') == null) {
-      localStorage.setItem('profileUserID', uID());
-    }
-    localStorage.setItem('SipDomain', sipData.wss); // Host only
-    localStorage.setItem('wssServer', sipData.wss);
-    localStorage.setItem('WebSocketPort', sipData.port);
-    localStorage.setItem('ServerPath', sipData.path);
-    localStorage.setItem('SipUsername', sipData.username);
-    localStorage.setItem('SipPassword', sipData.password);
-    localStorage.setItem('profileName', sipData.name);
-    localStorage.setItem('loggedIn', 'true');
-    localStorage.setItem('InstanceId', Date.now());
+    // Build loginCredentials in same format as AutoProvisionAccount
+    const loginCredentials = {
+      display_name: sipData.display_name,
+      username: sipData.extention,
+      extention: sipData.extention,
+      password: sipData.password,
+      wss_domain: sipData.wss_domain,
+      wss_port: sipData.wss_port,
+      wss_path: sipData.wss_path
+    };
 
-    $('#loginOverlay').remove(); // Remove login modal
+    // Call AutoProvisionAccount using the same format
+    AutoProvisionAccount(loginCredentials);
+
+    $('#loginOverlay').remove();
     $('.loading').remove();
-    console.log("SIP Login successful", sipData);
-    window.location.reload(true); // Reload to apply settings
   });
 
   $('.loading').remove();
