@@ -3127,13 +3127,12 @@ function showLoginDialog() {
       <!-- SIP Login -->
       <div class="login-modal sip-form" style="width: 100%; display: none;">
         <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
-        <input type="text" id="sipWss" placeholder="Secure WebSocket Server (e.g. calls247.ivrsolutions.in)" class="sip-field" style="color:white" />
-        <input type="text" id="sipPath" placeholder="WebSocket Path (e.g. /ws)" class="sip-field" style="color:white" />
-        <input type="text" id="sipPort" placeholder="WebSocket Port (e.g. 8443)" class="sip-field" style="color:white" />
-        <input type="text" id="sipName" placeholder="Full Name" class="sip-field" style="color:white" />
-        <input type="text" id="sipDomain" placeholder="Domain" class="sip-field" style="color:white" />
-        <input type="text" id="sipUser" placeholder="SIP Username" class="sip-field" style="color:white" />
-        <input type="password" id="sipPass" placeholder="SIP Password" class="sip-field" style="color:white" />
+        <input type="text" id="sipWss" placeholder="Secure WebSocket Server (e.g. wss://...)" class="sip-field" />
+        <input type="text" id="sipPath" placeholder="WebSocket Path (e.g. /ws)" class="sip-field" />
+        <input type="text" id="sipPort" placeholder="WebSocket Port (e.g. 8443)" class="sip-field" />
+        <input type="text" id="sipName" placeholder="Full Name" class="sip-field" />
+        <input type="text" id="sipUser" placeholder="SIP Username" class="sip-field" />
+        <input type="password" id="sipPass" placeholder="SIP Password" class="sip-field" />
         <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
           <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
         </div>
@@ -3159,7 +3158,7 @@ function showLoginDialog() {
     $('#ivrToggle').removeClass('active');
   });
 
-  // IVR Login Button
+  // IVR Login
   $overlay.find('#loginBtn').on('click', () => {
     const cc = $overlay.find('#countryCode').val();
     const mobile = $overlay.find('#mobileField').val().trim();
@@ -3174,43 +3173,32 @@ function showLoginDialog() {
     }
   });
 
-  // SIP Connect Button
+  // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
+    const sipWss = $('#sipWss').val();
     const sipData = {
-      ServerPath: $('#sipWss').val(),
-      SipPath: $('#sipPath').val(),
       WebSocketPort: $('#sipPort').val(),
+      WebSocketPath: $('#sipPath').val(),
       profileName: $('#sipName').val(),
-      SipDomain: $('#sipDomain').val(),
       SipUsername: $('#sipUser').val(),
       SipPassword: $('#sipPass').val(),
+      SipDomain: sipWss,           // copied from wss input
+      ServerPath: sipWss,          // assuming you also want to store this
+      loggedIn: true
     };
 
-    if (!sipData.ServerPath || !sipData.SipPath || !sipData.WebSocketPort || !sipData.SipUsername || !sipData.SipPassword) {
-      alert("Please fill all required SIP fields.");
-      return;
-    }
-
-    const instanceId = `1752642256${Date.now()}`;
-    localStorage.setItem("InstanceId", instanceId);
-    localStorage.setItem("ServerPath", sipData.ServerPath);
-    localStorage.setItem("SipPath", sipData.SipPath);
-    localStorage.setItem("WebSocketPort", sipData.WebSocketPort);
-    localStorage.setItem("profileName", sipData.profileName || sipData.SipUsername);
-    localStorage.setItem("SipDomain", sipData.SipDomain);
-    localStorage.setItem("SipUsername", sipData.SipUsername);
-    localStorage.setItem("SipPassword", sipData.SipPassword);
-    localStorage.setItem("loggedIn", "true");
-    localStorage.setItem("1752642256195245D-Buddies", JSON.stringify({ TotalRows: 0, DataCollection: [] }));
-
-    console.log("🔐 Third-party SIP login saved to localStorage.");
-    $('#loginOverlay').remove();
-
-    // Launch softphone (you can replace with your actual start function)
-    if (typeof initializeSoftphone === 'function') {
-      initializeSoftphone();
+    if (!sipData.SipUsername || !sipData.SipPassword || !sipWss) {
+      console.error("Missing required SIP credentials.");
     } else {
-      location.reload(); // fallback
+      // Store to localStorage
+      for (const [key, val] of Object.entries(sipData)) {
+        localStorage.setItem(key, val);
+      }
+
+      console.log("✅ Saved SIP settings to localStorage");
+      initializeSoftphone?.(); // or your init logic
+      $('.loading').remove();
+      $('#loginOverlay').remove();
     }
   });
 
