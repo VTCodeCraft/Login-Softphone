@@ -3247,6 +3247,8 @@ function showLoginDialog() {
 
   initializeThirdPartySoftphone(); // Call SIP init
   $('#loginOverlay').remove(); // Remove login modal
+  $('.loading').remove();
+  console.log("SIP Login successful", sipData);
 });
 
   $('.loading').remove();
