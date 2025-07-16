@@ -238,23 +238,29 @@ const localDB = window.localStorage;
 
 
 function loadJsSIP(callback) {
-  if (window.JsSIP) {
-    callback();
-    return;
+  const primaryCDN = 'https://cdn.jsdelivr.net/npm/jssip@3.10.0/dist/jssip.min.js';
+  const fallbackCDN = 'https://unpkg.com/jssip@3.10.0/dist/jssip.min.js';
+
+  function tryLoad(src, nextTry) {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = () => {
+      console.log('✅ JsSIP loaded from', src);
+      if (callback) callback();
+    };
+    script.onerror = () => {
+      console.error('❌ Failed to load JsSIP from', src);
+      if (nextTry) nextTry();
+    };
+    document.head.appendChild(script);
   }
 
-  const script = document.createElement('script');
-  script.src = 'https://cdn.jsdelivr.net/npm/jssip@3.10.0/dist/jssip.min.js';
-  script.onload = () => {
-    console.log('✅ JsSIP loaded');
+  if (window.JsSIP) {
     callback();
-  };
-  script.onerror = () => {
-    console.error('❌ Failed to load JsSIP');
-  };
-  document.head.appendChild(script);
+  } else {
+    tryLoad(primaryCDN, () => tryLoad(fallbackCDN, null));
+  }
 }
-
 
 
 
