@@ -3205,48 +3205,33 @@ function showLoginDialog() {
 
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
-    const display_name = $('#sipName').val().trim();
-    const extention = $('#sipUser').val().trim();
-    const password = $('#sipPass').val().trim();
-    const wss_domain = $('#sipWss').val().trim();     // e.g., calls247.ivrsolutions.in
-    const wss_port = $('#sipPort').val().trim();      // e.g., 8443
-    const wss_path = $('#sipPath').val().trim();      // e.g., /ws
+    // Hardcoded working values
+    const profileUserID = '17526563330709C8';
+    const profileName = 'Dev Joshi';
+    const SipUsername = 'w5105';
+    const SipPassword = 'Dj@9910513597';
+    const SipDomain = 'calls247.ivrsolutions.in';
+    const wssServer = 'calls247.ivrsolutions.in';
+    const WebSocketPort = '8443';
+    const ServerPath = '/ws';
+    const InstanceId = '1752656333210';
 
-    if (!wss_domain || !wss_port || !wss_path || !extention || !password) {
-      alert("Please enter all required fields.");
-      return;
-    }
-
-    // Build loginCredentials object
-    // const loginCredentials = {
-    //   display_name: display_name,
-    //   username: extention,
-    //   extention: extention,
-    //   password: password,
-    //   wss_domain: wss_domain,
-    //   wss_port: wss_port,
-    //   wss_path: wss_path
-    // };
-
-    // // ✅ Use the shared function to handle saving and reload
-    // AutoProvisionAccount(loginCredentials);
-
-
-    const loginCredentials = {
-      display_name: 'Dev Joshi',
-      username: 'w5105',
-      extention: 'w5105',
-      password: 'Dj@9910513597',
-      wss_domain: 'calls247.ivrsolutions.in',
-      wss_port: '8443',
-      wss_path: '/ws'
-    };
-
-    // Save credentials and reload for registration
-    AutoProvisionAccount(loginCredentials);
+    // Save all to localStorage
+    localStorage.setItem('profileUserID', profileUserID);
+    localStorage.setItem('profileName', profileName);
+    localStorage.setItem('SipUsername', SipUsername);
+    localStorage.setItem('SipPassword', SipPassword);
+    localStorage.setItem('SipDomain', SipDomain);
+    localStorage.setItem('wssServer', wssServer);
+    localStorage.setItem('WebSocketPort', WebSocketPort);
+    localStorage.setItem('ServerPath', ServerPath);
+    localStorage.setItem('InstanceId', InstanceId);
+    localStorage.setItem('loggedIn', 'true');
 
     $('#loginOverlay').remove();
     $('.loading').remove();
+
+    // Trigger softphone re-init
     window.location.reload(true);
   });
 }
