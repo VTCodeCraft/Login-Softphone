@@ -3116,9 +3116,11 @@ function showLoginDialog() {
             <option value="91" selected>+91</option>
             <option value="1">+1</option>
           </select>
-          <input type="text" id="mobileField" placeholder="Mobile number" style="flex: 1; color: white !important;" />
+          <input type="text" id="mobileField" placeholder="Mobile number"
+            style="flex: 1; color: white !important; background: transparent; border: 1px solid #ccc; padding: 8px;" />
         </div>
-        <input type="password" id="passwordField" placeholder="Password" style="width: 100%; margin-bottom: 16px;" />
+        <input type="password" id="passwordField" placeholder="Password"
+          style="width: 100%; margin-bottom: 16px; color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
         <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
           <button id="loginBtn" style="flex: 1; max-width: 200px;">Login</button>
         </div>
@@ -3127,13 +3129,20 @@ function showLoginDialog() {
       <!-- SIP Login -->
       <div class="login-modal sip-form" style="width: 100%; display: none;">
         <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
-        <input type="text" id="sipWss" placeholder="Secure WebSocket Server (wss://...)" class="sip-field" />
-        <input type="text" id="sipPort" placeholder="WebSocket Port (e.g. 4443)" class="sip-field" />
-        <input type="text" id="sipPath" placeholder="WebSocket Path (e.g. /ws)" class="sip-field" />
-        <input type="text" id="sipName" placeholder="Full Name" class="sip-field" />
-        <input type="text" id="sipDomain" placeholder="Domain" class="sip-field" />
-        <input type="text" id="sipUser" placeholder="SIP Username" class="sip-field" />
-        <input type="password" id="sipPass" placeholder="SIP Password" class="sip-field" />
+        <input type="text" id="sipWss" placeholder="Secure WebSocket Server (wss://...)" class="sip-field"
+          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
+        <input type="text" id="sipPort" placeholder="WebSocket Port (e.g. 4443)" class="sip-field"
+          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
+        <input type="text" id="sipPath" placeholder="WebSocket Path (e.g. /ws)" class="sip-field"
+          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
+        <input type="text" id="sipName" placeholder="Full Name" class="sip-field"
+          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
+        <input type="text" id="sipDomain" placeholder="Domain" class="sip-field"
+          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
+        <input type="text" id="sipUser" placeholder="SIP Username" class="sip-field"
+          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
+        <input type="password" id="sipPass" placeholder="SIP Password" class="sip-field"
+          style="color: white; background: transparent; border: 1px solid #ccc; padding: 8px;" />
         <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
           <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
         </div>
@@ -3197,6 +3206,7 @@ function showLoginDialog() {
 
   $('.loading').remove();
 }
+
 
 
 function connectToSipServer(sipData) {
