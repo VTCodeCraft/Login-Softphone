@@ -3235,10 +3235,6 @@ function showLoginDialog() {
   // ✅ Send to AutoProvisionAccount
   AutoProvisionAccount(loginCredentials);
 
-  $('#loginOverlay').remove();
-  $('.loading').remove();
-
-  window.location.reload(true);
 });
 }
 
