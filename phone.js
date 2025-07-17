@@ -3162,42 +3162,42 @@ function showLoginDialog() {
             type="text"
             id="sipWss"
             placeholder="Secure WebSocket Server (e.g. wss://...)"
-            style="color: white; background-color: #222; caret-color: white;"
+            style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipPath"
             placeholder="WebSocket Path (e.g. /ws)"
-            style="color: white; background-color: #222; caret-color: white;"
+            style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipPort"
             placeholder="WebSocket Port (e.g. 8443)"
-            style="color: white; background-color: #222; caret-color: white;"
+            style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipName"
             placeholder="Full Name"
-            style="color: white; background-color: #222; caret-color: white;"
+            style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipUser"
             placeholder="SIP Username"
-            style="color: white; background-color: #222; caret-color: white;"
+            style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="password"
             id="sipPass"
             placeholder="SIP Password"
-            style="color: white; background-color: #222; caret-color: white;"
+            style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <div class="UiWindowButtonBar" style="display: flex; gap: 20px; justify-content: center; margin-top: 20px;">
