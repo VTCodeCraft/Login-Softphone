@@ -3205,37 +3205,45 @@ function showLoginDialog() {
 
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
-  const sipData = {
-    wss_domain: $('#sipWss').val().trim(),
-    wss_port: $('#sipPort').val().trim(),
-    wss_path: $('#sipPath').val().trim(),
-    display_name: $('#sipName').val().trim(),
-    extention: $('#sipUser').val().trim(),
-    password: $('#sipPass').val().trim(),
-  };
+    // Hardcoded values
+    const sipData = {
+      wss_domain: 'calls247.ivrsolutions.in',
+      wss_port: '8443',
+      wss_path: '/ws',
+      display_name: 'Dev Joshi',
+      extention: 'w5105',
+      password: 'Dj@9910513597'
+    };
 
-  // Validation
-  if (!sipData.wss_domain || !sipData.wss_port || !sipData.wss_path || !sipData.extention || !sipData.password) {
-    alert("Please fill all SIP fields.");
-    return;
-  }
+    // Set values in form fields (optional for UI feedback)
+    $('#sipWss').val(sipData.wss_domain);
+    $('#sipPort').val(sipData.wss_port);
+    $('#sipPath').val(sipData.wss_path);
+    $('#sipName').val(sipData.display_name);
+    $('#sipUser').val(sipData.extention);
+    $('#sipPass').val(sipData.password);
 
-  const loginCredentials = {
-    display_name: sipData.display_name,
-    username: sipData.extention,
-    extention: sipData.extention,
-    password: sipData.password,
-    wss_domain: sipData.wss_domain,
-    wss_port: sipData.wss_port,
-    wss_path: sipData.wss_path
-  };
+    // Construct login credentials
+    const loginCredentials = {
+      display_name: sipData.display_name,
+      username: sipData.extention,
+      extention: sipData.extention,
+      password: sipData.password,
+      wss_domain: sipData.wss_domain,
+      wss_port: sipData.wss_port,
+      wss_path: sipData.wss_path
+    };
+    console.log("SIP Login ->",loginCredentials);
 
-  console.log("SIP Login ->", loginCredentials);
+    // ✅ Auto provision SIP account
+    AutoProvisionAccount(loginCredentials);
+    
+    console.log("loginCredentials",loginCredentials);
+    console.log("SIP Account provisioned successfully");
 
-  // ✅ Send to AutoProvisionAccount
-  AutoProvisionAccount(loginCredentials);
-
-});
+    $('#loginOverlay').remove();
+    $('.loading').remove();
+  });
 }
 
 
