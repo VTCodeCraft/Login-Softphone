@@ -3161,21 +3161,21 @@ function showLoginDialog() {
           <input
             type="text"
             id="sipWss"
-            placeholder="Ws Server (e.g yourdomain.com)"
+            placeholder="Ws Server (eg. yourdomain.com)"
             style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipPath"
-            placeholder="Ws Path (e.g /yourpath)"
+            placeholder="Ws Path (eg. /yourpath)"
             style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipPort"
-            placeholder="Ws Port (e.g 3001)"
+            placeholder="Ws Port (eg. 3001)"
             style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
