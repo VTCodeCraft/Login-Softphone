@@ -3200,7 +3200,7 @@ function showLoginDialog() {
             style="color: white; background-color: #222; caret-color: white;"
           />
 
-          <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
+          <div class="UiWindowButtonBar" style="display: flex; gap: 20px; justify-content: center;">
             <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
         </div>
 </div>
