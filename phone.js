@@ -3155,54 +3155,54 @@ function showLoginDialog() {
       </div>
 
       <!-- SIP Login -->
-<div class="login-modal sip-form" style="width: 100%; display: none;">
-  <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
+        <div class="login-modal sip-form" style="width: 100%; display: none;">
+          <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
 
-  <input
-    type="text"
-    id="sipWss"
-    placeholder="Secure WebSocket Server (e.g. wss://...)"
-    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
-  />
+          <input
+            type="text"
+            id="sipWss"
+            placeholder="Secure WebSocket Server (e.g. wss://...)"
+            style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+          />
 
-  <input
-    type="text"
-    id="sipPath"
-    placeholder="WebSocket Path (e.g. /ws)"
-    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
-  />
+          <input
+            type="text"
+            id="sipPath"
+            placeholder="WebSocket Path (e.g. /ws)"
+            style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+          />
 
-  <input
-    type="text"
-    id="sipPort"
-    placeholder="WebSocket Port (e.g. 8443)"
-    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
-  />
+          <input
+            type="text"
+            id="sipPort"
+            placeholder="WebSocket Port (e.g. 8443)"
+            style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+          />
 
-  <input
-    type="text"
-    id="sipName"
-    placeholder="Full Name"
-    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
-  />
+          <input
+            type="text"
+            id="sipName"
+            placeholder="Full Name"
+            style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+          />
 
-  <input
-    type="text"
-    id="sipUser"
-    placeholder="SIP Username"
-    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
-  />
+          <input
+            type="text"
+            id="sipUser"
+            placeholder="SIP Username"
+            style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+          />
 
-  <input
-    type="password"
-    id="sipPass"
-    placeholder="SIP Password"
-    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
-  />
+          <input
+            type="password"
+            id="sipPass"
+            placeholder="SIP Password"
+            style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+          />
 
-  <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
-    <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
-  </div>
+          <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
+            <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
+        </div>
 </div>
 
 
