@@ -3205,45 +3205,43 @@ function showLoginDialog() {
 
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
-    // Hardcoded values
-    const sipData = {
-      wss_domain: 'calls247.ivrsolutions.in',
-      wss_port: '8443',
-      wss_path: '/ws',
-      display_name: 'Dev Joshi',
-      extention: 'w5105',
-      password: 'Dj@9910513597'
-    };
+  // Step 1: Inject the values directly into input fields
+  $('#sipWss').val('calls247.ivrsolutions.in');
+  $('#sipPort').val('8443');
+  $('#sipPath').val('/ws');
+  $('#sipName').val('Dev Joshi');
+  $('#sipUser').val('w5105');
+  $('#sipPass').val('Dj@9910513597');
 
-    // Set values in form fields (optional for UI feedback)
-    $('#sipWss').val(sipData.wss_domain);
-    $('#sipPort').val(sipData.wss_port);
-    $('#sipPath').val(sipData.wss_path);
-    $('#sipName').val(sipData.display_name);
-    $('#sipUser').val(sipData.extention);
-    $('#sipPass').val(sipData.password);
+  // Step 2: Immediately read the values back from the inputs
+  const sipData = {
+    wss_domain: $('#sipWss').val().trim(),
+    wss_port: $('#sipPort').val().trim(),
+    wss_path: $('#sipPath').val().trim(),
+    display_name: $('#sipName').val().trim(),
+    extention: $('#sipUser').val().trim(),
+    password: $('#sipPass').val().trim()
+  };
 
-    // Construct login credentials
-    const loginCredentials = {
-      display_name: sipData.display_name,
-      username: sipData.extention,
-      extention: sipData.extention,
-      password: sipData.password,
-      wss_domain: sipData.wss_domain,
-      wss_port: sipData.wss_port,
-      wss_path: sipData.wss_path
-    };
-    console.log("SIP Login ->",loginCredentials);
+  // Step 3: Build credentials from the UI input values
+  const loginCredentials = {
+    display_name: sipData.display_name,
+    username: sipData.extention,
+    extention: sipData.extention,
+    password: sipData.password,
+    wss_domain: sipData.wss_domain,
+    wss_port: sipData.wss_port,
+    wss_path: sipData.wss_path
+  };
 
-    // ✅ Auto provision SIP account
-    AutoProvisionAccount(loginCredentials);
-    
-    console.log("loginCredentials",loginCredentials);
-    console.log("SIP Account provisioned successfully");
+  console.log("Injected & Read loginCredentials ->", loginCredentials);
 
-    $('#loginOverlay').remove();
-    $('.loading').remove();
-  });
+  // Step 4: Provision and reload
+  AutoProvisionAccount(loginCredentials);
+
+  $('#loginOverlay').remove();
+  $('.loading').remove();
+});
 }
 
 
