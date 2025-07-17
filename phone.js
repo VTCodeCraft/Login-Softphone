@@ -3140,28 +3140,15 @@ function showLoginDialog() {
 
       <!-- IVR Login -->
       <div class="login-modal ivr-form" style="width: 100%;">
-        <h3 class="UiTextHeading" style="margin-top: 0; text-align: center; color: white;">Sign In</h3>
+        <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">Sign In</h3>
         <div style="display: flex; gap: 8px; margin: 16px 0;">
-          <select id="countryCode" style="appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: none;">
+          <select id="countryCode">
             <option value="91" selected>+91</option>
             <option value="1">+1</option>
           </select>
           <input type="text" id="mobileField" placeholder="Mobile number" style="flex: 1; color: white !important;" />
         </div>
-        <div style="position: relative; margin-bottom: 16px;">
-          <input type="password" id="passwordField" placeholder="Password" style="width: 100%; padding-right: 40px;" />
-          <button type="button" id="togglePassword" style="
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #999;
-            cursor: pointer;
-            font-size: 12px;
-          ">Show</button>
-        </div>
+        <input type="password" id="passwordField" placeholder="Password" style="width: 100%; margin-bottom: 16px;" />
         <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
           <button id="loginBtn" style="flex: 1; max-width: 200px;">Login</button>
         </div>
@@ -3169,7 +3156,7 @@ function showLoginDialog() {
 
       <!-- SIP Login -->
         <div class="login-modal sip-form" style="width: 100%; display: none;">
-          <h3 class="UiTextHeading" style="margin-top: 0; text-align: center; color: white;">SIP Account</h3>
+          <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
 
           <input
             type="text"
@@ -3206,30 +3193,18 @@ function showLoginDialog() {
             style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
           />
 
-          <div style="position: relative; margin-bottom: 16px;">
-            <input
-              type="password"
-              id="sipPass"
-              placeholder="SIP Password"
-              style="color: white; background-color: #222; border: 1px solid #555; caret-color: white; width: 100%; padding-right: 40px;"
-            />
-            <button type="button" id="toggleSipPassword" style="
-              position: absolute;
-              right: 10px;
-              top: 50%;
-              transform: translateY(-50%);
-              background: none;
-              border: none;
-              color: #999;
-              cursor: pointer;
-              font-size: 12px;
-            ">Show</button>
-          </div>
+          <input
+            type="password"
+            id="sipPass"
+            placeholder="SIP Password"
+            style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+          />
 
           <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
-            <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">C o n n e c t</button>
+            <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
         </div>
 </div>
+
 
     </div>
   `);
@@ -3252,21 +3227,6 @@ function showLoginDialog() {
     $('#ivrToggle').removeClass('active');
   });
 
-  // Show/Hide password functionality
-  $overlay.find('#togglePassword').on('click', function() {
-    const passwordField = $('#passwordField');
-    const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
-    passwordField.attr('type', type);
-    $(this).text(type === 'password' ? 'Show' : 'Hide');
-  });
-
-  $overlay.find('#toggleSipPassword').on('click', function() {
-    const passwordField = $('#sipPass');
-    const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
-    passwordField.attr('type', type);
-    $(this).text(type === 'password' ? 'Show' : 'Hide');
-  });
-
   // IVR Login
   $overlay.find('#loginBtn').on('click', () => {
     const cc = $overlay.find('#countryCode').val();
@@ -3284,6 +3244,15 @@ function showLoginDialog() {
 
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
+    // // Step 1: Inject the values directly into input fields
+    // $('#sipWss').val('calls247.ivrsolutions.in');
+    // $('#sipPort').val('8443');
+    // $('#sipPath').val('/ws');
+    // $('#sipName').val('Dev Joshi');
+    // $('#sipUser').val('w5105');
+    // $('#sipPass').val('Dj@9910513597');
+
+    // Step 2: Immediately read the values back from the inputs
     const sipData = {
       wss_domain: $('#sipWss').val().trim(),
       wss_port: $('#sipPort').val().trim(),
@@ -3293,6 +3262,7 @@ function showLoginDialog() {
       password: $('#sipPass').val().trim()
     };
 
+    // Step 3: Build credentials from the UI input values
     const loginCredentials = {
       display_name: sipData.display_name,
       username: sipData.extention,
@@ -3305,6 +3275,7 @@ function showLoginDialog() {
 
     console.log("Injected & Read loginCredentials ->", loginCredentials);
 
+    // Step 4: Provision and reload
     AutoProvisionAccount(loginCredentials);
 
     $('#loginOverlay').remove();
