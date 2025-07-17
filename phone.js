@@ -353,8 +353,12 @@ window.addEventListener("message", (event) => {
 });
 
 window.addEventListener('message', function (event) {
-  // You can validate the origin here if needed
-  if (event.origin !== 'https://login-softphone.vercel.app') return;
+  // Optional: log origin for debugging
+  console.log('📩 Message received from:', event.origin);
+
+  // Optional: allow multiple trusted origins, or skip if you want truly global
+  // const allowedOrigins = ['https://login-softphone.vercel.app', 'https://yourcrm.com'];
+  // if (!allowedOrigins.includes(event.origin)) return;
 
   const data = event.data;
   if (data && data.type === 'SOFTPHONE_CALL' && data.number) {
