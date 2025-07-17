@@ -352,6 +352,18 @@ window.addEventListener("message", (event) => {
   }
 });
 
+window.addEventListener('message', function (event) {
+  // You can validate the origin here if needed
+  if (event.origin !== 'https://login-softphone.vercel.app') return;
+
+  const data = event.data;
+  if (data && data.type === 'SOFTPHONE_CALL' && data.number) {
+    console.log('📞 Received click-to-call for:', data.number);
+    DialByLine('audio', null, data.number, null, null);
+  }
+});
+
+
 // Set the following to null to disable
 let welcomeScreen = '<div class="UiWindowField"><pre style="font-size: 12px">';
 welcomeScreen +=
@@ -11939,6 +11951,8 @@ function DialByLine(type, buddy, numToDial, CallerID, extraHeaders) {
       .scrollIntoViewIfNeeded();
   } catch (e) { }
 }
+
+
 function SelectLine(lineNum) {
   var lineObj = FindLineByNumber(lineNum);
   if (lineObj == null) return;
