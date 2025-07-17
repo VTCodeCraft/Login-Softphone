@@ -3244,15 +3244,9 @@ function showLoginDialog() {
 
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
-    // // Step 1: Inject the values directly into input fields
-    // $('#sipWss').val('calls247.ivrsolutions.in');
-    // $('#sipPort').val('8443');
-    // $('#sipPath').val('/ws');
-    // $('#sipName').val('Dev Joshi');
-    // $('#sipUser').val('w5105');
-    // $('#sipPass').val('Dj@9910513597');
+    // Clear previous error
+    $('.sip-error-msg').remove();
 
-    // Step 2: Immediately read the values back from the inputs
     const sipData = {
       wss_domain: $('#sipWss').val().trim(),
       wss_port: $('#sipPort').val().trim(),
@@ -3262,14 +3256,18 @@ function showLoginDialog() {
       password: $('#sipPass').val().trim()
     };
 
-    // Check for empty fields
-    if (!sipData.wss_domain && !sipData.wss_port && !sipData.wss_path && !sipData.display_name && !sipData.extention && !sipData.password) {
-      alert("⚠️ Please fill in all SIP fields before connecting.");
+    // Validate all fields
+    if (!sipData.wss_domain || !sipData.wss_port || !sipData.wss_path ||
+      !sipData.display_name || !sipData.extention || !sipData.password) {
+
+      $('.sip-form').append(`
+      <div class="sip-error-msg" style="color: #ff4d4d; margin-top: 10px; text-align: center;">
+        ⚠️ Please fill in all SIP fields before connecting.
+      </div>
+    `);
       return;
     }
 
-
-    // Step 3: Build credentials from the UI input values
     const loginCredentials = {
       display_name: sipData.display_name,
       username: sipData.extention,
@@ -3280,13 +3278,7 @@ function showLoginDialog() {
       wss_path: sipData.wss_path
     };
 
-    console.log("Injected & Read loginCredentials ->", loginCredentials);
-
-    // Step 4: Provision and reload
     AutoProvisionAccount(loginCredentials);
-
-    $('#loginOverlay').remove();
-    $('.loading').remove();
   });
 }
 
