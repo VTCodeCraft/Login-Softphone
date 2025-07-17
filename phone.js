@@ -3155,14 +3155,12 @@ function showLoginDialog() {
       </div>
 
       <!-- SIP Login -->
-      <!-- SIP Login -->
 <div class="login-modal sip-form" style="width: 100%; display: none;">
   <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
 
   <input
     type="text"
     id="sipWss"
-    value="calls247.ivrsolutions.in"
     placeholder="Secure WebSocket Server (e.g. wss://...)"
     style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
   />
@@ -3170,7 +3168,6 @@ function showLoginDialog() {
   <input
     type="text"
     id="sipPath"
-    value="/ws"
     placeholder="WebSocket Path (e.g. /ws)"
     style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
   />
@@ -3178,7 +3175,6 @@ function showLoginDialog() {
   <input
     type="text"
     id="sipPort"
-    value="8443"
     placeholder="WebSocket Port (e.g. 8443)"
     style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
   />
@@ -3186,7 +3182,6 @@ function showLoginDialog() {
   <input
     type="text"
     id="sipName"
-    value="Dev Joshi"
     placeholder="Full Name"
     style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
   />
@@ -3194,7 +3189,6 @@ function showLoginDialog() {
   <input
     type="text"
     id="sipUser"
-    value="w5105"
     placeholder="SIP Username"
     style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
   />
@@ -3202,7 +3196,6 @@ function showLoginDialog() {
   <input
     type="password"
     id="sipPass"
-    value="Dj@9910513597"
     placeholder="SIP Password"
     style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
   />
@@ -3211,6 +3204,7 @@ function showLoginDialog() {
     <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
   </div>
 </div>
+
 
     </div>
   `);
