@@ -3155,7 +3155,7 @@ function showLoginDialog() {
       </div>
 
       <!-- SIP Login -->
-        <div class="login-modal sip-form" style="width: 100%; display:flex; flex-direction: column; gap: 10px;">
+        <div class="login-modal sip-form" style="width: 100%; display: none;">
           <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
 
           <input
