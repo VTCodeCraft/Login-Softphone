@@ -3207,7 +3207,7 @@ function showLoginDialog() {
   $overlay.find('#sipLoginBtn').on('click', () => {
   const sipData = {
     wss_domain: $('#sipWss').val('calls247.ivrsolutions.in').trim(),
-    wss_port: $('#sipPort').val(8443).trim(),
+    wss_port: $('#sipPort').val('8443').trim(),
     wss_path: $('#sipPath').val('/ws').trim(),
     display_name: $('#sipName').val('Dev Joshi').trim(),
     extention: $('#sipUser').val('w5105').trim(),
