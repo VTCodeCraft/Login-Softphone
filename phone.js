@@ -3161,21 +3161,21 @@ function showLoginDialog() {
           <input
             type="text"
             id="sipWss"
-            placeholder="Secure WebSocket Server (e.g. wss://...)"
+            placeholder="Secure WebSocket Server"
             style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipPath"
-            placeholder="WebSocket Path (e.g. /ws)"
+            placeholder="WebSocket Path"
             style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipPort"
-            placeholder="WebSocket Port (e.g. 8443)"
+            placeholder="WebSocket Port"
             style="color: white; background-color: #222; caret-color: white; width: 100%;"
           />
 
