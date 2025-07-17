@@ -3262,6 +3262,13 @@ function showLoginDialog() {
       password: $('#sipPass').val().trim()
     };
 
+    // Check for empty fields
+    if (!sipData.wss_domain && !sipData.wss_port && !sipData.wss_path && !sipData.display_name && !sipData.extention && !sipData.password) {
+      alert("⚠️ Please fill in all SIP fields before connecting.");
+      return;
+    }
+
+
     // Step 3: Build credentials from the UI input values
     const loginCredentials = {
       display_name: sipData.display_name,
