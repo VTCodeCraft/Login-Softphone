@@ -3155,18 +3155,63 @@ function showLoginDialog() {
       </div>
 
       <!-- SIP Login -->
-      <div class="login-modal sip-form" style="width: 100%; display: none;">
-        <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
-        <input type="text" id="sipWss" placeholder="Secure WebSocket Server (e.g. wss://...)"  style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
-        <input type="text" id="sipPath" placeholder="WebSocket Path (e.g. /ws)" style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
-        <input type="text" id="sipPort" placeholder="WebSocket Port (e.g. 8443)" style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
-        <input type="text" id="sipName" placeholder="Full Name" style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
-        <input type="text" id="sipUser" placeholder="SIP Username" style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
-        <input type="password" id="sipPass" placeholder="SIP Password" style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;" />
-        <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
-          <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
-        </div>
-      </div>
+      <!-- SIP Login -->
+<div class="login-modal sip-form" style="width: 100%; display: none;">
+  <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
+
+  <input
+    type="text"
+    id="sipWss"
+    value="calls247.ivrsolutions.in"
+    placeholder="Secure WebSocket Server (e.g. wss://...)"
+    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+  />
+
+  <input
+    type="text"
+    id="sipPath"
+    value="/ws"
+    placeholder="WebSocket Path (e.g. /ws)"
+    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+  />
+
+  <input
+    type="text"
+    id="sipPort"
+    value="8443"
+    placeholder="WebSocket Port (e.g. 8443)"
+    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+  />
+
+  <input
+    type="text"
+    id="sipName"
+    value="Dev Joshi"
+    placeholder="Full Name"
+    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+  />
+
+  <input
+    type="text"
+    id="sipUser"
+    value="w5105"
+    placeholder="SIP Username"
+    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+  />
+
+  <input
+    type="password"
+    id="sipPass"
+    value="Dj@9910513597"
+    placeholder="SIP Password"
+    style="color: white; background-color: #222; border: 1px solid #555; caret-color: white;"
+  />
+
+  <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
+    <button id="sipLoginBtn" style="flex: 1; max-width: 200px;">Connect</button>
+  </div>
+</div>
+
     </div>
   `);
 
@@ -3205,43 +3250,43 @@ function showLoginDialog() {
 
   // SIP Login
   $overlay.find('#sipLoginBtn').on('click', () => {
-  // Step 1: Inject the values directly into input fields
-  $('#sipWss').val('calls247.ivrsolutions.in');
-  $('#sipPort').val('8443');
-  $('#sipPath').val('/ws');
-  $('#sipName').val('Dev Joshi');
-  $('#sipUser').val('w5105');
-  $('#sipPass').val('Dj@9910513597');
+    // // Step 1: Inject the values directly into input fields
+    // $('#sipWss').val('calls247.ivrsolutions.in');
+    // $('#sipPort').val('8443');
+    // $('#sipPath').val('/ws');
+    // $('#sipName').val('Dev Joshi');
+    // $('#sipUser').val('w5105');
+    // $('#sipPass').val('Dj@9910513597');
 
-  // Step 2: Immediately read the values back from the inputs
-  const sipData = {
-    wss_domain: $('#sipWss').val().trim(),
-    wss_port: $('#sipPort').val().trim(),
-    wss_path: $('#sipPath').val().trim(),
-    display_name: $('#sipName').val().trim(),
-    extention: $('#sipUser').val().trim(),
-    password: $('#sipPass').val().trim()
-  };
+    // Step 2: Immediately read the values back from the inputs
+    const sipData = {
+      wss_domain: $('#sipWss').val().trim(),
+      wss_port: $('#sipPort').val().trim(),
+      wss_path: $('#sipPath').val().trim(),
+      display_name: $('#sipName').val().trim(),
+      extention: $('#sipUser').val().trim(),
+      password: $('#sipPass').val().trim()
+    };
 
-  // Step 3: Build credentials from the UI input values
-  const loginCredentials = {
-    display_name: sipData.display_name,
-    username: sipData.extention,
-    extention: sipData.extention,
-    password: sipData.password,
-    wss_domain: sipData.wss_domain,
-    wss_port: sipData.wss_port,
-    wss_path: sipData.wss_path
-  };
+    // Step 3: Build credentials from the UI input values
+    const loginCredentials = {
+      display_name: sipData.display_name,
+      username: sipData.extention,
+      extention: sipData.extention,
+      password: sipData.password,
+      wss_domain: sipData.wss_domain,
+      wss_port: sipData.wss_port,
+      wss_path: sipData.wss_path
+    };
 
-  console.log("Injected & Read loginCredentials ->", loginCredentials);
+    console.log("Injected & Read loginCredentials ->", loginCredentials);
 
-  // Step 4: Provision and reload
-  AutoProvisionAccount(loginCredentials);
+    // Step 4: Provision and reload
+    AutoProvisionAccount(loginCredentials);
 
-  $('#loginOverlay').remove();
-  $('.loading').remove();
-});
+    $('#loginOverlay').remove();
+    $('.loading').remove();
+  });
 }
 
 
