@@ -3130,7 +3130,7 @@ function showLoginDialog() {
       justify-content: center;
       padding: 24px;
       border-radius: 8px;
-      margin-bottom: 60px;
+      margin-bottom: 30px;
     ">
       <div style="text-align: center;">
         <img src="${welcome_info.logo}" alt="Logo" style="
