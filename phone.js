@@ -3113,6 +3113,7 @@ function showLoginDialog() {
       align-items: center;
       justify-content: center;
       z-index: 10000;
+      background-color: #222222;
     "></div>
   `);
 
@@ -3142,15 +3143,15 @@ function showLoginDialog() {
 
       <!-- Toggle Button -->
       <div style="display: flex; gap: 10px; justify-content: center;">
-        <button id="ivrToggle" class="toggle-btn active">IVR User</button>
-        <button id="sipToggle" class="toggle-btn">Third Party</button>
+        <button id="ivrToggle" class="toggle-btn active" style="color: white !important;">IVR User</button>
+        <button id="sipToggle" class="toggle-btn" style="color: white !important;">Third Party</button>
       </div>
 
       <!-- IVR Login -->
       <div class="login-modal ivr-form" style="width: 100%;">
-        <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">Sign In</h3>
+        <h3 class="UiTextHeading" style="margin-top: 0; text-align: center; color:white !important">Sign In</h3>
         <div style="display: flex; gap: 8px; margin: 16px 0;">
-          <select id="countryCode">
+          <select id="countryCode" style="color: white !important;">
             <option value="91" selected>+91</option>
             <option value="1">+1</option>
           </select>
@@ -3164,7 +3165,7 @@ function showLoginDialog() {
 
       <!-- SIP Login -->
         <div class="login-modal sip-form" style="width: 100%; display: none;">
-          <h3 class="UiTextHeading" style="margin-top: 0; text-align: center;">SIP Account</h3>
+          <h3 class="UiTextHeading" style="margin-top: 0; text-align: center; color:white !important">SIP Account</h3>
 
           <input
             type="text"
