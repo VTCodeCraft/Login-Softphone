@@ -3157,7 +3157,7 @@ function showLoginDialog() {
           </select>
           <input type="text" id="mobileField" placeholder="Mobile number" style="flex: 1; color: white !important;" />
         </div>
-        <input type="password" id="passwordField" placeholder="Password" style="width: 100%; margin-bottom: 16px;" />
+        <input type="password" id="passwordField" placeholder="Password" style="width: 100%; margin-bottom: 16px; color: white !important;" />
         <div class="UiWindowButtonBar" style="display: flex; gap: 12px; justify-content: center;">
           <button id="loginBtn" style="flex: 1; max-width: 200px;">Login</button>
         </div>
@@ -3171,42 +3171,42 @@ function showLoginDialog() {
             type="text"
             id="sipWss"
             placeholder="Ws Server (eg. yourdomain.com)"
-            style="color: white; background-color: #222; caret-color: white; width: 100%;"
+            style="color: white !important;; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipPath"
             placeholder="Ws Path (eg. /yourpath)"
-            style="color: white; background-color: #222; caret-color: white; width: 100%;"
+            style="color: white !important;; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipPort"
             placeholder="Ws Port (eg. 3001)"
-            style="color: white; background-color: #222; caret-color: white; width: 100%;"
+            style="color: white !important;; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipName"
             placeholder="Full Name"
-            style="color: white; background-color: #222; caret-color: white; width: 100%;"
+            style="color: white !important;; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="text"
             id="sipUser"
             placeholder="SIP Username"
-            style="color: white; background-color: #222; caret-color: white; width: 100%;"
+            style="color: white !important;; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <input
             type="password"
             id="sipPass"
             placeholder="SIP Password"
-            style="color: white; background-color: #222; caret-color: white; width: 100%;"
+            style="color: white !important;; background-color: #222; caret-color: white; width: 100%;"
           />
 
           <div class="UiWindowButtonBar" style="display: flex; gap: 20px; justify-content: center; margin-top: 20px;">
